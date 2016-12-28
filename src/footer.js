@@ -4,4 +4,4 @@
 	} else {
 		window.LCL = LCL;
 	}
-})();
+})(window);

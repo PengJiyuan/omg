@@ -1,6 +1,6 @@
 {
   "name": "lcl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "light canvas library",
   "main": "index.js",
   "scripts": {

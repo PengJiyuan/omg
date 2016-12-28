@@ -1,12 +1,12 @@
 
 // Source: src/header.js
-;(function(){
+;(function(window){
 
 // Source: src/core.js
 
 	var LCL = {
 
-		version: '1.0.0',
+		version: '1.0.1',
 
 		objects: [],
 
@@ -468,4 +468,4 @@
 	} else {
 		window.LCL = LCL;
 	}
-})();
+})(window);
