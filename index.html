@@ -14,7 +14,7 @@
 </div>
 <button id="start">start</button>
 <button id="stop">stop</button>
-<script src="../dist/lcl.js"></script>
+<script src="./lcl.min.js"></script>
 <script>
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
@@ -52,6 +52,12 @@
 		fillColor: '#ef8376'
 	}).on('mousedown', function() {
 		console.log('click rect2');
+	}).on('mousemove', function() {
+		rect2.fillColor = '#FFDAB9';
+		stage.redraw();
+	}).on('mouseleave', function() {
+		rect2.fillColor = '#ef8376';
+		stage.redraw();
 	});
 
 	var line1 = LCL.line({
@@ -74,8 +80,8 @@
 		line1.rotate = line1.rotate + 2;
 		stage.redraw();
 	}
-	stage.show();
-	//var a = stage.animate(go);
+	//stage.show();
+	var a = stage.animate(go);
 	//setInterval(go, 10);
 
 	start.onclick = function() {
