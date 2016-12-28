@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test html</title>
+	<style>
+		#canvas {
+			background-color: #ccc;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+		<canvas id="canvas"></canvas>
+</div>
+<button id="start">start</button>
+<button id="stop">stop</button>
+<script src="../dist/lcl.js"></script>
+<script>
+	var start = document.getElementById('start');
+	var stop = document.getElementById('stop');
+	var stage = LCL.init({
+		element: document.getElementById('canvas'),
+		width: 500,
+		height: 500
+	});
+
+	//stage.dragCanvas(true);
+
+	stage.scaleCanvas(true);
+
+	var rect1 = LCL.rectangle({
+		startX: 0,
+		startY: 0,
+		width: 110,
+		height: 110,
+		fillColor: '#514022'
+	}).on('mousedown', function() {
+		console.log('click rect1');
+	}).on('mousemove', function() {
+		rect1.fillColor = '#FFDAB9';
+		stage.redraw();
+	}).on('mouseleave', function() {
+		rect1.fillColor = '#514022';
+		stage.redraw();
+	});
+
+	var rect2 = LCL.rectangle({
+		startX: 60,
+		startY: 60,
+		width: 200,
+		height: 200,
+		fillColor: '#ef8376'
+	}).on('mousedown', function() {
+		console.log('click rect2');
+	});
+
+	var line1 = LCL.line({
+		startX: 200,
+		startY: 100,
+		endX: 400,
+		endY: 420
+	});
+
+	rect1.drag(true);
+	rect2.drag(true);
+
+	stage.addChild(rect1);
+	stage.addChild(rect2);
+	stage.addChild(line1);
+
+	function go() {
+		rect1.rotate++;
+		rect2.rotate = rect2.rotate + 2;
+		line1.rotate = line1.rotate + 2;
+		stage.redraw();
+	}
+	stage.show();
+	//var a = stage.animate(go);
+	//setInterval(go, 10);
+
+	start.onclick = function() {
+		stage.animate(go);
+	}
+	stop.onclick = function() {
+		stage.stop(a);
+	}
+
+</script>
+</body>
+</html>
