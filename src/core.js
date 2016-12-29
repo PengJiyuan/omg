@@ -94,52 +94,27 @@
 			if(typeof bool !== 'boolean' || !bool) {
 				return;
 			}
-			var that = this;
-			var down_dragCanvas = function(e_down) {
-				that.cacheX = LCL.event.getPos(e_down).x;
-				that.cacheY = LCL.event.getPos(e_down).y;
-
-				LCL.bind(document, 'mousemove', move_dragCanvas);
-
-				LCL.bind(document, 'mouseup', up_dragCanvas);
-			};
-
-			var move_dragCanvas = function(e_move) {
-				var mx = LCL.event.getPos(e_move).x,
-					my = LCL.event.getPos(e_move).y;
-				LCL.transX = LCL.transX + mx - that.cacheX;
-				LCL.transY = LCL.transY + my - that.cacheY;
-				that.redraw();
-				that.cacheX = mx;
-				that.cacheY = my;
-			};
-
-			var up_dragCanvas = function() {
-				LCL.unbind(document, 'mousemove', move_dragCanvas);
-				LCL.unbind(document, 'mouseup', up_dragCanvas);
-			};
-
-			LCL.bind(LCL.element, 'mousedown', down_dragCanvas);
+			LCL.enableDragCanvas = true;
 		},
 
-		scaleCanvas: function(bool) {
-			if(typeof bool !== 'boolean' || !bool) {
-				return;
-			}
-			var that = this;
-			LCL.bind(this.element, 'wheel', function(e) {
-				if(e.deltaY < 0) {
-					if(LCL.scale <= 3) {
-						LCL.scale += 0.02;
-						that.redraw();
-					}
-				} else {
-					if(LCL.scale > 0.5) {
-						LCL.scale -= 0.02;
-						that.redraw();
-					}
-				}
-			});
-		}
+		// scaleCanvas: function(bool) {
+		// 	if(typeof bool !== 'boolean' || !bool) {
+		// 		return;
+		// 	}
+		// 	var that = this;
+		// 	LCL.bind(this.element, 'wheel', function(e) {
+		// 		if(e.deltaY < 0) {
+		// 			if(LCL.scale <= 3) {
+		// 				LCL.scale += 0.02;
+		// 				that.redraw();
+		// 			}
+		// 		} else {
+		// 			if(LCL.scale > 0.5) {
+		// 				LCL.scale -= 0.02;
+		// 				that.redraw();
+		// 			}
+		// 		}
+		// 	});
+		// }
 
 	}

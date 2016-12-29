@@ -99,53 +99,28 @@
 			if(typeof bool !== 'boolean' || !bool) {
 				return;
 			}
-			var that = this;
-			var down_dragCanvas = function(e_down) {
-				that.cacheX = LCL.event.getPos(e_down).x;
-				that.cacheY = LCL.event.getPos(e_down).y;
-
-				LCL.bind(document, 'mousemove', move_dragCanvas);
-
-				LCL.bind(document, 'mouseup', up_dragCanvas);
-			};
-
-			var move_dragCanvas = function(e_move) {
-				var mx = LCL.event.getPos(e_move).x,
-					my = LCL.event.getPos(e_move).y;
-				LCL.transX = LCL.transX + mx - that.cacheX;
-				LCL.transY = LCL.transY + my - that.cacheY;
-				that.redraw();
-				that.cacheX = mx;
-				that.cacheY = my;
-			};
-
-			var up_dragCanvas = function() {
-				LCL.unbind(document, 'mousemove', move_dragCanvas);
-				LCL.unbind(document, 'mouseup', up_dragCanvas);
-			};
-
-			LCL.bind(LCL.element, 'mousedown', down_dragCanvas);
+			LCL.enableDragCanvas = true;
 		},
 
-		scaleCanvas: function(bool) {
-			if(typeof bool !== 'boolean' || !bool) {
-				return;
-			}
-			var that = this;
-			LCL.bind(this.element, 'wheel', function(e) {
-				if(e.deltaY < 0) {
-					if(LCL.scale <= 3) {
-						LCL.scale += 0.02;
-						that.redraw();
-					}
-				} else {
-					if(LCL.scale > 0.5) {
-						LCL.scale -= 0.02;
-						that.redraw();
-					}
-				}
-			});
-		}
+		// scaleCanvas: function(bool) {
+		// 	if(typeof bool !== 'boolean' || !bool) {
+		// 		return;
+		// 	}
+		// 	var that = this;
+		// 	LCL.bind(this.element, 'wheel', function(e) {
+		// 		if(e.deltaY < 0) {
+		// 			if(LCL.scale <= 3) {
+		// 				LCL.scale += 0.02;
+		// 				that.redraw();
+		// 			}
+		// 		} else {
+		// 			if(LCL.scale > 0.5) {
+		// 				LCL.scale -= 0.02;
+		// 				that.redraw();
+		// 			}
+		// 		}
+		// 	});
+		// }
 
 	}
 
@@ -398,10 +373,12 @@
 			},
 
 			mouseDown: function(e_down) {
-				var that = this;
+				var that = this, whichIn;
 				var hasDrags = LCL.objects.some(function(item) {
 					return !!item.enableDrag;
 				});
+
+				// drag shape
 				var pX = LCL.event.getPos(e_down).x;
 				var pY = LCL.event.getPos(e_down).y;
 				that.cacheX = pX;
@@ -425,10 +402,9 @@
 
 				// mouseDrag
 				if(hasDrags) {
-					var whichIn = LCL._objects.filter(function(item) {
+					whichIn = LCL._objects.filter(function(item) {
 						return item.enableDrag && item.isPointInner(pX, pY);
 					});
-
 					var move_Event = function(e_move) {
 						var mx = LCL.event.getPos(e_move).x,
 							my = LCL.event.getPos(e_move).y;
@@ -450,6 +426,29 @@
 						LCL.bind(document, 'mousemove', move_Event);
 						LCL.bind(document, 'mouseup', up_Event);
 					}
+				}
+
+				// global translate
+				if(LCL.enableDragCanvas && !(whichIn.length > 0)) {
+
+					var move_dragCanvas = function(e_move) {
+						var mx = LCL.event.getPos(e_move).x,
+							my = LCL.event.getPos(e_move).y;
+						LCL.transX = LCL.transX + mx - that.cacheX;
+						LCL.transY = LCL.transY + my - that.cacheY;
+						LCL.drawUtils.redraw();
+						that.cacheX = mx;
+						that.cacheY = my;
+					};
+
+					var up_dragCanvas = function() {
+						LCL.unbind(document, 'mousemove', move_dragCanvas);
+						LCL.unbind(document, 'mouseup', up_dragCanvas);
+					};
+
+					LCL.bind(document, 'mousemove', move_dragCanvas);
+
+					LCL.bind(document, 'mouseup', up_dragCanvas);
 				}
 			},
 

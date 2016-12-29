@@ -75,10 +75,12 @@
 			},
 
 			mouseDown: function(e_down) {
-				var that = this;
+				var that = this, whichIn;
 				var hasDrags = LCL.objects.some(function(item) {
 					return !!item.enableDrag;
 				});
+
+				// drag shape
 				var pX = LCL.event.getPos(e_down).x;
 				var pY = LCL.event.getPos(e_down).y;
 				that.cacheX = pX;
@@ -102,10 +104,9 @@
 
 				// mouseDrag
 				if(hasDrags) {
-					var whichIn = LCL._objects.filter(function(item) {
+					whichIn = LCL._objects.filter(function(item) {
 						return item.enableDrag && item.isPointInner(pX, pY);
 					});
-
 					var move_Event = function(e_move) {
 						var mx = LCL.event.getPos(e_move).x,
 							my = LCL.event.getPos(e_move).y;
@@ -127,6 +128,29 @@
 						LCL.bind(document, 'mousemove', move_Event);
 						LCL.bind(document, 'mouseup', up_Event);
 					}
+				}
+
+				// global translate
+				if(LCL.enableDragCanvas && !(whichIn.length > 0)) {
+
+					var move_dragCanvas = function(e_move) {
+						var mx = LCL.event.getPos(e_move).x,
+							my = LCL.event.getPos(e_move).y;
+						LCL.transX = LCL.transX + mx - that.cacheX;
+						LCL.transY = LCL.transY + my - that.cacheY;
+						LCL.drawUtils.redraw();
+						that.cacheX = mx;
+						that.cacheY = my;
+					};
+
+					var up_dragCanvas = function() {
+						LCL.unbind(document, 'mousemove', move_dragCanvas);
+						LCL.unbind(document, 'mouseup', up_dragCanvas);
+					};
+
+					LCL.bind(document, 'mousemove', move_dragCanvas);
+
+					LCL.bind(document, 'mouseup', up_dragCanvas);
 				}
 			},
 
