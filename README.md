@@ -33,7 +33,8 @@ init the stage
   var stage = LCL.init({
     element: document.getElementById('canvas'),
     width: 500,
-    height: 500
+    height: 500,
+    changeIndex: true // allow event order
   });
 ```
 global scale
@@ -126,7 +127,8 @@ stage.stop(a);
 
 ## ToDo
 
-* Event Z-index
+* Event Z-index (Done)
 * Browser compatibility test
+* global scale and translate...
 
 ## [MIT](./LICENSE)
