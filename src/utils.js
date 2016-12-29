@@ -20,6 +20,16 @@
     }
   };
 
+  // do not change the origin array
+  LCL.reverse = function(array) {
+    var length = array.length;
+    var ret = [];
+    for(var i = 0; i < length; i++) {
+      ret[i] = array[length - i -1];
+    }
+    return ret;
+  };
+
   // requestAnimationFrame polyfill
   ;(function() {
     var lastTime = 0;

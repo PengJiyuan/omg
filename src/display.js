@@ -15,6 +15,7 @@
 
 		};
 
+		// bind event
 		var on = function(eventTypes, callback) {
 
 			if(!eventTypes) {
@@ -44,12 +45,13 @@
 
 		};
 
+		// whether pointer is inner this shape
 		var isPointInner = function(x, y) {
 			var that = this;
-			var xRight = x > that.startX*LCL.scale + LCL.transX + this.moveX;
-			var xLeft = x < (that.startX + that.width)*LCL.scale + LCL.transX + this.moveX;
-			var yTop = y > that.startY*LCL.scale + LCL.transY + this.moveY;
-			var yBottom = y < (that.startY + that.height)*LCL.scale + LCL.transY + this.moveY;
+			var xRight = x > this.startX*LCL.scale + LCL.transX + this.moveX;
+			var xLeft = x < (this.startX + this.width)*LCL.scale + LCL.transX + this.moveX;
+			var yTop = y > this.startY*LCL.scale + LCL.transY + this.moveY;
+			var yBottom = y < (this.startY + this.height)*LCL.scale + LCL.transY + this.moveY;
 
 			switch(this.type) {
 				case 'rectangle':
@@ -57,12 +59,21 @@
 			}
 		};
 
+		// whether this shape can be dragged
 		var drag = function(bool) {
 			if(!bool || typeof bool !== 'boolean') {
 				return;
 			}
 			this.enableDrag = true;
-		}
+		};
+
+		// when select this shape, whether it should be changed the index
+		var changeIndex = function(bool) {
+			if(!bool || typeof bool !== 'boolean') {
+				return;
+			}
+			this.enableChangeIndex = true;
+		};
 
 		return Object.assign({}, settingsData, {
 
@@ -74,13 +85,13 @@
 
 			moveY: 0,
 
-			events: this.events,
-
 			on: on,
 
 			isPointInner: isPointInner,
 
-			drag: drag
+			drag: drag,
+
+			changeIndex: changeIndex
 
 		});
 

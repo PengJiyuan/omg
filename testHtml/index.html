@@ -21,7 +21,8 @@
 	var stage = LCL.init({
 		element: document.getElementById('canvas'),
 		width: 500,
-		height: 500
+		height: 500,
+		changeIndex: true
 	});
 
 	//stage.dragCanvas(true);
@@ -37,9 +38,11 @@
 	}).on('mousedown', function() {
 		console.log('click rect1');
 	}).on('mousemove', function() {
+		LCL.element.style.cursor = 'pointer';
 		rect1.fillColor = '#FFDAB9';
 		stage.redraw();
 	}).on('mouseleave', function() {
+		LCL.element.style.cursor = 'default';
 		rect1.fillColor = '#514022';
 		stage.redraw();
 	});
@@ -52,6 +55,14 @@
 		fillColor: '#ef8376'
 	}).on('mousedown', function() {
 		console.log('click rect2');
+	}).on('mouseenter', function() {
+		LCL.element.style.cursor = 'pointer';
+		rect2.fillColor = '#FFDAB9';
+		stage.redraw();
+	}).on('mouseleave', function() {
+		LCL.element.style.cursor = 'default';
+		rect2.fillColor = '#ef8376';
+		stage.redraw();
 	});
 
 	var line1 = LCL.line({

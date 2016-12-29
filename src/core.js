@@ -35,6 +35,8 @@
 			LCL.drawUtils.draw = this.draw;
 			LCL.drawUtils.redraw = this.redraw;
 
+			LCL.changeIndex = config.changeIndex;
+
 		},
 
 		init: function(config) {
