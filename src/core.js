@@ -15,7 +15,9 @@
 
 		drawUtils: {},
 
-		eventTypes: ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove'],
+		isDragging: false,
+
+		eventTypes: ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'dragin', 'dragout', 'drop'],
 
 		core: function(config) {
 
@@ -31,11 +33,11 @@
 
 			config.element.height = this.height = LCL.height = config.height;
 
+			LCL.enableGlobalTranslate = config.enableGlobalTranslate;
+
 			LCL.drawUtils.clear = this.clear;
 			LCL.drawUtils.draw = this.draw;
 			LCL.drawUtils.redraw = this.redraw;
-
-			LCL.changeIndex = config.changeIndex;
 
 		},
 
@@ -49,6 +51,8 @@
 
 		addChild: function(obj) {
 			LCL.objects.push(obj);
+			// copy the reverse events array
+			LCL._objects = LCL.reverse(LCL.objects);
 		},
 
 		show: function() {
@@ -90,11 +94,11 @@
 			cancelAnimationFrame(LCL[id]);
 		},
 
-		dragCanvas: function(bool) {
+		globalTranslate: function(bool) {
 			if(typeof bool !== 'boolean' || !bool) {
 				return;
 			}
-			LCL.enableDragCanvas = true;
+			LCL.enableGlobalTranslate = true;
 		},
 
 		// scaleCanvas: function(bool) {

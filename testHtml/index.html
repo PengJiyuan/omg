@@ -6,6 +6,12 @@
 		#canvas {
 			background-color: #ccc;
 		}
+		.drag li {
+			list-style: none;
+			width: 200px;
+			height: 40px;
+			background-color: #ef8376;
+		}
 	</style>
 </head>
 <body>
@@ -14,18 +20,21 @@
 </div>
 <button id="start">start</button>
 <button id="stop">stop</button>
+<ul class="drag">
+	<li id="dg" draggable="true">Drag</li>
+</ul>
 <script src="../dist/lcl.js"></script>
 <script>
+  var flag;
+
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
 	var stage = LCL.init({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
-		changeIndex: true
+		enableGlobalTranslate: true
 	});
-
-	stage.dragCanvas(true);
 
 	//stage.scaleCanvas(true);
 
@@ -34,66 +43,126 @@
 		startY: 0,
 		width: 110,
 		height: 110,
-		fillColor: '#514022'
+		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
 	}).on('mousedown', function() {
 		console.log('click rect1');
-	}).on('mousemove', function() {
-		LCL.element.style.cursor = 'pointer';
-		rect1.fillColor = '#FFDAB9';
+	}).on('mouseenter', function() {
+		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
 		stage.redraw();
 	}).on('mouseleave', function() {
-		LCL.element.style.cursor = 'default';
-		rect1.fillColor = '#514022';
+		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
 		stage.redraw();
+	}).config({
+		drag: true,
+		changeIndex: true
 	});
 
 	var rect2 = LCL.rectangle({
-		startX: 60,
-		startY: 60,
+		startX: 120,
+		startY: 120,
 		width: 200,
 		height: 200,
-		fillColor: '#ef8376'
+		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
 	}).on('mousedown', function() {
 		console.log('click rect2');
 	}).on('mouseenter', function() {
-		LCL.element.style.cursor = 'pointer';
-		rect2.fillColor = '#FFDAB9';
+		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
 		stage.redraw();
 	}).on('mouseleave', function() {
-		LCL.element.style.cursor = 'default';
-		rect2.fillColor = '#ef8376';
+		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
 		stage.redraw();
+	}).on('dragin', function() {
+		console.log('drag in rect2');
+		rect2.fillColor = '#ffffff';
+		stage.redraw();
+	}).on('dragout', function() {
+		console.log('drag out rect2');
+		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		stage.redraw();
+	}).on('drop', function() {
+		console.log('you drop on the rect2!');
+		rect2.fillColor = '#000';
+		stage.redraw();
+	}).config({
+		drag: true,
+		changeIndex: true
 	});
-
-	var line1 = LCL.line({
-		startX: 200,
-		startY: 100,
-		endX: 400,
-		endY: 420
-	});
-
-	rect1.drag(true);
-	rect2.drag(true);
 
 	stage.addChild(rect1);
 	stage.addChild(rect2);
-	stage.addChild(line1);
 
+	stage.show();
+
+	// drag and drop
+
+	var dg = document.getElementById('dg');
+	dg.onselectstart = function() {
+    return false;
+  };
+  dg.ondragstart = function(ev) {
+    ev.dataTransfer.effectAllowed = "move";
+    //ev.dataTransfer.setData("text", ev.target.innerHTML);
+    ev.dataTransfer.setDragImage(ev.target, 0, 0);
+    return true;
+  };
+
+  LCL.element.ondragover = function(e) {
+  	e.preventDefault();
+  	var x = LCL.event.getPos(e).x;
+  	var y = LCL.event.getPos(e).y;
+  	console.log(x, y)
+  	var which = LCL._objects.filter(function(item) {
+  		return item.isPointInner(x, y);
+  	});
+  	if(which.length > 0 ) {
+  		which[0].fillColor = '#000';
+  		stage.redraw();
+  	}
+  }
+
+  LCL.element.ondrop = function(ev) {
+  	var x = LCL.event.getPos(ev).x;
+  	var y = LCL.event.getPos(ev).y;
+  	var width = Math.random()*300;
+    var a = LCL.rectangle({
+			startX: x,
+			startY: y,
+			width: width,
+			height: width,
+			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+		}).on('mousedown', function() {
+			console.log('click a');
+		}).on('mouseenter', function() {
+			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			stage.redraw();
+		}).on('mouseleave', function() {
+			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			stage.redraw();
+		}).config({
+			drag: true,
+			changeIndex: true
+		});
+
+    stage.addChild(a);
+
+		stage.redraw();
+    return false;
+	};
+
+
+	//flag = stage.animate(go);
+	//setInterval(go, 10);
 	function go() {
-		rect1.rotate++;
-		rect2.rotate = rect2.rotate + 2;
-		line1.rotate = line1.rotate + 2;
+		LCL.objects.forEach(function(i) {
+			i.rotate++;
+		});
 		stage.redraw();
 	}
-	stage.show();
-	//var a = stage.animate(go);
-	//setInterval(go, 10);
-
 	start.onclick = function() {
-		stage.animate(go);
+		flag = stage.animate(go);
 	}
 	stop.onclick = function() {
-		stage.stop(a);
+		stage.stop(flag);
 	}
 
 </script>

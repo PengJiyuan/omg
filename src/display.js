@@ -47,16 +47,32 @@
 
 		// whether pointer is inner this shape
 		var isPointInner = function(x, y) {
-			var that = this;
-			var xRight = x > this.startX*LCL.scale + LCL.transX + this.moveX;
-			var xLeft = x < (this.startX + this.width)*LCL.scale + LCL.transX + this.moveX;
-			var yTop = y > this.startY*LCL.scale + LCL.transY + this.moveY;
-			var yBottom = y < (this.startY + this.height)*LCL.scale + LCL.transY + this.moveY;
+			// rotate the x and y coordinates 
+			var cX = this.startX + this.width/2 + LCL.transX + this.moveX, cY = this.startY + this.height/2 + LCL.transY + this.moveY;
+			var oX = (x - cX)*Math.cos((Math.PI/180)*(-this.rotate)) - (y - cY)*Math.sin((Math.PI/180)*(-this.rotate)) + cX;
+			var oY = (x - cX)*Math.sin((Math.PI/180)*(-this.rotate)) + (y - cY)*Math.cos((Math.PI/180)*(-this.rotate)) + cY;
+			var xRight = oX > this.startX + LCL.transX + this.moveX;
+			var xLeft = oX < this.startX + this.width + LCL.transX + this.moveX;
+			var yTop = oY > this.startY + LCL.transY + this.moveY;
+			var yBottom = oY < this.startY + this.height + LCL.transY + this.moveY;
 
 			switch(this.type) {
 				case 'rectangle':
 					return !!(xRight && xLeft && yTop && yBottom);
 			}
+		};
+
+		var config = function(obj) {
+			if(Object.prototype.toString.call(obj) !== '[object Object]') {
+				return;
+			}
+			if(obj.drag) {
+				this.enableDrag = true;
+			}
+			if(obj.changeIndex) {
+				this.enableChangeIndex = true;
+			}
+			return this;
 		};
 
 		// whether this shape can be dragged
@@ -77,7 +93,11 @@
 
 		return Object.assign({}, settingsData, {
 
+			isDragging: false,
+
 			hasEnter: false,
+
+			hasDraggedIn: false,
 
 			rotate: 0,
 
@@ -88,6 +108,8 @@
 			on: on,
 
 			isPointInner: isPointInner,
+
+			config: config,
 
 			drag: drag,
 
