@@ -44,7 +44,8 @@ console.log(LCL.version); // 1.1.0
  stage.globalTranslate(true);
 ```
 
-* **添加形状**
+* **添加形状**    
+
   > 目前只支持画指定的图形，如需自定义图形可以拉下源代码之后在shapes中按照我给定的格式添加自定义图形。
 
 矩形
@@ -157,6 +158,10 @@ stage.stop(a);
 * 对象添加属性链式调用。XX.on(..).on(..).config(...).drag(...)...
 * 优化点在形状内的判断，添加形状旋转后的判断...
 
+#### v1.1.1
+* 添加scripts文件，新增release脚本，自动化更新版本，提交代码。
+* 添加eslint， 和pre-commit脚本。
+
 ## ToDo
 
 * 给时间触发添加顺序(index) (Done)
@@ -165,5 +170,6 @@ stage.stop(a);
 * 外部拖拽与页面内对象交互，像原生的drag，drop. (Done) -- 见demo源代码
 * 浏览器兼容性测试
 * 添加基本，常见的图形的绘制
+* 增加group组件，几个图形可以放到一个group中，作为一个整体来添加事件和操作。
 
 ## [MIT](./LICENSE)
