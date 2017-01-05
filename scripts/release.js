@@ -38,7 +38,7 @@ changeVersion(version);
 console.log('package.json updated Success!');
 
 /*
- * Build & Commit & Add Tag & push tag origin & push origin
+ * Build & Commit & Add Tag & push tag origin & push origin & publish to NPM
  */
 
 console.log('');
