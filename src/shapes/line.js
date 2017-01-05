@@ -1,34 +1,34 @@
-	
-	;(function() {
 
-		var line = function(settings) {
+  ;(function() {// eslint-disable-line
 
-			var draw = function() {
-				var canvas = LCL.canvas,
-					startX = settings.startX,
-					startY = settings.startY,
-					endX = settings.endX,
-					endY = settings.endY;
+    var line = function(settings) {
 
-				canvas.save();
-				canvas.translate(startX + (endX - startX)/2, startY + (endY - startY)/2);
-				canvas.rotate((Math.PI/180)*this.rotate);
-				canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
-				canvas.translate(this.moveX, this.moveY);
-				canvas.beginPath();
-				canvas.moveTo(startX, startY);
-				canvas.lineTo(endX, endY);
-				canvas.stroke();
-				canvas.closePath();
-				canvas.restore();
-			};
+      var draw = function() {
+        var canvas = LCL.canvas,
+          startX = settings.startX,
+          startY = settings.startY,
+          endX = settings.endX,
+          endY = settings.endY;
 
-			return Object.assign({}, LCL.display(settings), {
-				type: 'line',
-				draw: draw
-			});
-		};
+        canvas.save();
+        canvas.translate(startX + (endX - startX)/2, startY + (endY - startY)/2);
+        canvas.rotate((Math.PI/180)*this.rotate);
+        canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
+        canvas.translate(this.moveX, this.moveY);
+        canvas.beginPath();
+        canvas.moveTo(startX, startY);
+        canvas.lineTo(endX, endY);
+        canvas.stroke();
+        canvas.closePath();
+        canvas.restore();
+      };
 
-		LCL.line = line;
+      return Object.assign({}, LCL.display(settings), {
+        type: 'line',
+        draw: draw
+      });
+    };
 
-	})();
+    LCL.line = line;
+
+  })();

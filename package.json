@@ -1,11 +1,14 @@
 {
   "name": "lcl",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "light canvas library",
   "main": "index.js",
   "scripts": {
     "dev": "grunt watch",
-    "build": "grunt build"
+    "build": "grunt build",
+    "release": "node scripts/release.js",
+    "add_eslint": "node ./scripts/pre_commit.js",
+    "eslint": "eslint *.js src/**/ scripts/ --ext .js --cache"
   },
   "repository": {
     "type": "git",
@@ -35,5 +38,8 @@
     "src/event.js",
     "src/utils.js",
     "src/footer.js"
-  ]
+  ],
+  "dependencies": {
+    "eslint": "^3.12.2"
+  }
 }

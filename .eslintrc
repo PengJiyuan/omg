@@ -1,0 +1,43 @@
+{
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "globals": {
+        "LCL": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "comma-spacing": [
+            "error",
+            { "before": false, "after": true }
+        ],
+        "indent": [
+            "error",
+            2
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-trailing-spaces": [
+            "error"
+        ],
+        "no-empty": [
+            "error"
+        ],
+        "no-console": [
+            "error", 
+            { 
+                "allow": ["log", "error", "warn"]
+            }
+        ],
+        "no-alert": [
+            "error"
+        ]
+    }
+}
