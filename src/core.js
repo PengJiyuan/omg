@@ -15,9 +15,15 @@
 
     drawUtils: {},
 
+    loader: null, // the instance of image loader
+
+    utils: {},
+
+    images: [],
+
     isDragging: false,
 
-    eventTypes: ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'dragin', 'dragout', 'drop'],
+    eventTypes: ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'],
 
     core: function(config) {
 
@@ -39,6 +45,11 @@
       LCL.drawUtils.draw = this.draw;
       LCL.drawUtils.redraw = this.redraw;
 
+      // init images
+      if(config.images) {
+        LCL.images = config.images;
+      }
+
     },
 
     init: function(config) {
@@ -49,15 +60,23 @@
 
   LCL.core.prototype = {
 
+    imgReady: function() {
+      LCL.loader = new LCL.utils.imageLoader();
+      LCL.loader.addImg(LCL.images);
+    },
+
     addChild: function(obj) {
       LCL.objects.push(obj);
       // copy the reverse events array
-      LCL._objects = LCL.reverse(LCL.objects);
+      LCL._objects = LCL.utils.reverse(LCL.objects);
     },
 
     show: function() {
-      LCL.drawUtils.draw();
-      LCL.event.triggerEvents();
+      this.imgReady();
+      LCL.loader.ready(function() {
+        LCL.drawUtils.draw();
+        LCL.event.triggerEvents();
+      });
     },
 
     draw: function() {
@@ -70,7 +89,7 @@
       LCL.drawUtils.clear();
       LCL.canvas.save();
       LCL.canvas.translate(LCL.transX, LCL.transY);
-      LCL.canvas.scale(LCL.scale, LCL.scale);
+      // LCL.canvas.scale(LCL.scale, LCL.scale);
       LCL.drawUtils.draw();
       LCL.canvas.restore();
     },

@@ -11,9 +11,9 @@
           endY = settings.endY;
 
         canvas.save();
-        canvas.translate(startX + (endX - startX)/2, startY + (endY - startY)/2);
-        canvas.rotate((Math.PI/180)*this.rotate);
-        canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
+        // canvas.translate(startX + (endX - startX)/2, startY + (endY - startY)/2);
+        // canvas.rotate((Math.PI/180)*this.rotate);
+        // canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
         canvas.translate(this.moveX, this.moveY);
         canvas.beginPath();
         canvas.moveTo(startX, startY);

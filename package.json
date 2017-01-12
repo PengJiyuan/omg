@@ -1,6 +1,6 @@
 {
   "name": "lcl",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "light canvas library",
   "main": "index.js",
   "scripts": {
@@ -36,6 +36,9 @@
     "src/display.js",
     "src/shapes/rectangle.js",
     "src/shapes/line.js",
+    "src/shapes/image.js",
+    "src/shapes/text.js",
+    "src/shapes/arc.js",
     "src/event.js",
     "src/utils.js",
     "src/footer.js"

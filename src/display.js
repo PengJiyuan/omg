@@ -3,15 +3,23 @@
 
     var settingsData = {
 
-      startX: settings.startX,
+      fillColor: settings.fillColor, // rectangle fillcolor
 
-      startY: settings.startY,
+      sliceX: settings.sliceX, // image sliceX
 
-      width: settings.width,
+      sliceY: settings.sliceY, // image sliceY
 
-      height: settings.height,
+      width: settings.width, // image
 
-      fillColor: settings.fillColor
+      height: settings.height, // image
+
+      sliceWidth: settings.sliceWidth, // image
+
+      sliceHeight: settings.sliceHeight, // image
+
+      backgroundColor: settings.backgroundColor, //text
+
+      text: settings.text // text
 
     };
 
@@ -47,18 +55,28 @@
 
     // whether pointer is inner this shape
     var isPointInner = function(x, y) {
-      // rotate the x and y coordinates 
-      var cX = this.startX + this.width/2 + LCL.transX + this.moveX, cY = this.startY + this.height/2 + LCL.transY + this.moveY;
-      var oX = (x - cX)*Math.cos((Math.PI/180)*(-this.rotate)) - (y - cY)*Math.sin((Math.PI/180)*(-this.rotate)) + cX;
-      var oY = (x - cX)*Math.sin((Math.PI/180)*(-this.rotate)) + (y - cY)*Math.cos((Math.PI/180)*(-this.rotate)) + cY;
-      var xRight = oX > this.startX + LCL.transX + this.moveX;
-      var xLeft = oX < this.startX + this.width + LCL.transX + this.moveX;
-      var yTop = oY > this.startY + LCL.transY + this.moveY;
-      var yBottom = oY < this.startY + this.height + LCL.transY + this.moveY;
+      var ltx = this.fixed ? 0 : LCL.transX;
+      var lty = this.fixed ? 0 : LCL.transY;
+      // rotate the x and y coordinates
+      // var cX = this.startX + this.width/2 + ltx + this.moveX, cY = this.startY + this.height/2 + lty + this.moveY;
+      // var oX = (x - cX)*Math.cos((Math.PI/180)*(-this.rotate)) - (y - cY)*Math.sin((Math.PI/180)*(-this.rotate)) + cX;
+      // var oY = (x - cX)*Math.sin((Math.PI/180)*(-this.rotate)) + (y - cY)*Math.cos((Math.PI/180)*(-this.rotate)) + cY;
+      // var xRight = oX > this.startX + ltx+ this.moveX;
+      // var xLeft = oX < this.startX + this.width + ltx+ this.moveX;
+      // var yTop = oY > this.startY + lty + this.moveY;
+      // var yBottom = oY < this.startY + this.height + lty + this.moveY;
+      var xRight = x > this.startX + this.moveX + ltx;
+      var xLeft = x < this.startX + this.width + this.moveX + ltx;
+      var yTop = y > this.startY + this.moveY + lty;
+      var yBottom = y < this.startY + this.height + this.moveY + lty;
 
       switch(this.type) {
         case 'rectangle':
+        case 'image':
+        case 'text':
           return !!(xRight && xLeft && yTop && yBottom);
+        case 'arc':
+          return !!( Math.sqrt( (x - this.x - this.moveX -ltx) * (x - this.x - this.moveX -ltx) + (y - this.y - this.moveY - lty) * (y - this.y - this.moveY - lty) ) <= this.radius );
       }
     };
 
@@ -71,6 +89,12 @@
       }
       if(obj.changeIndex) {
         this.enableChangeIndex = true;
+      }
+      if(obj.fixed) {
+        this.fixed = true;
+      }
+      if(obj.bg) {
+        this.isBg = true;
       }
       return this;
     };
@@ -91,6 +115,13 @@
       this.enableChangeIndex = true;
     };
 
+    var fixed = function(bool) {
+      if(!bool || typeof bool !== 'boolean') {
+        return;
+      }
+      this.fixed = true;
+    }
+
     return Object.assign({}, settingsData, {
 
       isDragging: false,
@@ -99,7 +130,7 @@
 
       hasDraggedIn: false,
 
-      rotate: 0,
+      //rotate: 0,
 
       moveX: 0,
 

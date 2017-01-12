@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test html</title>
+	<style>
+		#fps {
+			position: absolute;
+			top: 3px;
+			left: 394px;
+		}
+		#canvas {
+			background-color: #ccc;
+		}
+		.drag li {
+			list-style: none;
+			width: 200px;
+			height: 40px;
+			background-color: #ef8376;
+		}
+	</style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+		<canvas id="canvas"></canvas>
+</div>
+<ul class="drag">
+	<li id="dg" draggable="true">Drag</li>
+</ul>
+<script src="../dist/lcl.js"></script>
+<script>
+  var flag;
+
+	var start = document.getElementById('start');
+	var stop = document.getElementById('stop');
+	var stage = LCL.init({
+		element: document.getElementById('canvas'),
+		width: 500,
+		height: 500,
+		enableGlobalTranslate: true
+	});
+
+	//stage.scaleCanvas(true);
+
+	var rect1 = LCL.rectangle({
+		startX: 0,
+		startY: 0,
+		width: 110,
+		height: 110,
+		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+	}).on('mousedown', function() {
+		console.log('click rect1');
+	}).on('mouseenter', function() {
+		console.log(rect1.fillColor);
+		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		console.log(rect1.fillColor);
+		stage.redraw();
+	}).on('mouseleave', function() {
+		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		stage.redraw();
+	}).config({
+		drag: true,
+		changeIndex: true
+	});
+
+	var rect2 = LCL.rectangle({
+		startX: 120,
+		startY: 120,
+		width: 200,
+		height: 200,
+		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+	}).on('mousedown', function() {
+		console.log('click rect2');
+	}).on('mouseenter', function() {
+		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		stage.redraw();
+	}).on('mouseleave', function() {
+		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		stage.redraw();
+	}).on('dragin', function() {
+		console.log('drag in rect2');
+		rect2.fillColor = '#ffffff';
+		stage.redraw();
+	}).on('dragout', function() {
+		console.log('drag out rect2');
+		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		stage.redraw();
+	}).on('drop', function() {
+		console.log('you drop on the rect2!');
+		rect2.fillColor = '#000';
+		stage.redraw();
+	}).config({
+		drag: true,
+		changeIndex: true
+	});
+
+	var image = LCL.image({
+		startX: 0,
+		startY: 0,
+		width: 800,
+		height: 500,
+		src: './img/timg.jpg'
+	}).config({
+		bg: true,
+		fixed: true
+	});
+
+	var text = LCL.text({
+		startX: 300,
+		startY: 40,
+		width: 150,
+		height: 40,
+		paddingTop: 8, //text padding top
+		center: true, 
+		backgroundColor: 'blue', // optional
+		font: 'italic bold 20px arial,sans-serif',
+		text: 'Hello World',
+		color: '#fff',
+		type: 'fill'
+	}).config({
+		fixed: true,
+		bg: true
+	});
+
+	var image3 = LCL.image({
+		startX: 200,
+		startY: 200,
+		width: 97,
+		height: 110,
+		sliceX: 5,
+		sliceY: 0,
+		sliceWidth: 97,
+		sliceHeight: 110,
+		src: './img/action.png'
+	}).on('mousedown', function() {
+		console.log('image3');
+	}).config({
+		drag: true,
+		changeIndex: true
+	});
+
+	var arc = LCL.arc({
+		x: 400,
+		y: 400,
+		radius: 30,
+		color: 'rgba(255, 255, 255, 0.5)',
+		type: 'fill'
+	}).on('mouseenter', function() {
+		LCL.element.style.cursor = 'pointer';
+	}).on('mouseleave', function() {
+		LCL.element.style.cursor = 'default';
+	}).on('dragend', function() {
+		arc.moveX = 0;
+		arc.moveY = 0;
+		stage.redraw();
+	}).config({
+		drag: true,
+		changeIndex: true,
+		fixed: true
+	});
+
+	var arc2 = LCL.arc({
+		x: 400,
+		y: 400,
+		radius: 80,
+		color: 'rgba(255, 255, 255, 0.8)',
+		type: 'stroke'
+	}).config({
+		fixed: true,
+		bg: true
+	});
+
+	stage.addChild(image);
+	stage.addChild(text);
+	stage.addChild(rect1);
+	stage.addChild(rect2);
+	stage.addChild(image3);
+	stage.addChild(arc2);
+	stage.addChild(arc);
+
+	stage.show();
+
+	// drag and drop
+
+	var dg = document.getElementById('dg');
+	dg.onselectstart = function() {
+    return false;
+  };
+  dg.ondragstart = function(ev) {
+    ev.dataTransfer.effectAllowed = "move";
+    //ev.dataTransfer.setData("text", ev.target.innerHTML);
+    ev.dataTransfer.setDragImage(ev.target, 0, 0);
+    return true;
+  };
+
+  LCL.element.ondragover = function(e) {
+  	e.preventDefault();
+  	var x = LCL.event.getPos(e).x;
+  	var y = LCL.event.getPos(e).y;
+  	var which = LCL._objects.filter(function(item) {
+  		return item.isPointInner(x, y);
+  	});
+  	if(which.length > 0 ) {
+  		which[0].fillColor = '#000';
+  		stage.redraw();
+  	}
+  }
+
+  LCL.element.ondrop = function(ev) {
+  	var x = LCL.event.getPos(ev).x;
+  	var y = LCL.event.getPos(ev).y;
+  	var width = Math.random()*300;
+    var a = LCL.rectangle({
+			startX: x,
+			startY: y,
+			width: width,
+			height: width,
+			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+		}).on('mousedown', function() {
+			console.log('click a');
+		}).on('mouseenter', function() {
+			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			stage.redraw();
+		}).on('mouseleave', function() {
+			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			stage.redraw();
+		}).config({
+			drag: true,
+			changeIndex: true
+		});
+
+    stage.addChild(a);
+
+		stage.redraw();
+    return false;
+	};
+
+</script>
+</body>
+</html>

@@ -86,7 +86,6 @@ child_process.exec('npm run build', function(err, stdout) {
       console.log('Push Origin Tag...');
       child_process.exec('git push origin v' + version, function(err, stdout) {
         if(err) {
-          changeVersion(currentVersion);
           console.log('Push Origin Tag Failed!');
           console.error(err);
           process.exit(0);
@@ -99,7 +98,6 @@ child_process.exec('npm run build', function(err, stdout) {
         console.log('Push Origin...');
         child_process.exec('git push origin master', function(err, stdout) {
           if(err) {
-            changeVersion(currentVersion);
             console.log('Push Origin Failed!');
             console.error(err);
             process.exit(0);
