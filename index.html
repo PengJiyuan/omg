@@ -54,7 +54,7 @@
 
 	var demo1 = LCL.text({
 		startX: (LCL.width - 300)/2,
-		startY: 40,
+		startY: 20,
 		width: 300,
 		height: 40,
 		paddingTop: 2, //text padding top
@@ -80,7 +80,7 @@
 
 	var demo2 = LCL.text({
 		startX: (LCL.width - 300)/2,
-		startY: 100,
+		startY: 60,
 		width: 300,
 		height: 40,
 		paddingTop: 2, //text padding top
@@ -100,6 +100,32 @@
 		stage.redraw();
 	}).on('mousedown', function() {
 		window.location = './index2.html';
+	}).config({
+		fixed: true
+	});
+
+	var demo3 = LCL.text({
+		startX: (LCL.width - 300)/2,
+		startY: 100,
+		width: 300,
+		height: 40,
+		paddingTop: 2, //text padding top
+		center: true, 
+		backgroundColor: '#ef4476', // optional
+		font: 'italic bold 30px arial,sans-serif',
+		text: 'Big Data',
+		color: '#fff',
+		type: 'fill'
+	}).on('mouseenter', function() {
+		LCL.element.style.cursor = 'pointer';
+		demo3.backgroundColor = '#ef8454';
+		stage.redraw();
+	}).on('mouseleave', function() {
+		LCL.element.style.cursor = 'default';
+		demo3.backgroundColor = '#ef4476';
+		stage.redraw();
+	}).on('mousedown', function() {
+		window.location = './index4.html';
 	}).config({
 		fixed: true
 	});
@@ -128,12 +154,14 @@
 		trash.backgroundColor = '#ef4476';
 		trash.text = '捕熊箱(' + bear + ')';
 		LCL.objects.pop();
+		LCL._objects = LCL.utils.reverse(LCL.objects);
 		stage.redraw();
 	});
 
 	stage.addChild(title);
 	stage.addChild(demo1);
 	stage.addChild(demo2);
+	stage.addChild(demo3);
 	stage.addChild(trash);
 
 	function createBear() {
@@ -158,8 +186,8 @@
 		var randomNum = Math.round(Math.random()*3);
 		stage.addChild(
 			LCL.image({
-				startX: Math.random() * (width - 100) + 100,
-				startY: Math.random() * (height - 110) + 110,
+				startX: Math.random() * width - 50,
+				startY: Math.random() * height - 60,
 				width: arr[randomNum].w,
 				height: 110,
 				sliceX: arr[randomNum].sx,
@@ -174,7 +202,7 @@
 		);
 	}
 	
-	for(var i = 0;i < 10; i++) {
+	for(var i = 0;i < 100; i++) {
 		createBear();
 	}
 
