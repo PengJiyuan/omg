@@ -3,168 +3,226 @@
 <head>
 	<title>test html</title>
 	<style>
-		#canvas {
-			background-color: #ccc;
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
 		}
-		.drag li {
-			list-style: none;
-			width: 200px;
-			height: 40px;
-			line-height: 40px;
-			color: #fff;
-			text-align: center;
-			background-color: #ef8376;
+		#canvas {
+			margin: 0;
+			background-color: #fff;
 		}
 	</style>
 </head>
 <body>
+<div id="fps"></div>
 <div class="container">
 		<canvas id="canvas"></canvas>
 </div>
-<button id="start">start</button>
-<button id="stop">stop</button>
-<ul class="drag">
-	<li id="dg" draggable="true">可以拖拽与画布交互</li>
-</ul>
 <script src="./lcl.min.js"></script>
 <script>
   var flag;
+  var bear = 0;
+  var width = document.body.clientWidth,
+  	height = document.body.clientHeight;
 
-	var start = document.getElementById('start');
-	var stop = document.getElementById('stop');
 	var stage = LCL.init({
 		element: document.getElementById('canvas'),
-		width: 500,
-		height: 500,
+		width: width,
+		height: height,
 		enableGlobalTranslate: true
 	});
 
-	//stage.scaleCanvas(true);
-
-	var rect1 = LCL.rectangle({
-		startX: 0,
-		startY: 0,
-		width: 110,
-		height: 110,
-		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-	}).on('mousedown', function() {
-		console.log('click rect1');
-	}).on('mouseenter', function() {
-		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-		stage.redraw();
-	}).on('mouseleave', function() {
-		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-		stage.redraw();
+	var title = LCL.text({
+		startX: (LCL.width - 800)/2,
+		startY: (height - 300)/2,
+		width: 800,
+		height: 300,
+		paddingTop: 0, //text padding top
+		center: true, 
+		backgroundColor: 'blue', // optional
+		font: 'italic bold 270px arial,sans-serif',
+		text: 'LCL',
+		color: '#fff',
+		type: 'fill'
 	}).config({
-		drag: true,
-		changeIndex: true
+		fixed: true,
+		bg: true
 	});
 
-	var rect2 = LCL.rectangle({
-		startX: 120,
-		startY: 120,
-		width: 200,
-		height: 200,
-		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-	}).on('mousedown', function() {
-		console.log('click rect2');
+	var demo1 = LCL.text({
+		startX: (LCL.width - 300)/2,
+		startY: 40,
+		width: 300,
+		height: 40,
+		paddingTop: 2, //text padding top
+		center: true, 
+		backgroundColor: '#ef4476', // optional
+		font: 'italic bold 30px arial,sans-serif',
+		text: 'Walking Control',
+		color: '#fff',
+		type: 'fill'
 	}).on('mouseenter', function() {
-		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		LCL.element.style.cursor = 'pointer';
+		demo1.backgroundColor = '#ef8454';
 		stage.redraw();
 	}).on('mouseleave', function() {
-		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		LCL.element.style.cursor = 'default';
+		demo1.backgroundColor = '#ef4476';
 		stage.redraw();
+	}).on('mousedown', function() {
+		window.location = './index3.html';
+	}).config({
+		fixed: true
+	});
+
+	var demo2 = LCL.text({
+		startX: (LCL.width - 300)/2,
+		startY: 100,
+		width: 300,
+		height: 40,
+		paddingTop: 2, //text padding top
+		center: true, 
+		backgroundColor: '#ef4476', // optional
+		font: 'italic bold 30px arial,sans-serif',
+		text: 'Drag and Drop',
+		color: '#fff',
+		type: 'fill'
+	}).on('mouseenter', function() {
+		LCL.element.style.cursor = 'pointer';
+		demo2.backgroundColor = '#ef8454';
+		stage.redraw();
+	}).on('mouseleave', function() {
+		LCL.element.style.cursor = 'default';
+		demo2.backgroundColor = '#ef4476';
+		stage.redraw();
+	}).on('mousedown', function() {
+		window.location = './index2.html';
+	}).config({
+		fixed: true
+	});
+
+	var trash = LCL.text({
+		startX: LCL.width - 300,
+		startY: 40,
+		width: 280,
+		height: 120,
+		paddingTop: 30, //text padding top
+		center: true, 
+		backgroundColor: '#ef4476', // optional
+		font: 'italic bold 54px arial,sans-serif',
+		text: '捕熊箱(' + bear + ')',
+		color: '#fff',
+		type: 'fill'
+	}).config({
+		fixed: true,
+		drag: true
 	}).on('dragin', function() {
-		console.log('drag in rect2');
-		rect2.fillColor = '#ffffff';
-		stage.redraw();
+		trash.backgroundColor = 'red';
 	}).on('dragout', function() {
-		console.log('drag out rect2');
-		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		trash.backgroundColor = '#ef4476';
+	}).on('drop', function( item ) {
+		bear++;
+		trash.backgroundColor = '#ef4476';
+		trash.text = '捕熊箱(' + bear + ')';
+		LCL.objects.pop();
 		stage.redraw();
-	}).on('drop', function() {
-		console.log('you drop on the rect2!');
-		rect2.fillColor = '#000';
-		stage.redraw();
-	}).config({
-		drag: true,
-		changeIndex: true
 	});
 
-	stage.addChild(rect1);
-	stage.addChild(rect2);
+	stage.addChild(title);
+	stage.addChild(demo1);
+	stage.addChild(demo2);
+	stage.addChild(trash);
+
+	function createBear() {
+		var arr = [{
+			w: 97,
+			sx: 5,
+			sy: 0
+		}, {
+			w: 97,
+			sx: 5,
+			sy: 470
+		}, {
+			w: 64,
+			sx: 3,
+			sy: 238
+		}, {
+			w: 82,
+			sx: 7,
+			sy: 718
+		}];
+
+		var randomNum = Math.round(Math.random()*3);
+		stage.addChild(
+			LCL.image({
+				startX: Math.random() * (width - 100) + 100,
+				startY: Math.random() * (height - 110) + 110,
+				width: arr[randomNum].w,
+				height: 110,
+				sliceX: arr[randomNum].sx,
+				sliceY: arr[randomNum].sy,
+				sliceWidth: arr[randomNum].w,
+				sliceHeight: 110,
+				src: './img/action.png'
+			}).config({
+				drag: true,
+				changeIndex: true
+			})
+		);
+	}
+	
+	for(var i = 0;i < 10; i++) {
+		createBear();
+	}
 
 	stage.show();
+	stage.animate(go);
 
-	// drag and drop
-
-	var dg = document.getElementById('dg');
-	dg.onselectstart = function() {
-    return false;
-  };
-  dg.ondragstart = function(ev) {
-    ev.dataTransfer.effectAllowed = "move";
-    //ev.dataTransfer.setData("text", ev.target.innerHTML);
-    ev.dataTransfer.setDragImage(ev.target, 0, 0);
-    return true;
-  };
-
-  LCL.element.ondragover = function(e) {
-  	e.preventDefault();
-  	var x = LCL.event.getPos(e).x;
-  	var y = LCL.event.getPos(e).y;
-  	var which = LCL._objects.filter(function(item) {
-  		return item.isPointInner(x, y);
-  	});
-  	if(which.length > 0 ) {
-  		which[0].fillColor = '#000';
-  		stage.redraw();
-  	}
-  }
-
-  LCL.element.ondrop = function(ev) {
-  	var x = LCL.event.getPos(ev).x;
-  	var y = LCL.event.getPos(ev).y;
-  	var width = Math.random()*300;
-    var a = LCL.rectangle({
-			startX: x,
-			startY: y,
-			width: width,
-			height: width,
-			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-		}).on('mousedown', function() {
-			console.log('click a');
-		}).on('mouseenter', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
-		}).on('mouseleave', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
-		}).config({
-			drag: true,
-			changeIndex: true
-		});
-
-    stage.addChild(a);
-
-		stage.redraw();
-    return false;
-	};
-
-
-	//flag = stage.animate(go);
-	//setInterval(go, 10);
+	var num = 0;
 	function go() {
-		LCL.objects.forEach(function(i) {
-			i.rotate++;
-		});
+		if(num % 4 === 0) {
+			LCL.objects.forEach(function(item) {
+
+				if(item.sliceY === 0) {
+					if(item.sliceX > 102 * 7) {
+						item.sliceX = 5;
+					} else {
+						item.sliceX = item.sliceX + 102;
+					}
+				} else if(item.sliceY === 238) {
+					if(item.sliceX > 64 * 7) {
+						item.sliceX = 3;
+					} else {
+						item.sliceX = item.sliceX + 64;
+					}
+				} else if(item.sliceY === 470) {
+					if(item.sliceX > 104 * 7) {
+						item.sliceX = 5;
+					} else {
+						item.sliceX = item.sliceX + 104;
+					}
+				} else if(item.sliceY === 718) {
+					if(item.sliceX > 82 * 7) {
+						item.sliceX = 7;
+					} else {
+						item.sliceX = item.sliceX + 82;
+					}
+				}
+
+			});
+		}
+
 		stage.redraw();
+		num++;
 	}
-	start.onclick = function() {
-		flag = stage.animate(go);
-	}
-	stop.onclick = function() {
-		stage.stop(flag);
+
+	window.onresize = function() {
+		LCL.element.width = LCL.width = width;
+		LCL.element.height = LCL.height = height;
+		stage.redraw();
 	}
 
 </script>

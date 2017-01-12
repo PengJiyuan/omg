@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test html</title>
+	<style>
+		#fps {
+			position: absolute;
+			top: 3px;
+			left: 394px;
+		}
+		#canvas {
+			background-color: #ccc;
+		}
+		.drag li {
+			list-style: none;
+			width: 200px;
+			height: 40px;
+			background-color: #ef8376;
+		}
+	</style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+		<canvas id="canvas"></canvas>
+</div>
+<button id="start">start</button>
+<button id="stop">stop</button>
+<ul class="drag">
+	<li id="dg" draggable="true">Drag</li>
+</ul>
+<script src="./lcl.min.js"></script>
+<script src="./fpsmeter.min.js"></script>
+<script>
+	var meter = new FPSMeter(document.getElementById('fps'), {
+		heat: 1,
+		graph: 1,
+		theme: 'light'
+	});
+  var flag, direction;
+
+	var start = document.getElementById('start');
+	var stop = document.getElementById('stop');
+	var stage = LCL.init({
+		element: document.getElementById('canvas'),
+		width: 500,
+		height: 500,
+		enableGlobalTranslate: true,
+		images: ['./img/timg.jpg']
+	});
+
+
+	var image = LCL.image({
+		startX: 0,
+		startY: 0,
+		width: 800,
+		height: 500,
+		src: './img/timg.jpg'
+	}).config({
+		bg: true,
+		fixed: true
+	});
+
+	var image3 = LCL.image({
+		startX: 200,
+		startY: 200,
+		width: 97,
+		height: 110,
+		sliceX: 5,
+		sliceY: 0,
+		sliceWidth: 97,
+		sliceHeight: 110,
+		src: './img/action.png'
+	}).on('mousedown', function() {
+		console.log('image3');
+	}).config({
+		drag: true
+	});
+
+	var arc = LCL.arc({
+		x: 400,
+		y: 400,
+		radius: 30,
+		color: 'rgba(255, 255, 255, 0.5)',
+		type: 'fill'
+	}).on('mouseenter', function() {
+		LCL.element.style.cursor = 'pointer';
+	}).on('mouseleave', function() {
+		LCL.element.style.cursor = 'default';
+	}).on('drag', function() {
+		var mx = arc.moveX,
+			my = arc.moveY,
+			r = arc2.radius;
+
+			if(Math.sqrt( mx*mx + my*my ) > r + 20) {
+				arc.moveX = 0;
+				arc.moveY = 0;
+			}
+
+			// direction
+			if(mx > 0 && my > 0) {
+
+				if(my / mx < 1) {
+					direction = 'right';
+					image3.sliceX = 3;
+					image3.sliceY = 238;
+					image3.sliceWidth = 64;
+					image3.width = 64;
+				} else {
+					direction = 'bottom';
+					image3.sliceX = 5;
+					image3.sliceY = 470;
+					image3.sliceWidth = 97;
+					image3.width = 97;
+				}
+
+			} else if(mx > 0 && my < 0) {
+
+				if(my / mx > -1) {
+					direction = 'right';
+					image3.sliceX = 3;
+					image3.sliceY = 238;
+					image3.sliceWidth = 64;
+					image3.width = 64;
+				} else{
+					direction = 'top';
+					image3.sliceX = 5;
+					image3.sliceY = 0;
+					image3.sliceWidth = 97;
+					image3.width = 97;
+				}
+
+			} else if(mx < 0 && my > 0) {
+
+				if(my / mx > -1) {
+					direction = 'left';
+					image3.sliceX = 7;
+					image3.sliceY = 718;
+					image3.sliceWidth = 82;
+					image3.width = 82;
+				} else {
+					direction = 'bottom';
+					image3.sliceX = 5;
+					image3.sliceY = 470;
+					image3.sliceWidth = 97;
+					image3.width = 97;
+				}
+
+			} else if(mx < 0 && my < 0) {
+
+				if(my / mx < 1) {
+					direction = 'left';
+					image3.sliceX = 7;
+					image3.sliceY = 718;
+					image3.sliceWidth = 82;
+					image3.width = 82;
+				} else {
+					direction = 'top';
+					image3.sliceX = 5;
+					image3.sliceY = 0;
+					image3.sliceWidth = 97;
+					image3.width = 97;
+				}
+			}
+
+	}).on('dragend', function() {
+		arc.moveX = 0;
+		arc.moveY = 0;
+		stage.redraw();
+	}).config({
+		drag: true,
+		changeIndex: true,
+		fixed: true
+	});
+
+	var arc2 = LCL.arc({
+		x: 400,
+		y: 400,
+		radius: 80,
+		color: 'rgba(255, 255, 255, 0.8)',
+		type: 'stroke'
+	}).config({
+		fixed: true,
+		bg: true
+	});
+
+	stage.addChild(image);
+	stage.addChild(image3);
+	stage.addChild(arc2);
+	stage.addChild(arc);
+
+	stage.show();
+
+	var num = 0;
+	function go() {
+
+		if(num % 4 === 0) {
+			if(direction === 'top') {
+				if(image3.sliceX > 102 * 6) {
+					image3.sliceX = 5;
+				} else {
+					image3.sliceX += 102;
+				}
+			} else if(direction === 'bottom') {
+				if(image3.sliceX > 104 * 6) {
+					image3.sliceX = 5;
+				} else {
+					image3.sliceX += 104;
+				}
+			} else if(direction === 'left') {
+				if(image3.sliceX > 82 * 6) {
+					image3.sliceX = 7;
+				} else {
+					image3.sliceX += 82;
+				}
+			} else if(direction === 'right') {
+				if(image3.sliceX > 64 * 6) {
+					image3.sliceX = 3;
+				} else {
+					image3.sliceX += 64;
+				}
+			} else {
+				if(image3.sliceX > 102 * 6) {
+					image3.sliceX = 5;
+				} else {
+					image3.sliceX += 102;
+				}
+			}
+
+			switch(direction) {
+				case 'top':
+					image3.moveY -= 2;
+					break;
+				case 'right':
+					image3.moveX += 2;
+					break;
+				case 'bottom':
+					image3.moveY += 2;
+					break;
+				case 'left':
+					image3.moveX -= 2;
+					break;
+				default:
+					image3.moveY -= 2;
+			}
+		}
+
+		if(image3.moveX < -200) {
+			image3.moveX = -200;
+		}
+
+		if(image3.moveY < -200) {
+			image3.moveY = -200;
+		}
+
+		if(image3.moveX > LCL.width - 200 - 64) {
+			image3.moveX = LCL.width - 200 - 64;
+		}
+
+		if(image3.moveY > LCL.height - 200 - 110) {
+			image3.moveY = LCL.height - 200 - 110;
+		}
+
+		meter.tick();
+		stage.redraw();
+
+		num ++;
+	}
+	start.onclick = function() {
+		flag = stage.animate(go);
+	}
+	stop.onclick = function() {
+		stage.stop(flag);
+	}
+
+	// drag and drop
+
+	var dg = document.getElementById('dg');
+	dg.onselectstart = function() {
+    return false;
+  };
+  dg.ondragstart = function(ev) {
+    ev.dataTransfer.effectAllowed = "move";
+    //ev.dataTransfer.setData("text", ev.target.innerHTML);
+    ev.dataTransfer.setDragImage(ev.target, 0, 0);
+    return true;
+  };
+
+  LCL.element.ondragover = function(e) {
+  	e.preventDefault();
+  	var x = LCL.event.getPos(e).x;
+  	var y = LCL.event.getPos(e).y;
+  	var which = LCL._objects.filter(function(item) {
+  		return item.isPointInner(x, y);
+  	});
+  	if(which.length > 0 ) {
+  		which[0].fillColor = '#000';
+  		stage.redraw();
+  	}
+  }
+
+  LCL.element.ondrop = function(ev) {
+  	var x = LCL.event.getPos(ev).x;
+  	var y = LCL.event.getPos(ev).y;
+  	var width = Math.random()*300;
+    var a = LCL.rectangle({
+			startX: x,
+			startY: y,
+			width: width,
+			height: width,
+			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+		}).on('mousedown', function() {
+			console.log('click a');
+		}).on('mouseenter', function() {
+			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			stage.redraw();
+		}).on('mouseleave', function() {
+			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			stage.redraw();
+		}).config({
+			drag: true,
+			changeIndex: true
+		});
+
+    stage.addChild(a);
+
+		stage.redraw();
+    return false;
+	};
+
+</script>
+</body>
+</html>
