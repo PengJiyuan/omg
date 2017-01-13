@@ -41,7 +41,8 @@
 
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
-	var stage = LCL.init({
+	var world = new LCL();
+	var stage = world.init({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -50,7 +51,7 @@
 	});
 
 
-	var image = LCL.image({
+	var image = world.image({
 		startX: 0,
 		startY: 0,
 		width: 800,
@@ -61,7 +62,7 @@
 		fixed: true
 	});
 
-	var image3 = LCL.image({
+	var image3 = world.image({
 		startX: 200,
 		startY: 200,
 		width: 97,
@@ -77,16 +78,16 @@
 		drag: true
 	});
 
-	var arc = LCL.arc({
+	var arc = world.arc({
 		x: 400,
 		y: 400,
 		radius: 30,
 		color: 'rgba(255, 255, 255, 0.5)',
 		type: 'fill'
 	}).on('mouseenter', function() {
-		LCL.element.style.cursor = 'pointer';
+		world.element.style.cursor = 'pointer';
 	}).on('mouseleave', function() {
-		LCL.element.style.cursor = 'default';
+		world.element.style.cursor = 'default';
 	}).on('drag', function() {
 		var mx = arc.moveX,
 			my = arc.moveY,
@@ -173,7 +174,7 @@
 		fixed: true
 	});
 
-	var arc2 = LCL.arc({
+	var arc2 = world.arc({
 		x: 400,
 		y: 400,
 		radius: 80,
@@ -253,12 +254,12 @@
 			image3.moveY = -200;
 		}
 
-		if(image3.moveX > LCL.width - 200 - 64) {
-			image3.moveX = LCL.width - 200 - 64;
+		if(image3.moveX > world.width - 200 - 64) {
+			image3.moveX = world.width - 200 - 64;
 		}
 
-		if(image3.moveY > LCL.height - 200 - 110) {
-			image3.moveY = LCL.height - 200 - 110;
+		if(image3.moveY > world.height - 200 - 110) {
+			image3.moveY = world.height - 200 - 110;
 		}
 
 		meter.tick();
@@ -286,11 +287,11 @@
     return true;
   };
 
-  LCL.element.ondragover = function(e) {
+  world.element.ondragover = function(e) {
   	e.preventDefault();
-  	var x = LCL.event.getPos(e).x;
-  	var y = LCL.event.getPos(e).y;
-  	var which = LCL._objects.filter(function(item) {
+  	var x = world._event.getPos(e).x;
+  	var y = world._event.getPos(e).y;
+  	var which = world._objects.filter(function(item) {
   		return item.isPointInner(x, y);
   	});
   	if(which.length > 0 ) {
@@ -299,11 +300,11 @@
   	}
   }
 
-  LCL.element.ondrop = function(ev) {
-  	var x = LCL.event.getPos(ev).x;
-  	var y = LCL.event.getPos(ev).y;
+  world.element.ondrop = function(ev) {
+  	var x = world._event.getPos(ev).x;
+  	var y = world._event.getPos(ev).y;
   	var width = Math.random()*300;
-    var a = LCL.rectangle({
+    var a = world.rectangle({
 			startX: x,
 			startY: y,
 			width: width,

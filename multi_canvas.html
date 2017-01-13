@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test html</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		#canvas {
+			margin: 0;
+			background-color: #ccc;
+		}
+
+		#canvas2 {
+			position: absolute;
+			top: 0;
+			left: 550px;
+		}
+	</style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+		<canvas id="canvas"></canvas>
+		<canvas id="canvas2"></canvas>
+</div>
+<script src="./lcl.min.js"></script>
+<script>
+
+	var world = new LCL();
+
+	var stage = new world.init({
+		element: document.getElementById('canvas'),
+		width: 500,
+		height: 500,
+		enableGlobalTranslate: true
+	});
+
+	function createRect() {
+		stage.addChild(
+			world.arc({
+				x: Math.random()*400,
+				y: Math.random()*400,
+				radius: Math.random()*20,
+				color: '#'+(~~(Math.random()*(1<<24))).toString(16),
+				type: 'fill'
+			}).config({
+				drag: true,
+				changeIndex: true
+			})
+		);
+	}	
+
+	for(var i = 0;i < 200; i++) {createRect();}
+	stage.show();
+
+	var world2 = new LCL();
+
+	var stage2 = world2.init({
+		element: document.getElementById('canvas2'),
+		width: 500,
+		height: 500,
+		enableGlobalTranslate: true 
+	});
+
+	function createRect2() {
+		stage2.addChild(
+			world2.arc({
+				x: Math.random()*500,
+				y: Math.random()*500,
+				radius: Math.random()*20,
+				color: '#'+(~~(Math.random()*(1<<24))).toString(16),
+				type: 'fill'
+			}).config({
+				drag: true,
+				changeIndex: true
+			})
+		);
+	}	
+
+	for(var i = 0;i < 200; i++) {createRect2();}
+	stage2.show();
+
+
+
+</script>
+</body>
+</html>
