@@ -3,8 +3,10 @@
 
     var arc = function(settings) {
 
+      var _this = this;
+
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           x = this.x = settings.x,
           y = this.y = settings.y,
           color = this.color = settings.color,
@@ -13,7 +15,7 @@
 
         canvas.save();
         if(this.fixed) {
-          canvas.translate(-LCL.transX, -LCL.transY);
+          canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.translate(this.moveX, this.moveY);
         canvas.beginPath();
@@ -29,12 +31,12 @@
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'arc',
         draw: draw
       });
     };
 
-    LCL.arc = arc;
+    LCL.prototype.arc = arc;
 
   })();

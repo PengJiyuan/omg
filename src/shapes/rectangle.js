@@ -3,8 +3,10 @@
 
     var rectangle = function(settings) {
 
+      var _this = this;
+
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           startX = this.startX = settings.startX,
           startY = this.startY = settings.startY,
           width = this.width = settings.width,
@@ -16,19 +18,19 @@
         // canvas.translate(-( startX + width/2 + this.moveX), -( startY + height/2 + this.moveY));
         canvas.translate(this.moveX, this.moveY);
         if(this.fixed) {
-          canvas.translate(-LCL.transX, -LCL.transY);
+          canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.fillStyle = this.fillColor ? this.fillColor : '#000';
         canvas.fillRect(startX, startY, width, height);
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'rectangle',
         draw: draw
       });
     };
 
-    LCL.rectangle = rectangle;
+    LCL.prototype.rectangle = rectangle;
 
   })();

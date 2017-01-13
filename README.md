@@ -1,5 +1,5 @@
 # LCL
-Light Canvas Library --Beta [Demo](https://pengjiyuan.github.io/LCL)
+Light Canvas Library [Demo](https://pengjiyuan.github.io/LCL)
 
 ## Install
 
@@ -9,7 +9,7 @@ Light Canvas Library --Beta [Demo](https://pengjiyuan.github.io/LCL)
 
 ```javascript
 var LCL = require('lcl');
-console.log(LCL.version); // 1.1.0
+console.log(LCL); // ...
 ```
 
 **下载**    
@@ -19,18 +19,24 @@ console.log(LCL.version); // 1.1.0
 ```html
 <script src="path/lcl.min.js"></script>
 <script>
-    console.log(LCL.version);// 1.1.0
+    console.log(LCL);// ...
 </script>
 ```
 
 ## 使用
 
+1.3.0改版， 支持多canvas绘制， 使用方法基本没变，只添加一个world角色。
+
 * **Stage**    
+
+初始化
+
+var world = new LCL();
 
 初始化舞台(Canvas)
 
 ```javascript 
-  var stage = LCL.init({
+  var stage = world.init({
     element: document.getElementById('canvas'),
     width: 500,
     height: 500,
@@ -44,14 +50,16 @@ console.log(LCL.version); // 1.1.0
  stage.globalTranslate(true);
 ```
 
-* **添加形状**    
+* **添加形状**
 
-  > 目前只支持画指定的图形，如需自定义图形可以拉下源代码之后在shapes中按照我给定的格式添加自定义图形。
+由 __LCL.shape__ 改为 __world.shape [ new LCL().shape ]__ 
+
+> 目前只支持画指定的图形，如需自定义图形可以拉下源代码之后在shapes中按照我给定的格式添加自定义图形。
 
 矩形
 
 ```javascript
-var rect = LCL.rectangle({
+var rect = world.rectangle({
   startX: 0,
   startY: 0,
   width: 110,
@@ -63,7 +71,7 @@ var rect = LCL.rectangle({
 线条
 
 ```javascript
-var line = LCL.line({
+var line = world.line({
   startX: 200,
   startY: 100,
   endX: 400,
@@ -75,7 +83,7 @@ var line = LCL.line({
 
 ```javascript
 // 简单图片， 只指定起始坐标和宽高
-var image = LCL.image({
+var image = world.image({
   startX: 0,
   startY: 0,
   width: 800,
@@ -84,7 +92,7 @@ var image = LCL.image({
 });
 
 // 图片切割 (对照原生api)
-var image3 = LCL.image({
+var image3 = world.image({
   startX: 200,
   startY: 200,
   width: 97,
@@ -100,7 +108,7 @@ var image3 = LCL.image({
 文字
 
 ```javascript
-var text = LCL.text({
+var text = world.text({
   startX: 300,
   startY: 40,
   width: 150,
@@ -118,7 +126,7 @@ var text = LCL.text({
 圆
 
 ```javascript
-var arc = LCL.arc({
+var arc = world.arc({
   x: 400,
   y: 400,
   radius: 30,
@@ -193,14 +201,14 @@ stage.stop(a);
 ## 示例代码
 
 ```javascript
-var stage = LCL.init({
+var stage = world.init({
   element: document.getElementById('canvas'),
   width: 500,
   height: 500,
   enableGlobalTranslate: true
 });
 
-var rect = LCL.rectangle({
+var rect = world.rectangle({
   startX: 120,
   startY: 120,
   width: 200,
@@ -209,22 +217,22 @@ var rect = LCL.rectangle({
 }).on('mousedown', function() {
   console.log('click rect2');
 }).on('mouseenter', function() {
-  rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
   stage.redraw();
 }).on('mouseleave', function() {
-  rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
   stage.redraw();
 }).on('dragin', function() {
   console.log('drag in rect2');
-  rect2.fillColor = '#ffffff';
+  rect.fillColor = '#ffffff';
   stage.redraw();
 }).on('dragout', function() {
   console.log('drag out rect2');
-  rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
   stage.redraw();
 }).on('drop', function() {
   console.log('you drop on the rect2!');
-  rect2.fillColor = '#000';
+  rect.fillColor = '#000';
   stage.redraw();
 }).config({
   drag: true,
@@ -263,6 +271,9 @@ stage.show();
 * 添加 drag,dragend事件， 用于对象在拖拽和拖拽结束的时候触发，drop事件的callback添加item回调， `on('drop', function(item) {console.log(item)})` item是被拖拽的对象。
 * 添加图形 arc,text,image..
 * 优化Event
+
+### v1.3.0
+* 由于之前的设定， 只有一个全局变量LCL，而所有的信息，包括全局位置信息等都储存在着一个全局变量之中，导致无法绘制多个canvas，他们会共享一个全局变量。所以改版，支持多canvas绘制。
 
 ## ToDo
 

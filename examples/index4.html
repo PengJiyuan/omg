@@ -23,16 +23,17 @@
 </div>
 <script src="../dist/lcl.js"></script>
 <script>
-	var stage = LCL.init({
+	var world = new LCL();
+	var stage = world.init({
 		element: document.getElementById('canvas'),
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
 		enableGlobalTranslate: true
 	});
 
-	function createRect() {
+	function createArc() {
 		stage.addChild(
-			LCL.arc({
+			world.arc({
 				x: Math.random()*document.body.clientWidth,
 				y: Math.random()*document.body.clientHeight,
 				radius: Math.random()*20,
@@ -44,7 +45,7 @@
 			})
 		);
 	}	
-	for(var i = 0;i < 2000; i++) {createRect();}
+	for(var i = 0;i < 2000; i++) {createArc();}
 	stage.show();
 
 </script>

@@ -3,6 +3,8 @@
 
     var text = function(settings) {
 
+      var _this = this;
+
       function text_ellipsis(ctx, str, maxWidth) {
         var width = ctx.measureText(str).width,
           ellipsis = '...',
@@ -21,7 +23,7 @@
       }
 
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           startX = this.startX = settings.startX,
           startY = this.startY = settings.startY,
           width = settings.width,
@@ -40,7 +42,7 @@
         canvas.save();
         canvas.translate(this.moveX, this.moveY);
         if(this.fixed) {
-          canvas.translate(-LCL.transX, -LCL.transY);
+          canvas.translate(-_this.transX, -_this.transY);
         }
         if(this.backgroundColor) {
           canvas.save();
@@ -76,12 +78,12 @@
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'text',
         draw: draw
       });
     };
 
-    LCL.text = text;
+    LCL.prototype.text = text;
 
   })();

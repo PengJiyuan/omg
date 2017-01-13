@@ -1,5 +1,7 @@
 
-  LCL.display = function(settings) {
+  LCL.prototype.display = function(settings) {
+
+    var _this = this;
 
     var settingsData = {
 
@@ -39,7 +41,7 @@
       var eTypes = eventTypes.split(' '), that = this;
 
       eTypes.forEach(function(event) {
-        if(~LCL.eventTypes.indexOf(event)) {
+        if(~_this.eventTypes.indexOf(event)) {
           that.events.push({
             eventType: event,
             callback: callback
@@ -55,8 +57,9 @@
 
     // whether pointer is inner this shape
     var isPointInner = function(x, y) {
-      var ltx = this.fixed ? 0 : LCL.transX;
-      var lty = this.fixed ? 0 : LCL.transY;
+
+      var ltx = this.fixed ? 0 : _this.transX;
+      var lty = this.fixed ? 0 : _this.transY;
       // rotate the x and y coordinates
       // var cX = this.startX + this.width/2 + ltx + this.moveX, cY = this.startY + this.height/2 + lty + this.moveY;
       // var oX = (x - cX)*Math.cos((Math.PI/180)*(-this.rotate)) - (y - cY)*Math.sin((Math.PI/180)*(-this.rotate)) + cX;

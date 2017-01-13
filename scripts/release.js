@@ -11,6 +11,7 @@ var args = process.argv.slice(2);
 
 var currentVersion = pkg.version;
 var version = args[0];
+var commitMsg = args[1] || null;
 
 function changeVersion(v) {
   var newPkgFile = pkgFile.replace(
@@ -56,7 +57,7 @@ child_process.exec('npm run build', function(err, stdout) {
   console.log('Git Commit..');
   console.log('');
 
-  child_process.exec('git add . && git commit -m "' + version + '"', function(err, stdout) {
+  child_process.exec('git add . && git commit -m "' + (commitMsg ? commitMsg : version) + '"', function(err, stdout) {
     if(err) {
       changeVersion(currentVersion);
       console.log('Commit failed!');

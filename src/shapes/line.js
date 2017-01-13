@@ -3,8 +3,10 @@
 
     var line = function(settings) {
 
+      var _this = this;
+
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           startX = settings.startX,
           startY = settings.startY,
           endX = settings.endX,
@@ -15,6 +17,9 @@
         // canvas.rotate((Math.PI/180)*this.rotate);
         // canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
         canvas.translate(this.moveX, this.moveY);
+        if(this.fixed) {
+          canvas.translate(-_this.transX, -_this.transY);
+        }
         canvas.beginPath();
         canvas.moveTo(startX, startY);
         canvas.lineTo(endX, endY);
@@ -23,12 +28,12 @@
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'line',
         draw: draw
       });
     };
 
-    LCL.line = line;
+    LCL.prototype.line = line;
 
   })();

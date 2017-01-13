@@ -1,12 +1,12 @@
 
-  LCL.event = (function() {
+  LCL.prototype.event = function(_this) {
 
     return {
 
       getPos: function(e) {
         var e = e || event;
-        var x = e.pageX - LCL.element.offsetLeft,
-          y = e.pageY - LCL.element.offsetTop;
+        var x = e.pageX - _this.element.offsetLeft,
+          y = e.pageY - _this.element.offsetTop;
         return {
           x: x, 
           y: y
@@ -16,14 +16,15 @@
       triggerEvents: function() {
         
         var that = this;
-        var hasEvents = LCL.objects.some(function(item) {
+        var hasEvents = _this.objects.some(function(item) {
           return !!item.events && Object.prototype.toString.call(item.events) === '[object Array]' && !item.isBg || item.enableDrag;
         });
+
         if(!hasEvents) {
           return;
         }
 
-        var hasEnterOrMove = LCL.objects.some(function(item) {
+        var hasEnterOrMove = _this.objects.some(function(item) {
           return item.events && item.events.some(function(i) {
             return i.eventType === 'mouseenter' || i.eventType === 'mousemove';
           }) && !item.isBg;
@@ -34,29 +35,29 @@
           this.mouseEnterOrMove();
         }
 
-        LCL.utils.bind(LCL.element, 'mousedown', this.mouseDown.bind(this));
+        _this.utils.bind(_this.element, 'mousedown', this.mouseDown.bind(this));
       },
 
       mouseEnterOrMove: function() {
         var that = this, isDragging;
-        LCL.utils.bind(LCL.element, 'mousemove', function(e_moveOrEnter) {
-          var mX = LCL.event.getPos(e_moveOrEnter).x;
-          var mY = LCL.event.getPos(e_moveOrEnter).y;
+        _this.utils.bind(_this.element, 'mousemove', function(e_moveOrEnter) {
+          var mX = _this._event.getPos(e_moveOrEnter).x;
+          var mY = _this._event.getPos(e_moveOrEnter).y;
           
-          isDragging = LCL.objects.some(function(item) {
+          isDragging = _this.objects.some(function(item) {
             return item.isDragging;
           });
 
           // trigger mouseenter and mousemove
-          var movedOn = LCL._objects.filter(function(item) {
+          var movedOn = _this._objects.filter(function(item) {
             return item.isPointInner(mX, mY) && !item.isBg;
           });
 
           // init the cursor
           // if(movedOn && movedOn.length > 0) {
-          //   LCL.element.style.cursor = 'pointer';
+          //   this.element.style.cursor = 'pointer';
           // } else {
-          //   LCL.element.style.cursor = 'default';
+          //   this.element.style.cursor = 'default';
           // }
 
           if(isDragging) {
@@ -83,7 +84,7 @@
             };
 
             // Determine whether the mouse is dragged out from the shape and trigger dragout handler
-            LCL._objects.some(function(item) {
+            _this._objects.some(function(item) {
               return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
             });
 
@@ -112,7 +113,7 @@
             };
 
             // Determine whether the mouse is removed from the shape and trigger mouseleave handler
-            LCL._objects.some(function(item) {
+            _this._objects.some(function(item) {
               return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
             });
           }
@@ -122,18 +123,18 @@
 
       mouseDown: function(e_down) {
         var that = this, whichIn, hasEventDrag, dragCb, dragEndCb;
-        var hasDrags = LCL.objects.some(function(item) {
+        var hasDrags = _this.objects.some(function(item) {
           return !!item.enableDrag;
         });
 
         // drag shape
-        var pX = LCL.event.getPos(e_down).x;
-        var pY = LCL.event.getPos(e_down).y;
+        var pX = _this._event.getPos(e_down).x;
+        var pY = _this._event.getPos(e_down).y;
         that.cacheX = pX;
         that.cacheY = pY;
 
         // mousedown
-        var whichDown = LCL._objects.filter(function(item) {
+        var whichDown = _this._objects.filter(function(item) {
           return item.isPointInner(pX, pY) && !item.isBg;
         });
 
@@ -148,7 +149,7 @@
 
         // mouseDrag
         if(hasDrags) {
-          whichIn = LCL._objects.filter(function(item) {
+          whichIn = _this._objects.filter(function(item) {
             return item.isPointInner(pX, pY) && !item.isBg;
           });
 
@@ -167,8 +168,8 @@
           });
 
           var move_Event = function(e_move) {
-            var mx = LCL.event.getPos(e_move).x,
-              my = LCL.event.getPos(e_move).y;
+            var mx = _this._event.getPos(e_move).x,
+              my = _this._event.getPos(e_move).y;
 
             whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
             whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
@@ -176,17 +177,17 @@
             // event drag
             hasEventDrag && dragCb();
 
-            LCL.drawUtils.redraw();
+            _this.drawUtils.redraw();
             that.cacheX = mx;
             that.cacheY = my;
             whichIn[0].isDragging = true;
           }
 
           var up_Event = function(e_up) {
-            var uX = LCL.event.getPos(e_up).x;
-            var uY = LCL.event.getPos(e_up).y;
+            var uX = _this._event.getPos(e_up).x;
+            var uY = _this._event.getPos(e_up).y;
 
-            var upOn = LCL._objects.filter(function(item) {
+            var upOn = _this._objects.filter(function(item) {
               return item.isPointInner(uX, uY) && !item.isBg;
             });
 
@@ -206,49 +207,49 @@
             // event dragend
             hasEventDragEnd && dragEndCb();
 
-            LCL.utils.unbind(document, 'mousemove', move_Event);
-            LCL.utils.unbind(document, 'mouseup', up_Event);
+            _this.utils.unbind(document, 'mousemove', move_Event);
+            _this.utils.unbind(document, 'mouseup', up_Event);
             whichIn[0].isDragging = false;
           };
           if(whichIn && whichIn.length > 0 && whichIn[0].enableDrag) {
-            LCL.utils.bind(document, 'mousemove', move_Event);
-            LCL.utils.bind(document, 'mouseup', up_Event);
+            _this.utils.bind(document, 'mousemove', move_Event);
+            _this.utils.bind(document, 'mouseup', up_Event);
           }
         }
 
         // global translate
-        if(LCL.enableGlobalTranslate && !(whichIn && whichIn.length > 0)) {
+        if(_this.enableGlobalTranslate && !(whichIn && whichIn.length > 0)) {
 
           var move_dragCanvas = function(e_move) {
-            var mx = LCL.event.getPos(e_move).x,
-              my = LCL.event.getPos(e_move).y;
-            LCL.transX = LCL.transX + mx - that.cacheX;
-            LCL.transY = LCL.transY + my - that.cacheY;
-            LCL.drawUtils.redraw();
+            var mx = _this._event.getPos(e_move).x,
+              my = _this._event.getPos(e_move).y;
+            _this.transX = _this.transX + mx - that.cacheX;
+            _this.transY = _this.transY + my - that.cacheY;
+            _this.drawUtils.redraw();
             that.cacheX = mx;
             that.cacheY = my;
           };
 
           var up_dragCanvas = function() {
-            LCL.utils.unbind(document, 'mousemove', move_dragCanvas);
-            LCL.utils.unbind(document, 'mouseup', up_dragCanvas);
+            _this.utils.unbind(document, 'mousemove', move_dragCanvas);
+            _this.utils.unbind(document, 'mouseup', up_dragCanvas);
           };
 
-          LCL.utils.bind(document, 'mousemove', move_dragCanvas);
+          _this.utils.bind(document, 'mousemove', move_dragCanvas);
 
-          LCL.utils.bind(document, 'mouseup', up_dragCanvas);
+          _this.utils.bind(document, 'mouseup', up_dragCanvas);
         }
       },
 
       changeOrder: function(item) {
-        var i = LCL.objects.indexOf(item);
-        var cacheData = LCL.objects[i];
-        LCL.objects.splice(i, 1);
-        LCL.objects.push(cacheData);
-        LCL._objects = LCL.utils.reverse(LCL.objects);
-        LCL.drawUtils.redraw();
+        var i = _this.objects.indexOf(item);
+        var cacheData = _this.objects[i];
+        _this.objects.splice(i, 1);
+        _this.objects.push(cacheData);
+        _this._objects = _this.utils.reverse(_this.objects);
+        _this.drawUtils.redraw();
       }
 
     }
 
-  })();
+  };

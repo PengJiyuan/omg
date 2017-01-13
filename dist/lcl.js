@@ -4,152 +4,160 @@
 
 // Source: src/core.js
 
-  var LCL = {
+  LCL = function() {
 
-    version: '1.2.0',
+    this.version = '1.3.0';
 
-    objects: [],
+    this.objects = [];
 
-    canvas: null,
+    this.canvas = null;
 
-    transX: 0,
+    this.transX = 0;
 
-    transY: 0,
+    this.transY = 0;
 
-    scale: 1,
+    this.scale = 1;
 
-    drawUtils: {},
+    this.drawUtils = {};
 
-    loader: null, // the instance of image loader
+    this.loader = null; // the instance of image loader
 
-    utils: {},
+    this.images = [];
 
-    images: [],
+    this.isDragging = false;
 
-    isDragging: false,
+    this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
 
-    eventTypes: ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'],
+    this._event = new this.event(this);
+    
+    var _this = this;
 
-    core: function(config) {
+    this.core = function(config) {
 
       if(!(config instanceof Object)) {
         console.warn('no canvas element!');
         return;
       }
-      LCL.element = this.element = config.element,
 
-      this.canvas = LCL.canvas = this.element.getContext('2d');
+      this.element = _this.element = config.element,
 
-      config.element.width = this.width = LCL.width = config.width;
+      this.canvas = _this.canvas =  this.element.getContext('2d');
 
-      config.element.height = this.height = LCL.height = config.height;
+      // init the width and height
+      config.element.width = this.width = _this.width = config.width;
 
-      LCL.enableGlobalTranslate = config.enableGlobalTranslate;
+      config.element.height = this.height = _this.height = config.height;
 
-      LCL.drawUtils.clear = this.clear;
-      LCL.drawUtils.draw = this.draw;
-      LCL.drawUtils.redraw = this.redraw;
+      _this.enableGlobalTranslate = config.enableGlobalTranslate;
+
+      _this.drawUtils.clear = this.clear;
+      _this.drawUtils.draw = this.draw;
+      _this.drawUtils.redraw = this.redraw;
 
       // init images
       if(config.images) {
-        LCL.images = config.images;
+        _this.images = config.images;
       }
 
-    },
+    };
 
-    init: function(config) {
-      return new LCL.core(config);
-    }
+    this.core.prototype = {
+
+      imgReady: function() {
+        _this.loader = new _this.utils.imageLoader();
+        _this.loader.addImg(_this.images);
+      },
+
+      addChild: function(obj) {
+        _this.objects.push(obj);
+        // copy the reverse events array
+        _this._objects = _this.utils.reverse(_this.objects);
+      },
+
+      show: function() {
+        this.imgReady();
+        _this.loader.ready(function() {
+          _this.drawUtils.draw();
+          _this._event.triggerEvents();
+        });
+      },
+
+      draw: function() {
+        _this.objects.forEach(function(item) {
+          item.draw();
+        });
+      },
+
+      redraw: function() {
+        _this.drawUtils.clear();
+        _this.canvas.save();
+        _this.canvas.translate(_this.transX, _this.transY);
+        // LCL.canvas.scale(LCL.scale, LCL.scale);
+        _this.drawUtils.draw();
+        _this.canvas.restore();
+      },
+
+      clear: function() {
+        _this.canvas.clearRect(0, 0, _this.width, _this.height);
+      },
+
+      animate: function(func, name) {
+        _this._event.triggerEvents();
+        var id = new Date().getTime();
+        var _func = function() {
+          func();
+          _this[id] = requestAnimationFrame(_func);
+        }
+        _func();
+        return id;
+      },
+
+      stop: function(id) {
+        cancelAnimationFrame(_this[id]);
+      },
+
+      globalTranslate: function(bool) {
+        if(typeof bool !== 'boolean' || !bool) {
+          return;
+        }
+        _this.enableGlobalTranslate = true;
+      },
+
+      // scaleCanvas: function(bool) {
+      //   if(typeof bool !== 'boolean' || !bool) {
+      //     return;
+      //   }
+      //   var that = this;
+      //   LCL.bind(this.element, 'wheel', function(e) {
+      //     if(e.deltaY < 0) {
+      //       if(LCL.scale <= 3) {
+      //         LCL.scale += 0.02;
+      //         that.redraw();
+      //       }
+      //     } else {
+      //       if(LCL.scale > 0.5) {
+      //         LCL.scale -= 0.02;
+      //         that.redraw();
+      //       }
+      //     }
+      //   });
+      // }
+
+    };
+
+    this.init = function(config) {
+      return new _this.core(config);
+    };
 
   };
 
-  LCL.core.prototype = {
 
-    imgReady: function() {
-      LCL.loader = new LCL.utils.imageLoader();
-      LCL.loader.addImg(LCL.images);
-    },
-
-    addChild: function(obj) {
-      LCL.objects.push(obj);
-      // copy the reverse events array
-      LCL._objects = LCL.utils.reverse(LCL.objects);
-    },
-
-    show: function() {
-      this.imgReady();
-      LCL.loader.ready(function() {
-        LCL.drawUtils.draw();
-        LCL.event.triggerEvents();
-      });
-    },
-
-    draw: function() {
-      LCL.objects.forEach(function(item) {
-        item.draw();
-      });
-    },
-
-    redraw: function() {
-      LCL.drawUtils.clear();
-      LCL.canvas.save();
-      LCL.canvas.translate(LCL.transX, LCL.transY);
-      // LCL.canvas.scale(LCL.scale, LCL.scale);
-      LCL.drawUtils.draw();
-      LCL.canvas.restore();
-    },
-
-    clear: function() {
-      LCL.canvas.clearRect(0, 0, LCL.width, LCL.height);
-    },
-
-    animate: function(func, name) {
-      LCL.event.triggerEvents();
-      var id = new Date().getTime();
-      var _func = function() {
-        func();
-        LCL[id] = requestAnimationFrame(_func);
-      }
-      _func();
-      return id;
-    },
-
-    stop: function(id) {
-      cancelAnimationFrame(LCL[id]);
-    },
-
-    globalTranslate: function(bool) {
-      if(typeof bool !== 'boolean' || !bool) {
-        return;
-      }
-      LCL.enableGlobalTranslate = true;
-    },
-
-    // scaleCanvas: function(bool) {
-    //   if(typeof bool !== 'boolean' || !bool) {
-    //     return;
-    //   }
-    //   var that = this;
-    //   LCL.bind(this.element, 'wheel', function(e) {
-    //     if(e.deltaY < 0) {
-    //       if(LCL.scale <= 3) {
-    //         LCL.scale += 0.02;
-    //         that.redraw();
-    //       }
-    //     } else {
-    //       if(LCL.scale > 0.5) {
-    //         LCL.scale -= 0.02;
-    //         that.redraw();
-    //       }
-    //     }
-    //   });
-    // }
-
-  }
 
 // Source: src/display.js
 
-  LCL.display = function(settings) {
+  LCL.prototype.display = function(settings) {
+
+    var _this = this;
 
     var settingsData = {
 
@@ -189,7 +197,7 @@
       var eTypes = eventTypes.split(' '), that = this;
 
       eTypes.forEach(function(event) {
-        if(~LCL.eventTypes.indexOf(event)) {
+        if(~_this.eventTypes.indexOf(event)) {
           that.events.push({
             eventType: event,
             callback: callback
@@ -205,8 +213,9 @@
 
     // whether pointer is inner this shape
     var isPointInner = function(x, y) {
-      var ltx = this.fixed ? 0 : LCL.transX;
-      var lty = this.fixed ? 0 : LCL.transY;
+
+      var ltx = this.fixed ? 0 : _this.transX;
+      var lty = this.fixed ? 0 : _this.transY;
       // rotate the x and y coordinates
       // var cX = this.startX + this.width/2 + ltx + this.moveX, cY = this.startY + this.height/2 + lty + this.moveY;
       // var oX = (x - cX)*Math.cos((Math.PI/180)*(-this.rotate)) - (y - cY)*Math.sin((Math.PI/180)*(-this.rotate)) + cX;
@@ -308,8 +317,10 @@
 
     var rectangle = function(settings) {
 
+      var _this = this;
+
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           startX = this.startX = settings.startX,
           startY = this.startY = settings.startY,
           width = this.width = settings.width,
@@ -321,20 +332,20 @@
         // canvas.translate(-( startX + width/2 + this.moveX), -( startY + height/2 + this.moveY));
         canvas.translate(this.moveX, this.moveY);
         if(this.fixed) {
-          canvas.translate(-LCL.transX, -LCL.transY);
+          canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.fillStyle = this.fillColor ? this.fillColor : '#000';
         canvas.fillRect(startX, startY, width, height);
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'rectangle',
         draw: draw
       });
     };
 
-    LCL.rectangle = rectangle;
+    LCL.prototype.rectangle = rectangle;
 
   })();
 
@@ -344,8 +355,10 @@
 
     var line = function(settings) {
 
+      var _this = this;
+
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           startX = settings.startX,
           startY = settings.startY,
           endX = settings.endX,
@@ -356,6 +369,9 @@
         // canvas.rotate((Math.PI/180)*this.rotate);
         // canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
         canvas.translate(this.moveX, this.moveY);
+        if(this.fixed) {
+          canvas.translate(-_this.transX, -_this.transY);
+        }
         canvas.beginPath();
         canvas.moveTo(startX, startY);
         canvas.lineTo(endX, endY);
@@ -364,13 +380,13 @@
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'line',
         draw: draw
       });
     };
 
-    LCL.line = line;
+    LCL.prototype.line = line;
 
   })();
 
@@ -380,13 +396,15 @@
 
     var image = function(settings) {
 
+      var _this = this;
+
       // insert into images
       if(settings.src) {
-        !~LCL.images.indexOf(settings.src) && LCL.images.push(settings.src);
+        !~_this.images.indexOf(settings.src) && _this.images.push(settings.src);
       }
 
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           startX = this.startX = settings.startX,
           startY = this.startY = settings.startY,
           src = settings.src;
@@ -394,23 +412,23 @@
         canvas.save();
         canvas.translate(this.moveX, this.moveY);
         if(this.fixed) {
-          canvas.translate(-LCL.transX, -LCL.transY);
+          canvas.translate(-_this.transX, -_this.transY);
         }
         if(this.sliceWidth && this.sliceHeight) {
-          canvas.drawImage(LCL.loader.getImg(src), this.sliceX, this.sliceY, this.sliceWidth, this.sliceHeight, startX, startY, this.width, this.height);
+          canvas.drawImage(_this.loader.getImg(src), this.sliceX, this.sliceY, this.sliceWidth, this.sliceHeight, startX, startY, this.width, this.height);
         } else {
-          canvas.drawImage(LCL.loader.getImg(src), startX, startY, this.width, this.height);
+          canvas.drawImage(_this.loader.getImg(src), startX, startY, this.width, this.height);
         }
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'image',
         draw: draw
       });
     };
 
-    LCL.image = image;
+    LCL.prototype.image = image;
 
   })();
 
@@ -419,6 +437,8 @@
   ;(function() {// eslint-disable-line  
 
     var text = function(settings) {
+
+      var _this = this;
 
       function text_ellipsis(ctx, str, maxWidth) {
         var width = ctx.measureText(str).width,
@@ -438,7 +458,7 @@
       }
 
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           startX = this.startX = settings.startX,
           startY = this.startY = settings.startY,
           width = settings.width,
@@ -457,7 +477,7 @@
         canvas.save();
         canvas.translate(this.moveX, this.moveY);
         if(this.fixed) {
-          canvas.translate(-LCL.transX, -LCL.transY);
+          canvas.translate(-_this.transX, -_this.transY);
         }
         if(this.backgroundColor) {
           canvas.save();
@@ -493,13 +513,13 @@
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'text',
         draw: draw
       });
     };
 
-    LCL.text = text;
+    LCL.prototype.text = text;
 
   })();
 
@@ -509,8 +529,10 @@
 
     var arc = function(settings) {
 
+      var _this = this;
+
       var draw = function() {
-        var canvas = LCL.canvas,
+        var canvas = _this.canvas,
           x = this.x = settings.x,
           y = this.y = settings.y,
           color = this.color = settings.color,
@@ -519,7 +541,7 @@
 
         canvas.save();
         if(this.fixed) {
-          canvas.translate(-LCL.transX, -LCL.transY);
+          canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.translate(this.moveX, this.moveY);
         canvas.beginPath();
@@ -535,26 +557,26 @@
         canvas.restore();
       };
 
-      return Object.assign({}, LCL.display(settings), {
+      return Object.assign({}, _this.display(settings), {
         type: 'arc',
         draw: draw
       });
     };
 
-    LCL.arc = arc;
+    LCL.prototype.arc = arc;
 
   })();
 
 // Source: src/event.js
 
-  LCL.event = (function() {
+  LCL.prototype.event = function(_this) {
 
     return {
 
       getPos: function(e) {
         var e = e || event;
-        var x = e.pageX - LCL.element.offsetLeft,
-          y = e.pageY - LCL.element.offsetTop;
+        var x = e.pageX - _this.element.offsetLeft,
+          y = e.pageY - _this.element.offsetTop;
         return {
           x: x, 
           y: y
@@ -564,14 +586,15 @@
       triggerEvents: function() {
         
         var that = this;
-        var hasEvents = LCL.objects.some(function(item) {
+        var hasEvents = _this.objects.some(function(item) {
           return !!item.events && Object.prototype.toString.call(item.events) === '[object Array]' && !item.isBg || item.enableDrag;
         });
+
         if(!hasEvents) {
           return;
         }
 
-        var hasEnterOrMove = LCL.objects.some(function(item) {
+        var hasEnterOrMove = _this.objects.some(function(item) {
           return item.events && item.events.some(function(i) {
             return i.eventType === 'mouseenter' || i.eventType === 'mousemove';
           }) && !item.isBg;
@@ -582,29 +605,29 @@
           this.mouseEnterOrMove();
         }
 
-        LCL.utils.bind(LCL.element, 'mousedown', this.mouseDown.bind(this));
+        _this.utils.bind(_this.element, 'mousedown', this.mouseDown.bind(this));
       },
 
       mouseEnterOrMove: function() {
         var that = this, isDragging;
-        LCL.utils.bind(LCL.element, 'mousemove', function(e_moveOrEnter) {
-          var mX = LCL.event.getPos(e_moveOrEnter).x;
-          var mY = LCL.event.getPos(e_moveOrEnter).y;
+        _this.utils.bind(_this.element, 'mousemove', function(e_moveOrEnter) {
+          var mX = _this._event.getPos(e_moveOrEnter).x;
+          var mY = _this._event.getPos(e_moveOrEnter).y;
           
-          isDragging = LCL.objects.some(function(item) {
+          isDragging = _this.objects.some(function(item) {
             return item.isDragging;
           });
 
           // trigger mouseenter and mousemove
-          var movedOn = LCL._objects.filter(function(item) {
+          var movedOn = _this._objects.filter(function(item) {
             return item.isPointInner(mX, mY) && !item.isBg;
           });
 
           // init the cursor
           // if(movedOn && movedOn.length > 0) {
-          //   LCL.element.style.cursor = 'pointer';
+          //   this.element.style.cursor = 'pointer';
           // } else {
-          //   LCL.element.style.cursor = 'default';
+          //   this.element.style.cursor = 'default';
           // }
 
           if(isDragging) {
@@ -631,7 +654,7 @@
             };
 
             // Determine whether the mouse is dragged out from the shape and trigger dragout handler
-            LCL._objects.some(function(item) {
+            _this._objects.some(function(item) {
               return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
             });
 
@@ -660,7 +683,7 @@
             };
 
             // Determine whether the mouse is removed from the shape and trigger mouseleave handler
-            LCL._objects.some(function(item) {
+            _this._objects.some(function(item) {
               return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
             });
           }
@@ -670,18 +693,18 @@
 
       mouseDown: function(e_down) {
         var that = this, whichIn, hasEventDrag, dragCb, dragEndCb;
-        var hasDrags = LCL.objects.some(function(item) {
+        var hasDrags = _this.objects.some(function(item) {
           return !!item.enableDrag;
         });
 
         // drag shape
-        var pX = LCL.event.getPos(e_down).x;
-        var pY = LCL.event.getPos(e_down).y;
+        var pX = _this._event.getPos(e_down).x;
+        var pY = _this._event.getPos(e_down).y;
         that.cacheX = pX;
         that.cacheY = pY;
 
         // mousedown
-        var whichDown = LCL._objects.filter(function(item) {
+        var whichDown = _this._objects.filter(function(item) {
           return item.isPointInner(pX, pY) && !item.isBg;
         });
 
@@ -696,7 +719,7 @@
 
         // mouseDrag
         if(hasDrags) {
-          whichIn = LCL._objects.filter(function(item) {
+          whichIn = _this._objects.filter(function(item) {
             return item.isPointInner(pX, pY) && !item.isBg;
           });
 
@@ -715,8 +738,8 @@
           });
 
           var move_Event = function(e_move) {
-            var mx = LCL.event.getPos(e_move).x,
-              my = LCL.event.getPos(e_move).y;
+            var mx = _this._event.getPos(e_move).x,
+              my = _this._event.getPos(e_move).y;
 
             whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
             whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
@@ -724,17 +747,17 @@
             // event drag
             hasEventDrag && dragCb();
 
-            LCL.drawUtils.redraw();
+            _this.drawUtils.redraw();
             that.cacheX = mx;
             that.cacheY = my;
             whichIn[0].isDragging = true;
           }
 
           var up_Event = function(e_up) {
-            var uX = LCL.event.getPos(e_up).x;
-            var uY = LCL.event.getPos(e_up).y;
+            var uX = _this._event.getPos(e_up).x;
+            var uY = _this._event.getPos(e_up).y;
 
-            var upOn = LCL._objects.filter(function(item) {
+            var upOn = _this._objects.filter(function(item) {
               return item.isPointInner(uX, uY) && !item.isBg;
             });
 
@@ -754,56 +777,58 @@
             // event dragend
             hasEventDragEnd && dragEndCb();
 
-            LCL.utils.unbind(document, 'mousemove', move_Event);
-            LCL.utils.unbind(document, 'mouseup', up_Event);
+            _this.utils.unbind(document, 'mousemove', move_Event);
+            _this.utils.unbind(document, 'mouseup', up_Event);
             whichIn[0].isDragging = false;
           };
           if(whichIn && whichIn.length > 0 && whichIn[0].enableDrag) {
-            LCL.utils.bind(document, 'mousemove', move_Event);
-            LCL.utils.bind(document, 'mouseup', up_Event);
+            _this.utils.bind(document, 'mousemove', move_Event);
+            _this.utils.bind(document, 'mouseup', up_Event);
           }
         }
 
         // global translate
-        if(LCL.enableGlobalTranslate && !(whichIn && whichIn.length > 0)) {
+        if(_this.enableGlobalTranslate && !(whichIn && whichIn.length > 0)) {
 
           var move_dragCanvas = function(e_move) {
-            var mx = LCL.event.getPos(e_move).x,
-              my = LCL.event.getPos(e_move).y;
-            LCL.transX = LCL.transX + mx - that.cacheX;
-            LCL.transY = LCL.transY + my - that.cacheY;
-            LCL.drawUtils.redraw();
+            var mx = _this._event.getPos(e_move).x,
+              my = _this._event.getPos(e_move).y;
+            _this.transX = _this.transX + mx - that.cacheX;
+            _this.transY = _this.transY + my - that.cacheY;
+            _this.drawUtils.redraw();
             that.cacheX = mx;
             that.cacheY = my;
           };
 
           var up_dragCanvas = function() {
-            LCL.utils.unbind(document, 'mousemove', move_dragCanvas);
-            LCL.utils.unbind(document, 'mouseup', up_dragCanvas);
+            _this.utils.unbind(document, 'mousemove', move_dragCanvas);
+            _this.utils.unbind(document, 'mouseup', up_dragCanvas);
           };
 
-          LCL.utils.bind(document, 'mousemove', move_dragCanvas);
+          _this.utils.bind(document, 'mousemove', move_dragCanvas);
 
-          LCL.utils.bind(document, 'mouseup', up_dragCanvas);
+          _this.utils.bind(document, 'mouseup', up_dragCanvas);
         }
       },
 
       changeOrder: function(item) {
-        var i = LCL.objects.indexOf(item);
-        var cacheData = LCL.objects[i];
-        LCL.objects.splice(i, 1);
-        LCL.objects.push(cacheData);
-        LCL._objects = LCL.utils.reverse(LCL.objects);
-        LCL.drawUtils.redraw();
+        var i = _this.objects.indexOf(item);
+        var cacheData = _this.objects[i];
+        _this.objects.splice(i, 1);
+        _this.objects.push(cacheData);
+        _this._objects = _this.utils.reverse(_this.objects);
+        _this.drawUtils.redraw();
       }
 
     }
 
-  })();
+  };
 
 // Source: src/utils.js
+  
+  LCL.prototype.utils = {};
 
-  LCL.utils.bind = function(target, eventType, handler) {
+  LCL.prototype.utils.bind = function(target, eventType, handler) {
     try {
       if (window.addEventListener) {
         target.addEventListener(eventType, handler, false);
@@ -818,7 +843,7 @@
     }
   };
 
-  LCL.utils.unbind = function(target, eventType, handler) {
+  LCL.prototype.utils.unbind = function(target, eventType, handler) {
     try {
       if (window.removeEventListener) {
         target.removeEventListener(eventType, handler, false);
@@ -833,7 +858,7 @@
   };
 
   // do not change the origin array
-  LCL.utils.reverse = function(array) {
+  LCL.prototype.utils.reverse = function(array) {
     var length = array.length;
     var ret = [];
     for(var i = 0; i < length; i++) {
@@ -842,12 +867,12 @@
     return ret;
   };
 
-  LCL.utils.imageLoader = function() {
+  LCL.prototype.utils.imageLoader = function() {
     this.imageList = new Array();
     this.loadNum = 0;
   };
 
-  LCL.utils.imageLoader.prototype = {
+  LCL.prototype.utils.imageLoader.prototype = {
 
     ready: function(callback) {
       var that = this;

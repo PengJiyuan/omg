@@ -1,5 +1,7 @@
+  
+  LCL.prototype.utils = {};
 
-  LCL.utils.bind = function(target, eventType, handler) {
+  LCL.prototype.utils.bind = function(target, eventType, handler) {
     try {
       if (window.addEventListener) {
         target.addEventListener(eventType, handler, false);
@@ -14,7 +16,7 @@
     }
   };
 
-  LCL.utils.unbind = function(target, eventType, handler) {
+  LCL.prototype.utils.unbind = function(target, eventType, handler) {
     try {
       if (window.removeEventListener) {
         target.removeEventListener(eventType, handler, false);
@@ -29,7 +31,7 @@
   };
 
   // do not change the origin array
-  LCL.utils.reverse = function(array) {
+  LCL.prototype.utils.reverse = function(array) {
     var length = array.length;
     var ret = [];
     for(var i = 0; i < length; i++) {
@@ -38,12 +40,12 @@
     return ret;
   };
 
-  LCL.utils.imageLoader = function() {
+  LCL.prototype.utils.imageLoader = function() {
     this.imageList = new Array();
     this.loadNum = 0;
   };
 
-  LCL.utils.imageLoader.prototype = {
+  LCL.prototype.utils.imageLoader.prototype = {
 
     ready: function(callback) {
       var that = this;
