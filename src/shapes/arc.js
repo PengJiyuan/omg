@@ -10,17 +10,30 @@
           x = this.x = settings.x,
           y = this.y = settings.y,
           color = this.color = settings.color,
-          type = settings.type,
-          radius = this.radius = settings.radius;
+          style = this.style = settings.style,
+          startAngle = this.startAngle = settings.startAngle,
+          endAngle = this.endAngle = settings.endAngle;
 
         canvas.save();
         if(this.fixed) {
           canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.translate(this.moveX, this.moveY);
+        canvas.translate(x, y);
         canvas.beginPath();
-        canvas.arc(x, y, radius, 0, 2*Math.PI, false);
-        if(type === 'fill') {
+        if(!isNaN(startAngle) && !isNaN(endAngle)) {
+          canvas.arc(0, 0, this.radius, Math.PI/180*startAngle, Math.PI/180*endAngle, false);
+          canvas.save();
+          canvas.rotate(Math.PI/180*endAngle);
+          canvas.moveTo(this.radius, 0);
+          canvas.lineTo(0, 0);
+          canvas.restore();
+          canvas.rotate(Math.PI/180*startAngle);
+          canvas.lineTo(this.radius, 0);
+        } else {
+          canvas.arc(0, 0, this.radius, 0, Math.PI*2);
+        }
+        if(style === 'fill') {
           canvas.fillStyle = color;
           canvas.fill();
         } else {

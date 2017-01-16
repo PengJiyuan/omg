@@ -87,7 +87,6 @@
         _this.drawUtils.clear();
         _this.canvas.save();
         _this.canvas.translate(_this.transX, _this.transY);
-        // LCL.canvas.scale(LCL.scale, LCL.scale);
         _this.drawUtils.draw();
         _this.canvas.restore();
       },

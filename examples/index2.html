@@ -43,56 +43,79 @@
 
 	//stage.scaleCanvas(true);
 
-	var rect1 = world.rectangle({
-		startX: 0,
-		startY: 0,
-		width: 110,
-		height: 110,
-		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-	}).on('mousedown', function() {
-		console.log('click rect1');
-	}).on('mouseenter', function() {
-		console.log(rect1.fillColor);
-		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-		console.log(rect1.fillColor);
-		stage.redraw();
-	}).on('mouseleave', function() {
-		rect1.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-		stage.redraw();
-	}).config({
-		drag: true,
-		changeIndex: true
+	var line = world.line({
+		matrix: [
+		{x: 10,y: 180}, 
+		{x: 40,y: 50}, 
+		{x: 80,y: 180}, 
+		{x: 90,y: 80},
+		{x: 110,y: 100}, 
+		{x: 140,y: 50},
+		{x: 260,y: 180}
+		],
+		lineWidth: 2,
+		strokeColor: '#ef8376',
+		dash: [3, 3]
 	});
 
-	var rect2 = world.rectangle({
-		startX: 120,
-		startY: 120,
-		width: 200,
-		height: 200,
-		fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-	}).on('mousedown', function() {
-		console.log('click rect2');
+	var arca = world.arc({
+		x: 130,
+		y: 380,
+		radius: 100,
+		startAngle: -45,
+		endAngle: 45,
+		color: '#e1a376',
+		style: 'fill',
+		easingType: 'easeInOutQuint'
+	}).config({
+		drag: false,
+		changeIndex: true
 	}).on('mouseenter', function() {
-		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		arca.radius = 130;
 		stage.redraw();
 	}).on('mouseleave', function() {
-		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		arca.radius = 100;
 		stage.redraw();
-	}).on('dragin', function() {
-		console.log('drag in rect2');
-		rect2.fillColor = '#ffffff';
-		stage.redraw();
-	}).on('dragout', function() {
-		console.log('drag out rect2');
-		rect2.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-		stage.redraw();
-	}).on('drop', function() {
-		console.log('you drop on the rect2!');
-		rect2.fillColor = '#000';
-		stage.redraw();
+	});
+
+	var arcb = world.arc({
+		x: 130,
+		y: 380,
+		radius: 100,
+		startAngle: 45,
+		endAngle: 165,
+		color: '#512854',
+		style: 'fill',
+		easingType: 'easeInOutQuint'
 	}).config({
-		drag: true,
+		drag: false,
 		changeIndex: true
+	}).on('mouseenter', function() {
+		arcb.radius = 130;
+		stage.redraw();
+	}).on('mouseleave', function() {
+		arcb.radius = 100;
+		stage.redraw();
+	});
+
+	var arcc = world.arc({
+		x: 130,
+		y: 380,
+		radius: 100,
+		startAngle: 165,
+		endAngle: -45,
+		color: '#fd8915',
+		style: 'fill',
+		easingType: 'easeInOutQuint'
+	}).config({
+		drag: false,
+		changeIndex: true
+	}).on('mouseenter', function() {
+		arcc.radius = 130;
+		stage.redraw();
+	}).on('mouseleave', function() {
+		arcc.radius = 100;
+		stage.redraw();
 	});
 
 	var image = world.image({
@@ -145,7 +168,7 @@
 		y: 400,
 		radius: 30,
 		color: 'rgba(255, 255, 255, 0.5)',
-		type: 'fill'
+		style: 'fill'
 	}).on('mouseenter', function() {
 		world.element.style.cursor = 'pointer';
 	}).on('mouseleave', function() {
@@ -165,7 +188,7 @@
 		y: 400,
 		radius: 80,
 		color: 'rgba(255, 255, 255, 0.8)',
-		type: 'stroke'
+		style: 'stroke'
 	}).config({
 		fixed: true,
 		bg: true
@@ -173,11 +196,13 @@
 
 	stage.addChild(image);
 	stage.addChild(text);
-	stage.addChild(rect1);
-	stage.addChild(rect2);
 	stage.addChild(image3);
 	stage.addChild(arc2);
 	stage.addChild(arc);
+	stage.addChild(line);
+	stage.addChild(arca);
+	stage.addChild(arcb);
+	stage.addChild(arcc);
 
 	stage.show();
 

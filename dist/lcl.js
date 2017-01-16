@@ -92,7 +92,6 @@
         _this.drawUtils.clear();
         _this.canvas.save();
         _this.canvas.translate(_this.transX, _this.transY);
-        // LCL.canvas.scale(LCL.scale, LCL.scale);
         _this.drawUtils.draw();
         _this.canvas.restore();
       },
@@ -177,7 +176,9 @@
 
       backgroundColor: settings.backgroundColor, //text
 
-      text: settings.text // text
+      text: settings.text, // text,
+
+      radius: settings.radius //arc
 
     };
 
@@ -216,6 +217,8 @@
 
       var ltx = this.fixed ? 0 : _this.transX;
       var lty = this.fixed ? 0 : _this.transY;
+      var mx = this.moveX,
+        my = this.moveY;
       // rotate the x and y coordinates
       // var cX = this.startX + this.width/2 + ltx + this.moveX, cY = this.startY + this.height/2 + lty + this.moveY;
       // var oX = (x - cX)*Math.cos((Math.PI/180)*(-this.rotate)) - (y - cY)*Math.sin((Math.PI/180)*(-this.rotate)) + cX;
@@ -224,10 +227,10 @@
       // var xLeft = oX < this.startX + this.width + ltx+ this.moveX;
       // var yTop = oY > this.startY + lty + this.moveY;
       // var yBottom = oY < this.startY + this.height + lty + this.moveY;
-      var xRight = x > this.startX + this.moveX + ltx;
-      var xLeft = x < this.startX + this.width + this.moveX + ltx;
-      var yTop = y > this.startY + this.moveY + lty;
-      var yBottom = y < this.startY + this.height + this.moveY + lty;
+      var xRight = x > this.startX + mx + ltx;
+      var xLeft = x < this.startX + this.width + mx + ltx;
+      var yTop = y > this.startY + my + lty;
+      var yBottom = y < this.startY + this.height + my + lty;
 
       switch(this.type) {
         case 'rectangle':
@@ -235,7 +238,65 @@
         case 'text':
           return !!(xRight && xLeft && yTop && yBottom);
         case 'arc':
-          return !!( Math.sqrt( (x - this.x - this.moveX -ltx) * (x - this.x - this.moveX -ltx) + (y - this.y - this.moveY - lty) * (y - this.y - this.moveY - lty) ) <= this.radius );
+          var cx = this.x, // center x
+            cy = this.y, // center y
+            pi = Math.PI,
+            sa = this.startAngle < 0 ? 2*pi + pi/180*this.startAngle : pi/180*this.startAngle,
+            ea = this.endAngle < 0 ? 2*pi + pi/180*this.endAngle : pi/180*this.endAngle,
+            r = this.radius,
+            dx = x - cx - mx -ltx,
+            dy = y - cy - my - lty,
+            isIn, dis;
+          // Sector
+          if(!isNaN(sa) && !isNaN(ea)) {
+            var angle;
+            // 4th quadrant
+            if(dx >= 0 && dy >= 0) {
+              
+              if(dx === 0) {
+                angle = pi/2;
+              } else {
+                angle = Math.atan( (dy / dx) );
+              }
+            }
+            // 3th quadrant
+            else if(dx <= 0 && dy >= 0) {
+              if(dx === 0) {
+                angle = pi;
+              } else {
+                angle = pi - Math.atan(dy / Math.abs(dx));
+              }
+            }
+            // secend quadrant
+            else if(dx <= 0 && dy <= 0) {
+              if(dx === 0) {
+                angle = pi;
+              } else {
+                angle = Math.atan(Math.abs(dy) / Math.abs(dx)) + pi;
+              }
+            }
+            // first quadrant
+            else if(dx >= 0 && dy<= 0) {
+              if(dx === 0) {
+                angle = pi*3/2;
+              } else {
+                angle = 2*pi - Math.atan(Math.abs(dy) / dx);
+              }
+            }
+            dis = Math.sqrt( dx * dx + dy * dy );
+            if(sa < ea) {
+              isIn = !!(angle >= sa && angle <= ea && dis <= r);
+            } else {
+              isIn = !!( ( (angle >= 0 && angle <= ea) || (angle >= sa && angle <= 2*pi) ) && dis <= r);
+            }
+          }
+          // normal arc
+          else {
+            isIn = !!( Math.sqrt( dx * dx + dy * dy ) <= r );
+          }
+          return isIn;
+        default:
+          break;
       }
     };
 
@@ -288,8 +349,6 @@
       hasEnter: false,
 
       hasDraggedIn: false,
-
-      //rotate: 0,
 
       moveX: 0,
 
@@ -359,22 +418,34 @@
 
       var draw = function() {
         var canvas = _this.canvas,
-          startX = settings.startX,
-          startY = settings.startY,
-          endX = settings.endX,
-          endY = settings.endY;
+          matrix = settings.matrix,
+          lineWidth = settings.lineWidth,
+          dash = settings.dash,
+          lineCap = settings.lineCap,
+          lineJoin = settings.lineJoin,
+          strokeColor = settings.strokeColor;
 
         canvas.save();
-        // canvas.translate(startX + (endX - startX)/2, startY + (endY - startY)/2);
-        // canvas.rotate((Math.PI/180)*this.rotate);
-        // canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
+        canvas.translate(-0.5, -0.5);
         canvas.translate(this.moveX, this.moveY);
         if(this.fixed) {
           canvas.translate(-_this.transX, -_this.transY);
         }
+        canvas.lineWidth = lineWidth;
+        canvas.strokeStyle = strokeColor;
         canvas.beginPath();
-        canvas.moveTo(startX, startY);
-        canvas.lineTo(endX, endY);
+        if(dash && Object.prototype.toString.call(dash) === '[object Array]') {
+          canvas.setLineDash(dash);
+        }
+        if(lineCap) {
+          canvas.lineCap = lineCap;
+        }
+        if(lineJoin) {
+          canvas.lineJoin = lineJoin;
+        }
+        matrix.forEach(function(point, i) {
+          i === 0 ? canvas.moveTo(point.x, point.y) : canvas.lineTo(point.x, point.y);
+        });
         canvas.stroke();
         canvas.closePath();
         canvas.restore();
@@ -536,17 +607,31 @@
           x = this.x = settings.x,
           y = this.y = settings.y,
           color = this.color = settings.color,
-          type = settings.type,
-          radius = this.radius = settings.radius;
+          style = this.style = settings.style,
+          startAngle = this.startAngle = settings.startAngle,
+          endAngle = this.endAngle = settings.endAngle;
 
         canvas.save();
         if(this.fixed) {
           canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.translate(this.moveX, this.moveY);
+        canvas.translate(x, y);
         canvas.beginPath();
-        canvas.arc(x, y, radius, 0, 2*Math.PI, false);
-        if(type === 'fill') {
+        if(!isNaN(startAngle) && !isNaN(endAngle)) {
+          canvas.arc(0, 0, this.radius, Math.PI/180*startAngle, Math.PI/180*endAngle, false);
+          canvas.save();
+          canvas.rotate(Math.PI/180*endAngle);
+          canvas.moveTo(this.radius, 0);
+          canvas.lineTo(0, 0);
+          canvas.restore();
+          canvas.rotate(Math.PI/180*startAngle);
+          canvas.lineTo(this.radius, 0);
+        } else {
+          canvas.arc(0, 0, this.radius, 0, Math.PI*2);
+        }
+        
+        if(style === 'fill') {
           canvas.fillStyle = color;
           canvas.fill();
         } else {

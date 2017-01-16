@@ -7,22 +7,34 @@
 
       var draw = function() {
         var canvas = _this.canvas,
-          startX = settings.startX,
-          startY = settings.startY,
-          endX = settings.endX,
-          endY = settings.endY;
+          matrix = settings.matrix,
+          lineWidth = settings.lineWidth,
+          dash = settings.dash,
+          lineCap = settings.lineCap,
+          lineJoin = settings.lineJoin,
+          strokeColor = settings.strokeColor;
 
         canvas.save();
-        // canvas.translate(startX + (endX - startX)/2, startY + (endY - startY)/2);
-        // canvas.rotate((Math.PI/180)*this.rotate);
-        // canvas.translate(-(startX + (endX - startX)/2), -(startY + (endY - startY)/2));
+        canvas.translate(-0.5, -0.5);
         canvas.translate(this.moveX, this.moveY);
         if(this.fixed) {
           canvas.translate(-_this.transX, -_this.transY);
         }
+        canvas.lineWidth = lineWidth;
+        canvas.strokeStyle = strokeColor;
         canvas.beginPath();
-        canvas.moveTo(startX, startY);
-        canvas.lineTo(endX, endY);
+        if(dash && Object.prototype.toString.call(dash) === '[object Array]') {
+          canvas.setLineDash(dash);
+        }
+        if(lineCap) {
+          canvas.lineCap = lineCap;
+        }
+        if(lineJoin) {
+          canvas.lineJoin = lineJoin;
+        }
+        matrix.forEach(function(point, i) {
+          i === 0 ? canvas.moveTo(point.x, point.y) : canvas.lineTo(point.x, point.y);
+        });
         canvas.stroke();
         canvas.closePath();
         canvas.restore();
