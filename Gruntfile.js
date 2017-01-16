@@ -14,7 +14,7 @@ module.exports = function(grunt) {
           },
         },
         files: {
-          'dist/<%= pkg.name %>.js': pkg.files,
+          'dist/<%= pkg.name %>.js': pkg.devFiles,
         }
       }
     },
