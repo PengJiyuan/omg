@@ -6,7 +6,7 @@
 
   LCL = function() {
 
-    this.version = '1.3.0';
+    this.version = '1.3.1';
 
     this.objects = [];
 
@@ -630,7 +630,6 @@
         } else {
           canvas.arc(0, 0, this.radius, 0, Math.PI*2);
         }
-        
         if(style === 'fill') {
           canvas.fillStyle = color;
           canvas.fill();
