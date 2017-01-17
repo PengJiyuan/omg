@@ -6,7 +6,7 @@
 
   LCL = function() {
 
-    this.version = '1.3.1';
+    this.version = '1.3.3';
 
     this.objects = [];
 
@@ -15,7 +15,7 @@
     this.transX = 0;
 
     this.transY = 0;
-
+ 
     this.scale = 1;
 
     this.drawUtils = {};
@@ -1033,9 +1033,15 @@
 
 // Source: src/footer.js
   
+  //exports to multiple environments
   if(typeof exports === 'object' && typeof module === 'object') {
     module.exports = LCL;
+  } else if(typeof define === 'function' && define.amd) {
+    define(function(){
+      return LCL;
+    });
   } else {
     window.LCL = LCL;
   }
+
 })();
