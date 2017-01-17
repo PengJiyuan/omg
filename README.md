@@ -68,7 +68,8 @@ var rect = world.rectangle({
   startY: 0,
   width: 110,
   height: 110,
-  fillColor: '#514022'
+  fillColor: '#514022'，
+  zindex: 2 // 设置图形的z-index
 });
 ```
 
@@ -79,7 +80,8 @@ var line = world.line({
   startX: 200,
   startY: 100,
   endX: 400,
-  endY: 420
+  endY: 420，
+  zindex: 3
 });
 ```
 
@@ -92,7 +94,8 @@ var image = world.image({
   startY: 0,
   width: 800,
   height: 500,
-  src: './img/timg.jpg'
+  src: './img/timg.jpg',
+  zindex: 1
 });
 
 // 图片切割 (对照原生api)
@@ -105,7 +108,8 @@ var image3 = world.image({
   sliceY: 0,
   sliceWidth: 97,
   sliceHeight: 110,
-  src: './img/action.png'
+  src: './img/action.png',
+  zindex: 10
 });
 ```
 
@@ -123,7 +127,8 @@ var text = world.text({
   font: 'italic bold 20px arial,sans-serif', // 文字样式
   text: 'Hello World', // 文字内容
   color: '#fff', // 文字颜色
-  type: 'fill' // fill -- 填充， stroke -- 描边
+  type: 'fill' // fill -- 填充， stroke -- 描边,
+  zindex: 4
 });
 ```
 
@@ -135,7 +140,8 @@ var arc = world.arc({
   y: 400,
   radius: 30,
   color: 'rgba(255, 255, 255, 0.5)',
-  type: 'fill' // fill -- 填充， stroke -- 描边
+  type: 'fill' // fill -- 填充， stroke -- 描边,
+  zindex: 2
 });
 ```
 
@@ -176,6 +182,10 @@ rect.on('mousedown', function(){
 ```javascript
 stage.addChild(rect);
 stage.addChild(line);
+
+// or
+
+stage.addChild([rect, line, arc1, text1]);
 ```
 
 * **渲染**
@@ -278,6 +288,9 @@ stage.show();
 
 ### v1.3.0
 * 由于之前的设定， 只有一个全局变量LCL，而所有的信息，包括全局位置信息等都储存在着一个全局变量之中，导致无法绘制多个canvas，他们会共享一个全局变量。所以改版，支持多canvas绘制。
+#### v1.3.1
+* 绘制图形增添zindex, 默认为0, 可以为负数。
+* addChild可以直接添加数组。
 
 ## ToDo
 

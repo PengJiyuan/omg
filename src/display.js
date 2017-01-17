@@ -189,6 +189,8 @@
 
     return Object.assign({}, settingsData, {
 
+      zindex: settings.zindex ? settings.zindex : 0,
+
       isDragging: false,
 
       hasEnter: false,

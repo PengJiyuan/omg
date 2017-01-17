@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test html</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		#canvas {
+			margin: 0;
+			background-color: #ccc;
+		}
+
+	</style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+		<canvas id="canvas"></canvas>
+</div>
+<script src="../dist/lcl.js"></script>
+<script>
+
+	var world = new LCL();
+
+	var stage = new world.init({
+		element: document.getElementById('canvas'),
+		width: 500,
+		height: 500,
+		enableGlobalTranslate: true
+	});
+
+	function createRect(startX, startY, width, height, zindex) {
+		return world.rectangle({
+				startX: startX,
+				startY: startY,
+				width: width,
+				height: height,
+				zindex: zindex,
+				fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+			}).config({
+				drag: true
+			});
+	}	
+
+	var rect1 = createRect(0, 0, 50, 50, 4);
+	var rect2 = createRect(30, 30, 80, 80, 2);
+	var rect3 = createRect(20, 20, 60, 60, 1);
+	var rect4 = createRect(80, 80, 60, 60, 2);
+
+	stage.addChild([rect1, rect2, rect3, rect4]);
+
+	stage.show();
+
+</script>
+</body>
+</html>

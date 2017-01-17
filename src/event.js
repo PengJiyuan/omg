@@ -19,8 +19,7 @@
         var hasEvents = _this.objects.some(function(item) {
           return !!item.events && Object.prototype.toString.call(item.events) === '[object Array]' && !item.isBg || item.enableDrag;
         });
-
-        if(!hasEvents) {
+        if(!hasEvents && !_this.enableGlobalTranslate) {
           return;
         }
 

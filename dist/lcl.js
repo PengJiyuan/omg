@@ -6,7 +6,7 @@
 
   LCL = function() {
 
-    this.version = '1.3.3';
+    this.version = '1.3.4';
 
     this.objects = [];
 
@@ -15,7 +15,7 @@
     this.transX = 0;
 
     this.transY = 0;
- 
+
     this.scale = 1;
 
     this.drawUtils = {};
@@ -69,7 +69,15 @@
       },
 
       addChild: function(obj) {
-        _this.objects.push(obj);
+        // multi or single
+        if(Object.prototype.toString.call(obj) === '[object Array]') {
+          _this.objects = _this.objects.concat(obj);
+        } else {
+          _this.objects.push(obj);
+        }
+        _this.objects.sort(function(a, b) {
+          return a.zindex - b.zindex;
+        });
         // copy the reverse events array
         _this._objects = _this.utils.reverse(_this.objects);
       },
@@ -343,6 +351,8 @@
     }
 
     return Object.assign({}, settingsData, {
+
+      zindex: settings.zindex ? settings.zindex : 0,
 
       isDragging: false,
 
@@ -673,8 +683,7 @@
         var hasEvents = _this.objects.some(function(item) {
           return !!item.events && Object.prototype.toString.call(item.events) === '[object Array]' && !item.isBg || item.enableDrag;
         });
-
-        if(!hasEvents) {
+        if(!hasEvents && !_this.enableGlobalTranslate) {
           return;
         }
 

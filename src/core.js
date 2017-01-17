@@ -64,7 +64,15 @@
       },
 
       addChild: function(obj) {
-        _this.objects.push(obj);
+        // multi or single
+        if(Object.prototype.toString.call(obj) === '[object Array]') {
+          _this.objects = _this.objects.concat(obj);
+        } else {
+          _this.objects.push(obj);
+        }
+        _this.objects.sort(function(a, b) {
+          return a.zindex - b.zindex;
+        });
         // copy the reverse events array
         _this._objects = _this.utils.reverse(_this.objects);
       },
