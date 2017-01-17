@@ -1,4 +1,6 @@
 # LCL
+[![Build Status](https://travis-ci.org/PengJiyuan/LCL.svg?branch=master)](https://travis-ci.org/PengJiyuan/LCL)
+
 Light Canvas Library [Demo](https://pengjiyuan.github.io/LCL)
 
 ## Install
