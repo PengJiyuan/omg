@@ -290,3 +290,8 @@ stage.show();
 * 增加group组件，几个图形可以放到一个group中，作为一个整体来添加事件和操作。
 
 ## [MIT](./LICENSE)
+
+[npm-image]: https://img.shields.io/npm/v/lcl.svg
+[npm-url]: https://npmjs.org/package/lcl
+[downloads-image]: https://img.shields.io/npm/dm/lcl.svg
+[downloads-url]: https://npmjs.org/package/lcl
