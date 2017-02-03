@@ -11,9 +11,7 @@
         target['on' + eventType] = handler;
       }
       return target;
-    } catch(e) {
-      console.log(e);
-    }
+    } catch(e) {}
   };
 
   LCL.prototype.utils.unbind = function(target, eventType, handler) {
@@ -25,9 +23,7 @@
       } else {
         target['on' + eventType] = '';
       }
-    } catch(e) {
-      console.log(e);
-    }
+    } catch(e) {}
   };
 
   // do not change the origin array
@@ -114,8 +110,6 @@
       if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function(id) {
         clearTimeout(id);
       };
-    } catch(e) {
-      console.log(e);
-    }
+    } catch(e) {}
 
   }());

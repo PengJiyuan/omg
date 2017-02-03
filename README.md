@@ -1,3 +1,5 @@
+![LCL][./assets/logo.png]
+
 # LCL
 [![Build Status](https://travis-ci.org/PengJiyuan/LCL.svg?branch=master)](https://travis-ci.org/PengJiyuan/LCL)
 [![NPM Version][npm-image]][npm-url]
