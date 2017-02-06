@@ -56,6 +56,8 @@
 		lineWidth: 2,
 		strokeColor: '#ef8376',
 		dash: [3, 3]
+	}).config({
+		fixed: true
 	});
 
 	var arca = world.arc({
@@ -147,7 +149,7 @@
 	});
 
 	var image3 = world.image({
-		startX: 200,
+		startX: 300,
 		startY: 200,
 		width: 97,
 		height: 110,
@@ -199,10 +201,42 @@
 	stage.addChild(image3);
 	stage.addChild(arc2);
 	stage.addChild(arc);
-	stage.addChild(line);
 	stage.addChild(arca);
 	stage.addChild(arcb);
 	stage.addChild(arcc);
+		stage.addChild(
+		world.coord({
+			startX: 10,
+			startY: 0,
+			width: 300,
+			height: 250,
+			xAxis: {
+				data: ["C#", "PHP", "JS", "C", "C++"]
+			},
+			yAxis: {
+
+			},
+			series: [{
+				data: [-0.11358, -0.622, 0.33, 0.44, 0.5555]
+				// data: [
+				// 	[0.25, -0.11358],
+				// 	[-0.36, -0.622],
+				// 	[0.28, 0.33],
+				// 	[0.251, 0.44],
+				// 	[-0.24, 0.5555]
+				// ]
+			}],
+			boundaryGap: true,
+			backgroundColor: '#F3F3F3',//'#'+(~~(Math.random()*(1<<24))).toString(16)
+			title: 'Test Title'
+		}).config({
+			fixed: true,
+			drag: false,
+			changeIndex: false,
+			zindex: 0
+		})
+	);
+	stage.addChild(line);
 
 	stage.show();
 
