@@ -39,6 +39,7 @@
     "src/shapes/image.js",
     "src/shapes/text.js",
     "src/shapes/arc.js",
+    "src/shapes/coord.js",
     "src/event.js",
     "src/utils.js",
     "src/footer.js"

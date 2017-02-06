@@ -149,6 +149,40 @@ var arc = world.arc({
 });
 ```
 
+扇形
+
+```javascript
+var arcb = world.arc({
+  x: 130,
+  y: 380,
+  radius: 100,
+  startAngle: 45,
+  endAngle: 165,
+  color: '#512854',
+  style: 'fill'
+});
+```
+
+坐标系
+
+```javascript
+world.coord({
+  startX: 0, // 坐标系的左上起点的x坐标
+  startY: 0, // 坐标系的左上起点的y坐标
+  width: 800, // 坐标系的宽度
+  height: 600, // 坐标系的高度
+  xAxis: {
+    data: ["C#", "PHP", "JS", "C", "C++"] // 坐标系的横坐标
+  },
+  yAxis: {}, // 暂不支持
+  series: [{
+    data: [-0.11358, -0.622, 0.33, 0.44, 0.5555] // 要展示的数据，不过这个仅仅用来构建y轴区间，不展示数据
+  }],
+  boundaryGap: true, // 横坐标展示在区间中心还是左侧
+  backgroundColor: '#F3F3F3' // 坐标系的背景颜色
+})
+```
+
 * **给添加的形状(对象)添加事件**
 
 支持链式调用  
@@ -292,9 +326,13 @@ stage.show();
 
 ### v1.3.0
 * 由于之前的设定， 只有一个全局变量LCL，而所有的信息，包括全局位置信息等都储存在着一个全局变量之中，导致无法绘制多个canvas，他们会共享一个全局变量。所以改版，支持多canvas绘制。
+
 #### v1.3.1
 * 绘制图形增添zindex, 默认为0, 可以为负数。
 * addChild可以直接添加数组。
+
+#### v1.3.4
+*  新增绘制坐标系(coord.js)，只需提供x，y轴数据，即可自己选取合适的区间，绘制坐标系。
 
 ## ToDo
 

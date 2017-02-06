@@ -89,6 +89,64 @@
 
   };
 
+  LCL.prototype.utils.calculateCoord = function(max, min) {
+    var gap, // return value -> gap
+      retMax, // return value -> max
+      absMax, // absolute value -> max
+      calcMax, // converted max
+      numLength; // max value length
+    var ma = Math.abs(max), mi = Math.abs(min);
+    absMax = ma >= mi ? ma : mi;
+    numLength = absMax < 1 ? absMax.toString().length : absMax.toString().length;
+    calcMax = absMax < 1 ? this.formatFloat( absMax * Math.pow(10, numLength - 2), 1 ) : ( absMax / Math.pow(10, numLength - 1) );
+    if(calcMax === 1 && numLength > 1) {
+      calcMax = 10;
+      numLength --;
+    } else if(calcMax > 10) {
+      var l = calcMax.toString().length
+      calcMax = calcMax / Math.pow(10, l - 1);
+      numLength = numLength - l + 1;
+    }
+
+    var data = [
+      [1, 0.2],
+      [1.2, 0.2],
+      [1.4, 0.2],
+      [1.5, 0.3],
+      [1.8, 0.3],
+      [2, 0.4],
+      [2.5, 0.5],
+      [3, 0.5],
+      [3.5, 0.5],
+      [4, 0.5],
+      [5, 1],
+      [6, 1],
+      [7, 1],
+      [8, 1],
+      [10, 2]
+    ];
+
+    data.forEach(function(item, index) {
+      var pre = index === 0 ? 0 : data[index - 1][0];
+      if(pre < calcMax && calcMax <= item[0]) {
+        gap = item[1],
+        retMax = item[0];
+      }
+    });
+
+    return {
+      gap: absMax < 1 ? ( gap / Math.pow(10, numLength - 2) ) :  ( gap * Math.pow(10, numLength - 1) ),
+      max: absMax < 1 ? ( retMax / Math.pow(10, numLength - 2) ) : ( retMax * Math.pow(10, numLength - 1) )
+    };
+
+  };
+
+  // adjustment accuracy
+  LCL.prototype.utils.formatFloat = function(f, digit) { 
+    var m = Math.pow(10, digit); 
+    return parseInt(f * m, 10) / m;
+  }
+
   // requestAnimationFrame polyfill
   ;(function() {
     var lastTime = 0;
