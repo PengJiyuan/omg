@@ -4,18 +4,49 @@
     var coord = function(settings) {
 
       var _this = this;
+      var canvas = _this.canvas,
+        startX = this.startX = settings.startX,
+        startY = this.startY = settings.startY,
+        width = settings.width,
+        height = settings.height,
+        xAxis = settings.xAxis,
+        //yAxis = settings.yAxis,
+        series = settings.series,
+        boundaryGap = settings.boundaryGap,
+        title = settings.title,
+        subTitle = settings.subTitle;
+
+      var TO_TOP = 20;
+
+      var margin = width / 10;
+      var xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
+
+      // yAxis
+      var maxY = _this.utils.getMaxMin(false, series, xAxis).max,
+        minY = _this.utils.getMaxMin(false, series, xAxis).min,
+        gm = _this.utils.calculateCoord(maxY, minY),
+        gap = gm.gap;
+      //retMax = gm.max;
+
+      yLength = height - 2 * margin;
+      //count = Math.round(retMax / gap);
+
+      upCount = maxY > 0 ? Math.ceil(maxY / gap) : 0;
+      downCount = minY < 0 ? Math.ceil( Math.abs(minY) / gap) : 0;
+      yCount = upCount + downCount;
+      yGapLength = Math.round( yLength / yCount ),
+      ySpace = yCount,
+      ygl = yGapLength;
+
+      // xAxis
+      if(xAxis.data && xAxis.data.length > 0) {
+        xCount = xAxis.data.length;
+        xSpace = boundaryGap ? xCount : xCount -1;
+        xLength = width - margin * 2;
+        xGapLength = xLength / xSpace;
+      }
 
       var draw = function() {
-        var canvas = _this.canvas,
-          startX = this.startX = settings.startX,
-          startY = this.startY = settings.startY,
-          width = settings.width,
-          height = settings.height,
-          xAxis = settings.xAxis,
-          //yAxis = settings.yAxis,
-          series = settings.series,
-          boundaryGap = settings.boundaryGap,
-          title = settings.title;
 
         canvas.save();
         canvas.translate(-0.5, -0.5);
@@ -30,78 +61,46 @@
           canvas.restore();
         }
 
-        // get max xAxis or yAxis
-        function getMaxMin(isX) {
-          var max, min, maxArray = [], minArray = [];
-          series.forEach(function(item) {
-            var ma = [];
-            item.data.forEach(function(i) {
-              if(isX) {
-                ma.push(i[0]);
-              } else {
-                xAxis.data && xAxis.data.length > 0 ? ma.push(i) : ma.push(i[1]);
-              }
-            });
-            maxArray.push(Math.max.apply(null, ma));
-            minArray.push(Math.min.apply(null, ma));
-          });
-          max = Math.max.apply(null, maxArray);
-          min = Math.min.apply(null, minArray);
-
-          return {
-            max: max,
-            min: min
-          };
-        }
-
-        var margin = width / 10;
-        var count, space, length, gapLength, upCount, downCount, ygl;
-
         // draw title
+        canvas.save();
         canvas.font = '24px serif';
         canvas.textAlign = 'left';
         canvas.textBaseline = 'top';
         canvas.fillText(title, margin / 2, 10);
+        canvas.restore();
+        canvas.save();
+        canvas.fillStyle = '#666666';
+        canvas.font = '14px serif';
+        canvas.textAlign = 'left';
+        canvas.textBaseline = 'top';
+        canvas.fillText(subTitle, margin / 2 + 4, 40);
+        canvas.restore();
+
 
         // draw yAxis
-        var maxY = getMaxMin(false).max,
-          minY = getMaxMin(false).min,
-          gm = _this.utils.calculateCoord(maxY, minY),
-          gap = gm.gap;
-          //retMax = gm.max;
-
-        length = height - 2 * margin;
-        //count = Math.round(retMax / gap);
-
-        upCount = maxY > 0 ? Math.ceil(maxY / gap) : 0;
-        downCount = minY < 0 ? Math.ceil( Math.abs(minY) / gap) : 0;
-        count = upCount + downCount;
-        gapLength = Math.floor( length / count ),
-        space = count,
-        ygl = gapLength;
 
         // coordinate origin
-        canvas.translate(startX + margin, startY + height - margin - downCount * gapLength);
+        canvas.translate(startX + margin, startY + margin + upCount * yGapLength + TO_TOP);
 
         // yAxis
         canvas.beginPath();
-        canvas.moveTo(0, 0 + downCount * gapLength);
-        canvas.lineTo(0, -(height - margin*2) + downCount * gapLength);
+        canvas.moveTo(0, 0 + downCount * yGapLength);
+        canvas.lineTo(0, -(height - margin*2) + downCount * yGapLength - 5);
         canvas.stroke();
         canvas.closePath();
 
         for(var ii = 0; ii <= upCount; ii++) {
           canvas.beginPath();
-          canvas.moveTo(0, -gapLength * ii);
-          canvas.lineTo(-5, -gapLength * ii);
+          canvas.moveTo(0, -yGapLength * ii);
+          canvas.lineTo(-5, -yGapLength * ii);
           canvas.stroke();
           canvas.closePath();
           // draw grid
           canvas.save();
           canvas.strokeStyle = '#ccc';
           canvas.beginPath();
-          canvas.moveTo(0, -gapLength * ii);
-          canvas.lineTo(width - margin*2, -gapLength * ii);
+          canvas.moveTo(0, -yGapLength * ii);
+          canvas.lineTo(width - margin*2, -yGapLength * ii);
           canvas.stroke();
           canvas.restore();
           canvas.closePath();
@@ -110,22 +109,22 @@
           canvas.font = '15px serif';
           canvas.textAlign = 'right';
           canvas.textBaseline = 'middle';
-          canvas.fillText( _this.utils.formatFloat(gap*ii, 1), -15, -gapLength * ii);
+          canvas.fillText( _this.utils.formatFloat(gap*ii), -15, -yGapLength * ii);
           canvas.restore();
         }
 
         for(var iii = 0; iii <= downCount; iii++) {
           canvas.beginPath();
-          canvas.moveTo(0, gapLength * iii);
-          canvas.lineTo(-5, gapLength * iii);
+          canvas.moveTo(0, yGapLength * iii);
+          canvas.lineTo(-5, yGapLength * iii);
           canvas.stroke();
           canvas.closePath();
           // draw grid
           canvas.save();
           canvas.strokeStyle = '#ccc';
           canvas.beginPath();
-          canvas.moveTo(0, gapLength * iii);
-          canvas.lineTo(width - margin*2, gapLength * iii);
+          canvas.moveTo(0, yGapLength * iii);
+          canvas.lineTo(width - margin*2, yGapLength * iii);
           canvas.stroke();
           canvas.restore();
           canvas.closePath();
@@ -134,7 +133,7 @@
           canvas.font = '15px serif';
           canvas.textAlign = 'right';
           canvas.textBaseline = 'middle';
-          canvas.fillText( _this.utils.formatFloat(-gap*iii, 1), -15, gapLength * iii);
+          canvas.fillText( _this.utils.formatFloat(-gap*iii), -15, yGapLength * iii);
           canvas.restore();
         }
 
@@ -147,20 +146,16 @@
 
         // draw xAxis
         if(xAxis.data && xAxis.data.length > 0) {
-          count = xAxis.data.length;
-          space = boundaryGap ? count : count -1;
-          length = width - margin * 2;
-          gapLength = length / space;
 
           xAxis.data.forEach(function(item, index) {
             canvas.beginPath();
-            canvas.moveTo(gapLength * (index + 1), 0);
-            canvas.lineTo(gapLength * (index + 1), 5);
+            canvas.moveTo(xGapLength * (index + 1), 0);
+            canvas.lineTo(xGapLength * (index + 1), 5);
             canvas.save();
             canvas.font = '15px serif';
             canvas.textAlign = 'center';
             canvas.textBaseline = 'top';
-            boundaryGap ? canvas.fillText(item, gapLength * index + gapLength / 2, 5 + downCount * ygl) : canvas.fillText(item, gapLength * index, 5 + downCount * ygl);
+            boundaryGap ? canvas.fillText(item, xGapLength * index + xGapLength / 2, 5 + downCount * ygl) : canvas.fillText(item, xGapLength * index, 5 + downCount * ygl);
             canvas.restore();
             canvas.stroke();
             canvas.closePath();
@@ -178,7 +173,18 @@
 
       return Object.assign({}, _this.display(settings), {
         type: 'coord',
-        draw: draw
+        draw: draw,
+        xLength: xLength,
+        yLength: yLength,
+        xSpace: xSpace,
+        ySpace: ySpace,
+        xGapLength: xGapLength,
+        yGapLength: yGapLength,
+        upCount: upCount,
+        downCount: downCount,
+        gap: gap,
+        margin: margin,
+        TO_TOP: TO_TOP
       });
     };
 

@@ -108,7 +108,7 @@
       numLength = numLength - l + 1;
     }
 
-    var data = [
+    var granularity = [
       [1, 0.2],
       [1.2, 0.2],
       [1.4, 0.2],
@@ -126,8 +126,8 @@
       [10, 2]
     ];
 
-    data.forEach(function(item, index) {
-      var pre = index === 0 ? 0 : data[index - 1][0];
+    granularity.forEach(function(item, index) {
+      var pre = index === 0 ? 0 : granularity[index - 1][0];
       if(pre < calcMax && calcMax <= item[0]) {
         gap = item[1],
         retMax = item[0];
@@ -142,10 +142,34 @@
   };
 
   // adjustment accuracy
-  LCL.prototype.utils.formatFloat = function(f, digit) { 
-    var m = Math.pow(10, digit); 
+  LCL.prototype.utils.formatFloat = function(f) { 
+    var m = Math.pow(10, 10); 
     return parseInt(f * m, 10) / m;
-  }
+  };
+
+  // get max xAxis or yAxis
+  LCL.prototype.utils.getMaxMin = function(isX, series, xAxis) {
+    var max, min, maxArray = [], minArray = [];
+    series.forEach(function(item) {
+      var ma = [];
+      item.data.forEach(function(i) {
+        if(isX) {
+          ma.push(i[0]);
+        } else {
+          xAxis.data && xAxis.data.length > 0 ? ma.push(i) : ma.push(i[1]);
+        }
+      });
+      maxArray.push(Math.max.apply(null, ma));
+      minArray.push(Math.min.apply(null, ma));
+    });
+    max = Math.max.apply(null, maxArray);
+    min = Math.min.apply(null, minArray);
+
+    return {
+      max: max,
+      min: min
+    };
+  };
 
   // requestAnimationFrame polyfill
   ;(function() {

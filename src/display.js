@@ -161,6 +161,7 @@
       if(obj.bg) {
         this.isBg = true;
       }
+      this.zindex = obj.zindex ? obj.zindex : 0;
       return this;
     };
 
@@ -188,8 +189,6 @@
     }
 
     return Object.assign({}, settingsData, {
-
-      zindex: settings.zindex ? settings.zindex : 0,
 
       isDragging: false,
 
