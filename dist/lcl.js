@@ -244,6 +244,8 @@
         case 'rectangle':
         case 'image':
         case 'text':
+        case 'coord':
+        case 'textColor':
           return !!(xRight && xLeft && yTop && yBottom);
         case 'arc':
           var cx = this.x, // center x
@@ -432,7 +434,8 @@
           dash = settings.dash,
           lineCap = settings.lineCap,
           lineJoin = settings.lineJoin,
-          strokeColor = settings.strokeColor;
+          strokeColor = settings.strokeColor,
+          smooth = settings.smooth;
 
         canvas.save();
         canvas.translate(-0.5, -0.5);
@@ -452,9 +455,46 @@
         if(lineJoin) {
           canvas.lineJoin = lineJoin;
         }
-        matrix.forEach(function(point, i) {
-          i === 0 ? canvas.moveTo(point.x, point.y) : canvas.lineTo(point.x, point.y);
-        });
+        if(smooth) {
+          var getCtrlPoint = function(ps, i, a, b) {
+            var pAx, pAy, pBx, pBy;
+            if(!a || !b){
+              a = 0.25;
+              b = 0.25;
+            }
+            if( i < 1){
+              pAx = ps[0].x + (ps[1].x - ps[0].x)*a;
+              pAy = ps[0].y + (ps[1].y - ps[0].y)*a;
+            }else{
+              pAx = ps[i].x + (ps[i+1].x - ps[i-1].x)*a;
+              pAy = ps[i].y + (ps[i+1].y - ps[i-1].y)*a;
+            }
+            if(i > ps.length-3){
+              var last = ps.length-1;
+              pBx = ps[last].x - (ps[last].x - ps[last-1].x) * b;
+              pBy = ps[last].y - (ps[last].y - ps[last-1].y) * b;
+            }else{
+              pBx = ps[i + 1].x - (ps[i + 2].x - ps[i].x) * b;
+              pBy = ps[i + 1].y - (ps[i + 2].y - ps[i].y) * b;
+            }
+            return {
+              pA:{x: pAx, y: pAy},
+              pB:{x: pBx, y: pBy}
+            };
+          };
+          for(var i = 0; i < matrix.length; i++) {
+            if(i === 0){
+              canvas.moveTo(matrix[i].x, matrix[i].y);
+            }else{
+              var cMatrix = getCtrlPoint(matrix, i-1);
+              canvas.bezierCurveTo(cMatrix.pA.x, cMatrix.pA.y, cMatrix.pB.x, cMatrix.pB.y, matrix[i].x, matrix[i].y);
+            }
+          }
+        } else {
+          matrix.forEach(function(point, i) {
+            i === 0 ? canvas.moveTo(point.x, point.y) : canvas.lineTo(point.x, point.y);
+          });
+        }
         canvas.stroke();
         canvas.closePath();
         canvas.restore();
@@ -668,27 +708,27 @@
 
       var _this = this;
       var canvas = _this.canvas,
-      startX = this.startX = settings.startX,
-      startY = this.startY = settings.startY,
-      width = settings.width,
-      height = settings.height,
-      xAxis = settings.xAxis,
-      //yAxis = settings.yAxis,
-      series = settings.series,
-      boundaryGap = settings.boundaryGap,
-      title = settings.title,
-      subTitle = settings.subTitle;
+        startX = this.startX = settings.startX,
+        startY = this.startY = settings.startY,
+        width = settings.width,
+        height = settings.height,
+        xAxis = settings.xAxis,
+        //yAxis = settings.yAxis,
+        series = settings.series,
+        boundaryGap = settings.boundaryGap,
+        title = settings.title,
+        subTitle = settings.subTitle;
 
       var TO_TOP = 20;
 
-      var margin = width / 10;
+      var margin = width <= 300 ? width / 5 : width / 10;
       var xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
 
       // yAxis
       var maxY = _this.utils.getMaxMin(false, series, xAxis).max,
-      minY = _this.utils.getMaxMin(false, series, xAxis).min,
-      gm = _this.utils.calculateCoord(maxY, minY),
-      gap = gm.gap;
+        minY = _this.utils.getMaxMin(false, series, xAxis).min,
+        gm = _this.utils.calculateCoord(maxY, minY),
+        gap = gm.gap;
       //retMax = gm.max;
 
       yLength = height - 2 * margin;
@@ -726,14 +766,14 @@
 
         // draw title
         canvas.save();
-        canvas.font = '24px serif';
+        canvas.font = width <= 300 ? '18px serif' : '24px serif';
         canvas.textAlign = 'left';
         canvas.textBaseline = 'top';
         canvas.fillText(title, margin / 2, 10);
         canvas.restore();
         canvas.save();
         canvas.fillStyle = '#666666';
-        canvas.font = '14px serif';
+        canvas.font = width <= 300 ? '10px serif' : '14px serif';
         canvas.textAlign = 'left';
         canvas.textBaseline = 'top';
         canvas.fillText(subTitle, margin / 2 + 4, 40);
@@ -769,10 +809,10 @@
           canvas.closePath();
           // draw label
           canvas.save();
-          canvas.font = '15px serif';
+          canvas.font = '12px serif';
           canvas.textAlign = 'right';
           canvas.textBaseline = 'middle';
-          canvas.fillText( _this.utils.formatFloat(gap*ii), -15, -yGapLength * ii);
+          canvas.fillText( _this.utils.formatFloat(gap*ii), -10, -yGapLength * ii);
           canvas.restore();
         }
 
@@ -793,10 +833,12 @@
           canvas.closePath();
           // draw label
           canvas.save();
-          canvas.font = '15px serif';
+          canvas.font = '12px serif';
           canvas.textAlign = 'right';
           canvas.textBaseline = 'middle';
-          canvas.fillText( _this.utils.formatFloat(-gap*iii), -15, yGapLength * iii);
+          if(iii !== 0) {
+            canvas.fillText( _this.utils.formatFloat(-gap*iii), -10, yGapLength * iii);
+          }
           canvas.restore();
         }
 
@@ -847,7 +889,8 @@
         downCount: downCount,
         gap: gap,
         margin: margin,
-        TO_TOP: TO_TOP
+        TO_TOP: TO_TOP,
+        boundaryGap: boundaryGap
       });
     };
 

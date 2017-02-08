@@ -18,7 +18,7 @@
 
       var TO_TOP = 20;
 
-      var margin = width / 10;
+      var margin = width <= 300 ? width / 5 : width / 10;
       var xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
 
       // yAxis
@@ -63,14 +63,14 @@
 
         // draw title
         canvas.save();
-        canvas.font = '24px serif';
+        canvas.font = width <= 300 ? '18px serif' : '24px serif';
         canvas.textAlign = 'left';
         canvas.textBaseline = 'top';
         canvas.fillText(title, margin / 2, 10);
         canvas.restore();
         canvas.save();
         canvas.fillStyle = '#666666';
-        canvas.font = '14px serif';
+        canvas.font = width <= 300 ? '10px serif' : '14px serif';
         canvas.textAlign = 'left';
         canvas.textBaseline = 'top';
         canvas.fillText(subTitle, margin / 2 + 4, 40);
@@ -106,10 +106,10 @@
           canvas.closePath();
           // draw label
           canvas.save();
-          canvas.font = '15px serif';
+          canvas.font = '12px serif';
           canvas.textAlign = 'right';
           canvas.textBaseline = 'middle';
-          canvas.fillText( _this.utils.formatFloat(gap*ii), -15, -yGapLength * ii);
+          canvas.fillText( _this.utils.formatFloat(gap*ii), -10, -yGapLength * ii);
           canvas.restore();
         }
 
@@ -130,10 +130,12 @@
           canvas.closePath();
           // draw label
           canvas.save();
-          canvas.font = '15px serif';
+          canvas.font = '12px serif';
           canvas.textAlign = 'right';
           canvas.textBaseline = 'middle';
-          canvas.fillText( _this.utils.formatFloat(-gap*iii), -15, yGapLength * iii);
+          if(iii !== 0) {
+            canvas.fillText( _this.utils.formatFloat(-gap*iii), -10, yGapLength * iii);
+          }
           canvas.restore();
         }
 
@@ -184,7 +186,8 @@
         downCount: downCount,
         gap: gap,
         margin: margin,
-        TO_TOP: TO_TOP
+        TO_TOP: TO_TOP,
+        boundaryGap: boundaryGap
       });
     };
 

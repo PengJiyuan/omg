@@ -81,6 +81,8 @@
         case 'rectangle':
         case 'image':
         case 'text':
+        case 'coord':
+        case 'textColor':
           return !!(xRight && xLeft && yTop && yBottom);
         case 'arc':
           var cx = this.x, // center x
