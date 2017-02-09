@@ -6,11 +6,7 @@
       var _this = this;
 
       var draw = function() {
-        var canvas = _this.canvas,
-          startX = this.startX = settings.startX,
-          startY = this.startY = settings.startY,
-          width = this.width = settings.width,
-          height = this.height = settings.height;
+        var canvas = _this.canvas;
 
         canvas.save();
         // canvas.translate( startX + width/2 + this.moveX, startY + height/2 + this.moveY);
@@ -21,7 +17,7 @@
           canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.fillStyle = this.fillColor ? this.fillColor : '#000';
-        canvas.fillRect(startX, startY, width, height);
+        canvas.fillRect(this.startX, this.startY, this.width, this.height);
         canvas.restore();
       };
 

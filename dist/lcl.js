@@ -168,6 +168,14 @@
 
     var settingsData = {
 
+      startX: settings.startX,
+
+      startY: settings.startY,
+
+      dash: settings.dash, // line
+
+      offset: settings.offset ? settings.offset : 0, // line
+
       fillColor: settings.fillColor, // rectangle fillcolor
 
       sliceX: settings.sliceX, // image sliceX
@@ -390,11 +398,7 @@
       var _this = this;
 
       var draw = function() {
-        var canvas = _this.canvas,
-          startX = this.startX = settings.startX,
-          startY = this.startY = settings.startY,
-          width = this.width = settings.width,
-          height = this.height = settings.height;
+        var canvas = _this.canvas;
 
         canvas.save();
         // canvas.translate( startX + width/2 + this.moveX, startY + height/2 + this.moveY);
@@ -405,7 +409,7 @@
           canvas.translate(-_this.transX, -_this.transY);
         }
         canvas.fillStyle = this.fillColor ? this.fillColor : '#000';
-        canvas.fillRect(startX, startY, width, height);
+        canvas.fillRect(this.startX, this.startY, this.width, this.height);
         canvas.restore();
       };
 
@@ -431,7 +435,6 @@
         var canvas = _this.canvas,
           matrix = settings.matrix,
           lineWidth = settings.lineWidth,
-          dash = settings.dash,
           lineCap = settings.lineCap,
           lineJoin = settings.lineJoin,
           strokeColor = settings.strokeColor,
@@ -446,8 +449,9 @@
         canvas.lineWidth = lineWidth;
         canvas.strokeStyle = strokeColor;
         canvas.beginPath();
-        if(dash && Object.prototype.toString.call(dash) === '[object Array]') {
-          canvas.setLineDash(dash);
+        canvas.lineDashOffset = this.offset;
+        if(this.dash && Object.prototype.toString.call(this.dash) === '[object Array]') {
+          canvas.setLineDash(this.dash);
         }
         if(lineCap) {
           canvas.lineCap = lineCap;

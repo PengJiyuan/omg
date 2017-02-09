@@ -5,6 +5,14 @@
 
     var settingsData = {
 
+      startX: settings.startX,
+
+      startY: settings.startY,
+
+      dash: settings.dash, // line
+
+      offset: settings.offset ? settings.offset : 0, // line
+
       fillColor: settings.fillColor, // rectangle fillcolor
 
       sliceX: settings.sliceX, // image sliceX
