@@ -356,13 +356,6 @@
       this.enableChangeIndex = true;
     };
 
-    var fixed = function(bool) {
-      if(!bool || typeof bool !== 'boolean') {
-        return;
-      }
-      this.fixed = true;
-    };
-
     return Object.assign({}, settingsData, {
 
       isDragging: false,
@@ -382,8 +375,6 @@
       config: config,
 
       drag: drag,
-
-      fixed: fixed,
 
       changeIndex: changeIndex
 

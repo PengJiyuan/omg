@@ -336,6 +336,7 @@ stage.show();
 
 #### v1.3.5
 *  增加颜色函数，包括十六进制颜色转rgb颜色， rgb颜色转hsl颜色， 仿less的lighten和darken函数...
+
 ## ToDo
 
 * 给时间触发添加顺序(index) (Done)
