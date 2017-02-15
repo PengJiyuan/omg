@@ -19,6 +19,8 @@
 
     this.images = [];
 
+    this.pointerInnerArray = [];
+
     this.isDragging = false;
 
     this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];

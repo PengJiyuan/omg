@@ -69,6 +69,7 @@
 
     // whether pointer is inner this shape
     var isPointInner = function(x, y) {
+      var that = this;
 
       var ltx = this.fixed ? 0 : _this.transX;
       var lty = this.fixed ? 0 : _this.transY;
@@ -93,7 +94,6 @@
       case 'image':
       case 'text':
       case 'coord':
-      case 'textColor':
         return !!(xRight && xLeft && yTop && yBottom);
       case 'arc':
         var cx = this.x, // center x
@@ -154,6 +154,14 @@
         return isIn;
       default:
         break;
+      }
+
+      // expand isPointerInner
+      var arr = _this.pointerInnerArray;
+      for(var i = 0; i < arr.length; i++) {
+        if(that.type === arr[i].type) {
+          return arr[i].isPointInner(that, x, y);
+        }
       }
     };
 
@@ -218,4 +226,3 @@
     });
 
   };
-
