@@ -24,7 +24,7 @@
     this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
 
     this._event = new this.event(this);
-    
+
     var _this = this;
 
     this.core = function(config) {
@@ -103,13 +103,13 @@
         _this.canvas.clearRect(0, 0, _this.width, _this.height);
       },
 
-      animate: function(func, name) {
+      animate: function(func) {
         _this._event.triggerEvents();
         var id = new Date().getTime();
         var _func = function() {
           func();
           _this[id] = requestAnimationFrame(_func);
-        }
+        };
         _func();
         return id;
       },

@@ -4,15 +4,17 @@
     var line = function(settings) {
 
       var _this = this;
+      var canvas = _this.canvas,
+        matrix = settings.matrix,
+        lineWidth = settings.lineWidth,
+        lineCap = settings.lineCap,
+        lineJoin = settings.lineJoin,
+        strokeColor = settings.strokeColor,
+        smooth = settings.smooth;
+
+      var totalLength;
 
       var draw = function() {
-        var canvas = _this.canvas,
-          matrix = settings.matrix,
-          lineWidth = settings.lineWidth,
-          lineCap = settings.lineCap,
-          lineJoin = settings.lineJoin,
-          strokeColor = settings.strokeColor,
-          smooth = settings.smooth;
 
         canvas.save();
         canvas.translate(-0.5, -0.5);
@@ -80,7 +82,8 @@
 
       return Object.assign({}, _this.display(settings), {
         type: 'line',
-        draw: draw
+        draw: draw,
+        totalLength: totalLength
       });
     };
 

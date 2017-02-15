@@ -9,7 +9,6 @@
         var canvas = _this.canvas,
           x = this.x = settings.x,
           y = this.y = settings.y,
-          color = this.color = settings.color,
           style = this.style = settings.style,
           startAngle = this.startAngle = settings.startAngle,
           endAngle = this.endAngle = settings.endAngle;
@@ -34,10 +33,10 @@
           canvas.arc(0, 0, this.radius, 0, Math.PI*2);
         }
         if(style === 'fill') {
-          canvas.fillStyle = color;
+          canvas.fillStyle = this.color;
           canvas.fill();
         } else {
-          canvas.strokeStyle = color;
+          canvas.strokeStyle = this.color;
           canvas.stroke();
         }
         canvas.closePath();

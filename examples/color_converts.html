@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test html</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		#canvas {
+			margin: 0;
+			background-color: #fff;
+		}
+	</style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+		<canvas id="canvas"></canvas>
+</div>
+<script src="../dist/lcl.js"></script>
+<script>
+	var world = new LCL();
+	var stage = world.init({
+		element: document.getElementById('canvas'),
+		width: document.body.clientWidth,
+		height: document.body.clientHeight,
+		enableGlobalTranslate: false
+	});
+
+	function createArc() {
+		var color = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		var rgb = world.color.hexToRGB(color);
+		var rgb_color = rgb.rgb;
+		var hsl = world.color.rgbToHSL(rgb.r, rgb.g, rgb.b);
+		var lighten_color = world.color.darken(color, '10%');
+		console.log(lighten_color)
+		var radius = Math.random()*500;
+		var arc = world.arc({
+			x: Math.random()*document.body.clientWidth,
+			y: Math.random()*document.body.clientHeight,
+			radius: radius,
+			color: color,
+			style: 'fill'
+		}).on('mouseenter mousemove', function() {
+			world.element.style.cursor = 'pointer';
+			arc.color = lighten_color;
+			stage.redraw();
+		}).on('mouseleave', function() {
+			world.element.style.cursor = 'default';
+			arc.color = color;
+			stage.redraw();
+		}).config({
+			drag: false,
+			changeIndex: true
+		});
+		stage.addChild(arc);
+	}	
+	for(var i = 0;i < 2; i++) {createArc();}
+	stage.show();
+
+</script>
+</body>
+</html>

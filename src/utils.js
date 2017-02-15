@@ -1,5 +1,15 @@
-  
+
   LCL.prototype.utils = {};
+
+  LCL.prototype.utils.getPos = function(e) {
+    var ev = e || event;
+    var x = ev.pageX,
+      y = ev.pageY;
+    return {
+      x: x,
+      y: y
+    };
+  };
 
   LCL.prototype.utils.bind = function(target, eventType, handler) {
     try {
@@ -45,24 +55,24 @@
 
     ready: function(callback) {
       var that = this;
-      this.imageList.forEach(function(img){  
-        that.loadImg(img);  
+      this.imageList.forEach(function(img){
+        that.loadImg(img);
       });
       var timer = setInterval(function(){
         if(that.loadNum === that.imageList.length){
           clearInterval(timer);
           callback && callback();
-        }  
+        }
       }, 50);
     },
 
     loadImg: function(img) {
       var that = this;
-      var timer = setInterval(function(){  
+      var timer = setInterval(function(){
         if(img.complete === true){
-          that.loadNum++;  
-          clearInterval(timer);  
-        }  
+          that.loadNum++;
+          clearInterval(timer);
+        }
       }, 50);
     },
 
@@ -103,7 +113,7 @@
       calcMax = 10;
       numLength --;
     } else if(calcMax > 10) {
-      var l = calcMax.toString().length
+      var l = calcMax.toString().length;
       calcMax = calcMax / Math.pow(10, l - 1);
       numLength = numLength - l + 1;
     }
@@ -142,8 +152,8 @@
   };
 
   // adjustment accuracy
-  LCL.prototype.utils.formatFloat = function(f) { 
-    var m = Math.pow(10, 10); 
+  LCL.prototype.utils.formatFloat = function(f) {
+    var m = Math.pow(10, 10);
     return parseInt(f * m, 10) / m;
   };
 
@@ -172,7 +182,7 @@
   };
 
   // requestAnimationFrame polyfill
-  ;(function() {
+  (function() {
     var lastTime = 0;
     var vendors = ['ms', 'moz', 'webkit', 'o'];
     try {
@@ -180,11 +190,11 @@
         window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
         window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
       }
-      if (!window.requestAnimationFrame) window.requestAnimationFrame = function(callback, element) {
+      if (!window.requestAnimationFrame) window.requestAnimationFrame = function(callback) {
         var currTime = new Date().getTime();
         var timeToCall = Math.max(0, 16 - (currTime - lastTime));
         var id = window.setTimeout(function() {
-            callback(currTime + timeToCall);
+          callback(currTime + timeToCall);
         }, timeToCall);
         lastTime = currTime + timeToCall;
         return id;

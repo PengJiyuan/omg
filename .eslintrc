@@ -28,7 +28,7 @@
             "error"
         ],
         "no-empty": [
-            "error"
+            "warn"
         ],
         "no-console": [
             "error", 

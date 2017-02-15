@@ -28,24 +28,55 @@
 		element: document.getElementById('canvas'),
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
-		enableGlobalTranslate: true
+		enableGlobalTranslate: false
 	});
 
+	// tooltip
+
+	var style = 'position: absolute; display: none; border-style: solid; white-space: nowrap; z-index: 9999999; transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1), top 0.4s cubic-bezier(0.23, 1, 0.32, 1); background-color: rgba(50, 50, 50, 0.701961); border-width: 0px; border-color: rgb(51, 51, 51); border-radius: 4px; color: rgb(255, 255, 255); font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 14px; font-family: sans-serif; line-height: 21px; padding: 5px;';
+	var dom = document.createElement('div');
+	dom.style = style;
+
+	dom.innerHTML = '';
+
+	document.body.appendChild(dom);
+
+	var setValue = function(value) {
+		var innerhtml = value.title + '<br><span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + value.color + '"></span>' + value.name + ' : ' + value.value + '';
+		dom.innerHTML = innerhtml;
+	}
+
 	function createArc() {
-		stage.addChild(
-			world.arc({
-				x: Math.random()*document.body.clientWidth,
-				y: Math.random()*document.body.clientHeight,
-				radius: Math.random()*20,
-				color: '#'+(~~(Math.random()*(1<<24))).toString(16),
-				style: 'fill'
-			}).config({
-				drag: true,
-				changeIndex: true
-			})
-		);
+		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.5)';
+		var radius = Math.random()*10;
+		var arc = world.arc({
+			x: Math.random()*document.body.clientWidth,
+			y: Math.random()*document.body.clientHeight,
+			radius: radius,
+			color: color,
+			style: 'fill'
+		}).on('mouseenter mousemove', function() {
+			dom.style.display = 'block';
+			setValue({
+				title: '这里有10000个圆',
+				color: color,
+				name: 'radius',
+				value: radius
+			});
+			world.element.style.cursor = 'pointer';
+			var x = world.utils.getPos().x + 20;
+			var y = world.utils.getPos().y + 20;
+			dom.style.left = x + 'px';
+			dom.style.top = y + 'px';
+		}).on('mouseleave', function() {
+			world.element.style.cursor = 'default';
+		}).config({
+			drag: false,
+			changeIndex: true
+		});
+		stage.addChild(arc);
 	}	
-	for(var i = 0;i < 2000; i++) {createArc();}
+	for(var i = 0;i < 10000; i++) {createArc();}
 	stage.show();
 
 </script>

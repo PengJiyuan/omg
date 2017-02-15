@@ -4,18 +4,17 @@
     return {
 
       getPos: function(e) {
-        var e = e || event;
-        var x = e.pageX - _this.element.offsetLeft,
-          y = e.pageY - _this.element.offsetTop;
+        var ev = e || event;
+        var x = ev.pageX - _this.element.offsetLeft,
+          y = ev.pageY - _this.element.offsetTop;
         return {
-          x: x, 
+          x: x,
           y: y
         };
       },
 
       triggerEvents: function() {
-        
-        var that = this;
+
         var hasEvents = _this.objects.some(function(item) {
           return !!item.events && Object.prototype.toString.call(item.events) === '[object Array]' && !item.isBg || item.enableDrag;
         });
@@ -38,11 +37,11 @@
       },
 
       mouseEnterOrMove: function() {
-        var that = this, isDragging;
+        var isDragging;
         _this.utils.bind(_this.element, 'mousemove', function(e_moveOrEnter) {
           var mX = _this._event.getPos(e_moveOrEnter).x;
           var mY = _this._event.getPos(e_moveOrEnter).y;
-          
+
           isDragging = _this.objects.some(function(item) {
             return item.isDragging;
           });
@@ -121,7 +120,7 @@
       },
 
       mouseDown: function(e_down) {
-        var that = this, whichIn, hasEventDrag, dragCb, dragEndCb;
+        var that = this, whichIn, hasEventDrag, hasEventDragEnd, dragCb, dragEndCb;
         var hasDrags = _this.objects.some(function(item) {
           return !!item.enableDrag;
         });
@@ -155,14 +154,14 @@
           hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function(item) {
             if(item.eventType === 'drag') {
               dragCb = item.callback;
-            };
+            }
             return item.eventType === 'drag';
           });
 
           hasEventDragEnd = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function(item) {
             if(item.eventType === 'dragend') {
               dragEndCb = item.callback;
-            };
+            }
             return item.eventType === 'dragend';
           });
 
@@ -180,7 +179,7 @@
             that.cacheX = mx;
             that.cacheY = my;
             whichIn[0].isDragging = true;
-          }
+          };
 
           var up_Event = function(e_up) {
             var uX = _this._event.getPos(e_up).x;
@@ -249,6 +248,6 @@
         _this.drawUtils.redraw();
       }
 
-    }
+    };
 
   };

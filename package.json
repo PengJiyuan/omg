@@ -1,6 +1,6 @@
 {
   "name": "lcl",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "light canvas library",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "grunt build",
     "release": "node scripts/release.js",
     "add_eslint": "node ./scripts/pre_commit.js",
-    "eslint": "eslint *.js src/**/ scripts/ --ext .js --cache"
+    "eslint": "eslint *.js src/** scripts/ --ext .js --cache"
   },
   "repository": {
     "type": "git",
@@ -41,6 +41,7 @@
     "src/shapes/arc.js",
     "src/shapes/coord.js",
     "src/event.js",
+    "src/color.js",
     "src/utils.js",
     "src/footer.js"
   ]
