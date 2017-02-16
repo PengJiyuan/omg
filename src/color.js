@@ -64,29 +64,42 @@
 
     // color lighten
     lighten: function(color, percent) {
-      var hsl, h, s, l;
+      var hsl, h, s, l, rgba, a;
       if(!color || !percent || !/^[0-9]{1,2}%$/.test(percent)) {
         return;
       }
-      hsl = this.getHsl(color);
-      h = hsl.h;
-      s = hsl.s;
-      l = hsl.l * 100 + +percent.slice(0, -1);
+      if(this.isRgba(color)) {
+        rgba = this.getRgba(color);
+        a = +rgba.a - +( percent.slice(0, -1) / 100 );
+        return 'rgba(' + rgba.r + ', ' + rgba.g + ', ' + rgba.b + ', ' + a + ')';
+      } else {
+        hsl = this.getHsl(color);
+        h = +hsl.h;
+        s = +hsl.s;
+        l = +hsl.l * 100 + +percent.slice(0, -1);
 
-      return "hsl(" + h * 360 + ', ' + s * 100 + '%' + ', ' + l + '%' + ")";
+        return "hsl(" + h * 360 + ', ' + s * 100 + '%' + ', ' + l + '%' + ")";
+      }
     },
 
     // color darken
     darken: function(color, percent) {
-      var hsl, h, s, l;
+      var hsl, h, s, l, rgba, a;
       if(!color || !percent || !/^[0-9]{1,2}%$/.test(percent)) {
         return;
       }
-      hsl = this.getHsl(color);
-      h = hsl.h;
-      s = hsl.s;
-      l = hsl.l * 100 - +percent.slice(0, -1);
-      return "hsl(" + h * 360 + ', ' + s * 100 + '%' + ', ' + l + '%' + ")";
+      if(this.isRgba(color)) {
+        rgba = this.getRgba(color);
+        a = +rgba.a + +( percent.slice(0, -1) / 100 );
+        return 'rgba(' + rgba.r + ', ' + rgba.g + ', ' + rgba.b + ', ' + a + ')';
+      } else {
+        hsl = this.getHsl(color);
+        h = +hsl.h;
+        s = +hsl.s;
+        l = +hsl.l * 100 - +percent.slice(0, -1);
+
+        return "hsl(" + h * 360 + ', ' + s * 100 + '%' + ', ' + l + '%' + ")";
+      }
     },
 
     isHex: function(color) {
@@ -118,6 +131,22 @@
         r: r,
         g: g,
         b: b
+      };
+    },
+
+    getRgba: function(color) {
+      var rgba, r, g, b, a;
+      rgba = color.slice(5, -1).split(',');
+      r = rgba[0];
+      g = rgba[1];
+      b = rgba[2];
+      a = rgba[3];
+
+      return {
+        r: r,
+        g: g,
+        b: b,
+        a: a
       };
     },
 

@@ -33,10 +33,11 @@
 
 	function createArc() {
 		var color = '#'+(~~(Math.random()*(1<<24))).toString(16);
+		//var color = 'rgba(123, 21, 241, 0.8)';
 		var rgb = world.color.hexToRGB(color);
 		var rgb_color = rgb.rgb;
 		var hsl = world.color.rgbToHSL(rgb.r, rgb.g, rgb.b);
-		var lighten_color = world.color.darken(color, '10%');
+		var lighten_color = world.color.lighten(color, '10%');
 		console.log(lighten_color)
 		var radius = Math.random()*500;
 		var arc = world.arc({
@@ -54,7 +55,7 @@
 			arc.color = color;
 			stage.redraw();
 		}).config({
-			drag: false,
+			drag: true,
 			changeIndex: true
 		});
 		stage.addChild(arc);
