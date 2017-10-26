@@ -1,9 +1,10 @@
+class Display {
 
-  LCL.prototype.display = function(settings) {
+  constructor(settings, _this) {
 
-    var _this = this;
+    this._ = _this;
 
-    var settingsData = {
+    this.settingsData = {
 
       color: settings.color, // arc
 
@@ -37,58 +38,48 @@
 
     };
 
-    // bind event
-    var on = function(eventTypes, callback) {
+  }
 
-      if(!eventTypes) {
-        throw 'no eventTypes defined!';
+  on(eventTypes, callback) {
+    if(!eventTypes) {
+      throw 'no eventTypes defined!';
+    }
+
+    if(!callback || typeof callback !== 'function') {
+      throw 'you need defined a callback!';
+    }
+
+    this.events = this.events || [];
+
+    const eTypes = eventTypes.split(' '), that = this;
+
+    eTypes.forEach(event => {
+      if(~this._.eventTypes.indexOf(event)) {
+        that.events.push({
+          eventType: event,
+          callback: callback
+        });
+      } else {
+        console.error(event + ' is not in eventTypes!');
       }
+    });
 
-      if(!callback || typeof callback !== 'function') {
-        throw 'you need defined a callback!';
-      }
+    return this;
+  }
 
-      this.events = this.events || [];
+  // whether pointer is inner this shape
+  isPointInner(x, y) {
+    const that = this;
+    const mx = this.moveX;
+    const my = this.moveY;
+    const ltx = this.fixed ? 0 : this._.transX;
+    const lty = this.fixed ? 0 : this._.transY;
+    const xRight = x > this.startX + mx + ltx;
+    const xLeft = x < this.startX + this.width + mx + ltx;
+    const yTop = y > this.startY + my + lty;
+    const yBottom = y < this.startY + this.height + my + lty;
 
-      var eTypes = eventTypes.split(' '), that = this;
-
-      eTypes.forEach(function(event) {
-        if(~_this.eventTypes.indexOf(event)) {
-          that.events.push({
-            eventType: event,
-            callback: callback
-          });
-        } else {
-          console.warn(event + ' is not in eventTypes!');
-        }
-      });
-
-      return this;
-
-    };
-
-    // whether pointer is inner this shape
-    var isPointInner = function(x, y) {
-      var that = this;
-
-      var ltx = this.fixed ? 0 : _this.transX;
-      var lty = this.fixed ? 0 : _this.transY;
-      var mx = this.moveX,
-        my = this.moveY;
-      // rotate the x and y coordinates
-      // var cX = this.startX + this.width/2 + ltx + this.moveX, cY = this.startY + this.height/2 + lty + this.moveY;
-      // var oX = (x - cX)*Math.cos((Math.PI/180)*(-this.rotate)) - (y - cY)*Math.sin((Math.PI/180)*(-this.rotate)) + cX;
-      // var oY = (x - cX)*Math.sin((Math.PI/180)*(-this.rotate)) + (y - cY)*Math.cos((Math.PI/180)*(-this.rotate)) + cY;
-      // var xRight = oX > this.startX + ltx+ this.moveX;
-      // var xLeft = oX < this.startX + this.width + ltx+ this.moveX;
-      // var yTop = oY > this.startY + lty + this.moveY;
-      // var yBottom = oY < this.startY + this.height + lty + this.moveY;
-      var xRight = x > this.startX + mx + ltx;
-      var xLeft = x < this.startX + this.width + mx + ltx;
-      var yTop = y > this.startY + my + lty;
-      var yBottom = y < this.startY + this.height + my + lty;
-
-      switch(this.type) {
+    switch(this.type) {
 
       case 'rectangle':
       case 'image':
@@ -154,75 +145,81 @@
         return isIn;
       default:
         break;
-      }
+    }
 
-      // expand isPointerInner
-      var arr = _this.pointerInnerArray;
-      for(var i = 0; i < arr.length; i++) {
-        if(that.type === arr[i].type) {
-          return arr[i].isPointInner(that, x, y);
-        }
-      }
-    };
+    // expand isPointerInner
+    // const arr = that.pointerInnerArray;
+    // for(let i = 0; i < arr.length; i++) {
+    //   if(that.type === arr[i].type) {
+    //     return arr[i].isPointInner(that, x, y);
+    //   }
+    // }
+  }
 
-    var config = function(obj) {
-      if(Object.prototype.toString.call(obj) !== '[object Object]') {
-        return;
-      }
-      if(obj.drag) {
-        this.enableDrag = true;
-      }
-      if(obj.changeIndex) {
-        this.enableChangeIndex = true;
-      }
-      if(obj.fixed) {
-        this.fixed = true;
-      }
-      if(obj.bg) {
-        this.isBg = true;
-      }
-      this.zindex = obj.zindex ? obj.zindex : 0;
-      return this;
-    };
-
-    // whether this shape can be dragged
-    var drag = function(bool) {
-      if(!bool || typeof bool !== 'boolean') {
-        return;
-      }
+  config(obj) {
+    if(Object.prototype.toString.call(obj) !== '[object Object]') {
+      return;
+    }
+    if(obj.drag) {
       this.enableDrag = true;
-    };
-
-    // when select this shape, whether it should be changed the index
-    var changeIndex = function(bool) {
-      if(!bool || typeof bool !== 'boolean') {
-        return;
-      }
+    }
+    if(obj.changeIndex) {
       this.enableChangeIndex = true;
-    };
+    }
+    if(obj.fixed) {
+      this.fixed = true;
+    }
+    if(obj.bg) {
+      this.isBg = true;
+    }
+    this.zindex = obj.zindex ? obj.zindex : 0;
+    return this;
+  }
 
-    return Object.assign({}, settingsData, {
-
-      isDragging: false,
-
-      hasEnter: false,
-
-      hasDraggedIn: false,
-
-      moveX: 0,
-
-      moveY: 0,
-
-      on: on,
-
-      isPointInner: isPointInner,
-
-      config: config,
-
-      drag: drag,
-
-      changeIndex: changeIndex
-
-    });
-
+  // whether this shape can be dragged
+  drag(bool) {
+    if(!bool || typeof bool !== 'boolean') {
+      return;
+    }
+    this.enableDrag = true;
   };
+
+  // when select this shape, whether it should be changed the index
+  changeIndex(bool) {
+    if(!bool || typeof bool !== 'boolean') {
+      return;
+    }
+    this.enableChangeIndex = true;
+  };
+
+}
+
+export default (settings, _this) => {
+  const display = new Display(settings, _this);
+
+  return Object.assign({}, display.settingsData, {
+
+    isDragging: false,
+
+    hasEnter: false,
+
+    hasDraggedIn: false,
+
+    moveX: 0,
+
+    moveY: 0,
+
+    on: display.on,
+
+    isPointInner: display.isPointInner,
+
+    config: display.config,
+
+    drag: display.drag,
+
+    changeIndex: display.changeIndex,
+
+    _: display._
+
+  });
+}

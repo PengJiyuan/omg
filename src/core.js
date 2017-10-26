@@ -1,11 +1,19 @@
+import polyfill from './utils/polyfill';
+import { version } from '../package.json';
+import { Event } from './event';
+import { Color } from './utils/color';
+import { ImageLoader } from './utils/imageLoader';
+import utils from './utils/helpers';
+import shapes from './shapes/index';
+// console.log(utils);
 
-  LCL = function() {
+export class LCL {
 
-    this.version = '<%%version%%>';
+  constructor(config) {
+
+    this.version = version;
 
     this.objects = [];
-
-    this.canvas = null;
 
     this.transX = 0;
 
@@ -13,145 +21,143 @@
 
     this.scale = 1;
 
-    this.drawUtils = {};
-
-    this.loader = null; // the instance of image loader
-
-    this.images = [];
+    // the instance of image loader
+    this.loader = null;
 
     this.pointerInnerArray = [];
 
     this.isDragging = false;
 
-    this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
+    // support event types
+    this.eventTypes = [
+      'mousedown',
+      'mouseup',
+      'mouseenter',
+      'mouseleave',
+      'mousemove',
+      'drag',
+      'dragend',
+      'dragin',
+      'dragout',
+      'drop'
+    ];
 
-    this._event = new this.event(this);
+    this._event = new Event(this);
 
-    var _this = this;
+    this.color = new Color();
 
-    this.core = function(config) {
+    this.element = config.element;
 
-      if(!(config instanceof Object)) {
-        console.warn('no canvas element!');
-        return;
+    this.canvas =  this.element.getContext('2d');
+
+    // init the width and height
+    this.element.width = this.width = config.width;
+
+    this.element.height = this.height = config.height;
+
+    this.enableGlobalTranslate = config.enableGlobalTranslate || false;
+
+    // init images
+    this.images = config.images || [];
+
+    Object.keys(shapes).forEach(shape => {
+      this[shape] = function(settings) {
+        return shapes[shape](settings, this);
       }
+    });
 
-      this.element = _this.element = config.element,
+  }
 
-      this.canvas = _this.canvas =  this.element.getContext('2d');
+  imgReady() {
+    this.loader = new ImageLoader();
+    this.loader.addImg(this.images);
+  }
 
-      // init the width and height
-      config.element.width = this.width = _this.width = config.width;
+  addChild(obj) {
+    // multi or single
+    if(utils.isArr(obj)) {
+      this.objects = this.objects.concat(obj);
+    } else {
+      this.objects.push(obj);
+    }
+    this.objects.sort((a, b) => {
+      return a.zindex - b.zindex;
+    });
+    // copy the reverse events array
+    this._objects = utils.reverse(this.objects);
+  }
 
-      config.element.height = this.height = _this.height = config.height;
+  show() {
+    const _this = this;
+    this.imgReady();
+    this.loader.ready(() => {
+      _this.draw();
+      _this._event.triggerEvents();
+    });
+  }
 
-      _this.enableGlobalTranslate = config.enableGlobalTranslate;
+  draw() {
+    this.objects.forEach(item => {
+      item.draw();
+    });
+  }
 
-      _this.drawUtils.clear = this.clear;
-      _this.drawUtils.draw = this.draw;
-      _this.drawUtils.redraw = this.redraw;
+  redraw() {
+    this.clear();
+    this.canvas.save();
+    this.canvas.translate(this.transX, this.transY);
+    this.draw();
+    this.canvas.restore();
+  }
 
-      // init images
-      if(config.images) {
-        _this.images = config.images;
+  clear() {
+    this.canvas.clearRect(0, 0, this.width, this.height);
+  }
+
+  animate(func) {
+    this._event.triggerEvents();
+    const id = new Date().getTime();
+    const _func = () => {
+      func();
+      this[id] = requestAnimationFrame(_func);
+    };
+    _func();
+    return id;
+  }
+
+  stop(id) {
+    cancelAnimationFrame(this[id]);
+  }
+
+  globalTranslate(bool) {
+    if(typeof bool !== 'boolean' || !bool) {
+      return;
+    }
+    this.enableGlobalTranslate = true;
+  }
+
+  getVersion() {
+    return this.version;
+  }
+
+  scaleCanvas(bool) {
+    if(typeof bool !== 'boolean' || !bool) {
+      return;
+    }
+    const that = this;
+    utils.bind(this.element, 'wheel', function(e) {
+      if(e.deltaY < 0) {
+        if(that.scale <= 3) {
+          that.scale += 0.02;
+          that.redraw();
+        }
+      } else {
+        if(that.scale > 0.5) {
+          that.scale -= 0.02;
+          that.redraw();
+        }
       }
+    });
+  }
 
-    };
-
-    this.core.prototype = {
-
-      imgReady: function() {
-        _this.loader = new _this.utils.imageLoader();
-        _this.loader.addImg(_this.images);
-      },
-
-      addChild: function(obj) {
-        // multi or single
-        if(Object.prototype.toString.call(obj) === '[object Array]') {
-          _this.objects = _this.objects.concat(obj);
-        } else {
-          _this.objects.push(obj);
-        }
-        _this.objects.sort(function(a, b) {
-          return a.zindex - b.zindex;
-        });
-        // copy the reverse events array
-        _this._objects = _this.utils.reverse(_this.objects);
-      },
-
-      show: function() {
-        this.imgReady();
-        _this.loader.ready(function() {
-          _this.drawUtils.draw();
-          _this._event.triggerEvents();
-        });
-      },
-
-      draw: function() {
-        _this.objects.forEach(function(item) {
-          item.draw();
-        });
-      },
-
-      redraw: function() {
-        _this.drawUtils.clear();
-        _this.canvas.save();
-        _this.canvas.translate(_this.transX, _this.transY);
-        _this.drawUtils.draw();
-        _this.canvas.restore();
-      },
-
-      clear: function() {
-        _this.canvas.clearRect(0, 0, _this.width, _this.height);
-      },
-
-      animate: function(func) {
-        _this._event.triggerEvents();
-        var id = new Date().getTime();
-        var _func = function() {
-          func();
-          _this[id] = requestAnimationFrame(_func);
-        };
-        _func();
-        return id;
-      },
-
-      stop: function(id) {
-        cancelAnimationFrame(_this[id]);
-      },
-
-      globalTranslate: function(bool) {
-        if(typeof bool !== 'boolean' || !bool) {
-          return;
-        }
-        _this.enableGlobalTranslate = true;
-      },
-
-      // scaleCanvas: function(bool) {
-      //   if(typeof bool !== 'boolean' || !bool) {
-      //     return;
-      //   }
-      //   var that = this;
-      //   LCL.bind(this.element, 'wheel', function(e) {
-      //     if(e.deltaY < 0) {
-      //       if(LCL.scale <= 3) {
-      //         LCL.scale += 0.02;
-      //         that.redraw();
-      //       }
-      //     } else {
-      //       if(LCL.scale > 0.5) {
-      //         LCL.scale -= 0.02;
-      //         that.redraw();
-      //       }
-      //     }
-      //   });
-      // }
-
-    };
-
-    this.init = function(config) {
-      return new _this.core(config);
-    };
-
-  };
-
+}
