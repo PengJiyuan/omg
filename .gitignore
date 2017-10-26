@@ -41,3 +41,6 @@ jspm_packages
 
 # my test
 /test
+
+# Mac files
+**/.DS_Store
