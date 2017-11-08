@@ -24,10 +24,7 @@
 </div>
 <script src="../dist/lcl.js"></script>
 <script>
-
-	var world = new LCL();
-
-	var stage = new world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -52,9 +49,9 @@
 	var rect3 = createRect(20, 20, 60, 60, 1);
 	var rect4 = createRect(80, 80, 60, 60, 2);
 
-	stage.addChild([rect1, rect2, rect3, rect4]);
+	world.addChild([rect1, rect2, rect3, rect4]);
 
-	stage.show();
+	world.show();
 
 </script>
 </body>

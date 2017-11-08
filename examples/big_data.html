@@ -23,8 +23,7 @@
 </div>
 <script src="../dist/lcl.js"></script>
 <script>
-	var world = new LCL();
-	var stage = world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
@@ -74,10 +73,10 @@
 			drag: false,
 			changeIndex: true
 		});
-		stage.addChild(arc);
+		world.addChild(arc);
 	}	
 	for(var i = 0;i < 10000; i++) {createArc();}
-	stage.show();
+	world.show();
 
 </script>
 </body>

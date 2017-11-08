@@ -1,49 +1,50 @@
 import display from '../display.js';
 import utils from '../utils/helpers.js';
 
-export default (settings, _this) => {
+export default function(settings, _this) {
+  let canvas = _this.canvas,
+    startX = this.startX = settings.startX,
+    startY = this.startY = settings.startY,
+    width = settings.width,
+    height = settings.height,
+    xAxis = settings.xAxis,
+    //yAxis = settings.yAxis,
+    series = settings.series,
+    boundaryGap = settings.boundaryGap,
+    title = settings.title,
+    subTitle = settings.subTitle;
+
+  let TO_TOP = 20;
+
+  let margin = width <= 300 ? width / 5 : width / 10;
+  let xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
+
+  // yAxis
+  let maxY = utils.getMaxMin(false, series, xAxis).max,
+    minY = utils.getMaxMin(false, series, xAxis).min,
+    gm = utils.calculateCoord(maxY, minY),
+    gap = gm.gap;
+  //retMax = gm.max;
+
+  yLength = height - 2 * margin;
+  //count = Math.round(retMax / gap);
+
+  upCount = maxY > 0 ? Math.ceil(maxY / gap) : 0;
+  downCount = minY < 0 ? Math.ceil( Math.abs(minY) / gap) : 0;
+  yCount = upCount + downCount;
+  yGapLength = Math.round( yLength / yCount ),
+  ySpace = yCount,
+  ygl = yGapLength;
+
+  // xAxis
+  if(xAxis.data && xAxis.data.length > 0) {
+    xCount = xAxis.data.length;
+    xSpace = boundaryGap ? xCount : xCount -1;
+    xLength = width - margin * 2;
+    xGapLength = xLength / xSpace;
+  }
+
   let draw = function() {
-    let canvas = _this.canvas,
-      startX = this.startX = settings.startX,
-      startY = this.startY = settings.startY,
-      width = settings.width,
-      height = settings.height,
-      xAxis = settings.xAxis,
-      //yAxis = settings.yAxis,
-      series = settings.series,
-      boundaryGap = settings.boundaryGap,
-      title = settings.title,
-      subTitle = settings.subTitle;
-
-    let TO_TOP = 20;
-
-    let margin = width <= 300 ? width / 5 : width / 10;
-    let xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
-
-    // yAxis
-    let maxY = getMaxMin(false, series, xAxis).max,
-      minY = getMaxMin(false, series, xAxis).min,
-      gm = calculateCoord(maxY, minY),
-      gap = gm.gap;
-    //retMax = gm.max;
-
-    yLength = height - 2 * margin;
-    //count = Math.round(retMax / gap);
-
-    upCount = maxY > 0 ? Math.ceil(maxY / gap) : 0;
-    downCount = minY < 0 ? Math.ceil( Math.abs(minY) / gap) : 0;
-    yCount = upCount + downCount;
-    yGapLength = Math.round( yLength / yCount ),
-    ySpace = yCount,
-    ygl = yGapLength;
-
-    // xAxis
-    if(xAxis.data && xAxis.data.length > 0) {
-      xCount = xAxis.data.length;
-      xSpace = boundaryGap ? xCount : xCount -1;
-      xLength = width - margin * 2;
-      xGapLength = xLength / xSpace;
-    }
 
     canvas.save();
     canvas.translate(-0.5, -0.5);
@@ -106,7 +107,7 @@ export default (settings, _this) => {
       canvas.font = '12px serif';
       canvas.textAlign = 'right';
       canvas.textBaseline = 'middle';
-      canvas.fillText( formatFloat(gap*ii), -10, -yGapLength * ii);
+      canvas.fillText( utils.formatFloat(gap*ii), -10, -yGapLength * ii);
       canvas.restore();
     }
 
@@ -131,7 +132,7 @@ export default (settings, _this) => {
       canvas.textAlign = 'right';
       canvas.textBaseline = 'middle';
       if(iii !== 0) {
-        canvas.fillText( formatFloat(-gap*iii), -10, yGapLength * iii);
+        canvas.fillText( utils.formatFloat(-gap*iii), -10, yGapLength * iii);
       }
       canvas.restore();
     }

@@ -820,7 +820,7 @@ var display = function (settings, _this) {
   });
 };
 
-var arc = function (settings, _this) {
+var arc = function(settings, _this) {
   var draw = function() {
     var canvas = _this.canvas,
       x = this.x = settings.x,
@@ -865,49 +865,50 @@ var arc = function (settings, _this) {
   });
 };
 
-var coord = function (settings, _this) {
+var coord = function(settings, _this) {
+  var canvas = _this.canvas,
+    startX = this.startX = settings.startX,
+    startY = this.startY = settings.startY,
+    width = settings.width,
+    height = settings.height,
+    xAxis = settings.xAxis,
+    //yAxis = settings.yAxis,
+    series = settings.series,
+    boundaryGap = settings.boundaryGap,
+    title = settings.title,
+    subTitle = settings.subTitle;
+
+  var TO_TOP = 20;
+
+  var margin = width <= 300 ? width / 5 : width / 10;
+  var xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
+
+  // yAxis
+  var maxY = utils.getMaxMin(false, series, xAxis).max,
+    minY = utils.getMaxMin(false, series, xAxis).min,
+    gm = utils.calculateCoord(maxY, minY),
+    gap = gm.gap;
+  //retMax = gm.max;
+
+  yLength = height - 2 * margin;
+  //count = Math.round(retMax / gap);
+
+  upCount = maxY > 0 ? Math.ceil(maxY / gap) : 0;
+  downCount = minY < 0 ? Math.ceil( Math.abs(minY) / gap) : 0;
+  yCount = upCount + downCount;
+  yGapLength = Math.round( yLength / yCount ),
+  ySpace = yCount,
+  ygl = yGapLength;
+
+  // xAxis
+  if(xAxis.data && xAxis.data.length > 0) {
+    xCount = xAxis.data.length;
+    xSpace = boundaryGap ? xCount : xCount -1;
+    xLength = width - margin * 2;
+    xGapLength = xLength / xSpace;
+  }
+
   var draw = function() {
-    var canvas = _this.canvas,
-      startX = this.startX = settings.startX,
-      startY = this.startY = settings.startY,
-      width = settings.width,
-      height = settings.height,
-      xAxis = settings.xAxis,
-      //yAxis = settings.yAxis,
-      series = settings.series,
-      boundaryGap = settings.boundaryGap,
-      title = settings.title,
-      subTitle = settings.subTitle;
-
-    var TO_TOP = 20;
-
-    var margin = width <= 300 ? width / 5 : width / 10;
-    var xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
-
-    // yAxis
-    var maxY = getMaxMin(false, series, xAxis).max,
-      minY = getMaxMin(false, series, xAxis).min,
-      gm = calculateCoord(maxY, minY),
-      gap = gm.gap;
-    //retMax = gm.max;
-
-    yLength = height - 2 * margin;
-    //count = Math.round(retMax / gap);
-
-    upCount = maxY > 0 ? Math.ceil(maxY / gap) : 0;
-    downCount = minY < 0 ? Math.ceil( Math.abs(minY) / gap) : 0;
-    yCount = upCount + downCount;
-    yGapLength = Math.round( yLength / yCount ),
-    ySpace = yCount,
-    ygl = yGapLength;
-
-    // xAxis
-    if(xAxis.data && xAxis.data.length > 0) {
-      xCount = xAxis.data.length;
-      xSpace = boundaryGap ? xCount : xCount -1;
-      xLength = width - margin * 2;
-      xGapLength = xLength / xSpace;
-    }
 
     canvas.save();
     canvas.translate(-0.5, -0.5);
@@ -970,7 +971,7 @@ var coord = function (settings, _this) {
       canvas.font = '12px serif';
       canvas.textAlign = 'right';
       canvas.textBaseline = 'middle';
-      canvas.fillText( formatFloat(gap*ii), -10, -yGapLength * ii);
+      canvas.fillText( utils.formatFloat(gap*ii), -10, -yGapLength * ii);
       canvas.restore();
     }
 
@@ -995,7 +996,7 @@ var coord = function (settings, _this) {
       canvas.textAlign = 'right';
       canvas.textBaseline = 'middle';
       if(iii !== 0) {
-        canvas.fillText( formatFloat(-gap*iii), -10, yGapLength * iii);
+        canvas.fillText( utils.formatFloat(-gap*iii), -10, yGapLength * iii);
       }
       canvas.restore();
     }
@@ -1052,7 +1053,7 @@ var coord = function (settings, _this) {
   });
 };
 
-var image = function (settings, _this) {
+var image = function(settings, _this) {
   // insert into images
   if(settings.src) {
     !~_this.images.indexOf(settings.src) && _this.images.push(settings.src);
@@ -1083,7 +1084,7 @@ var image = function (settings, _this) {
   });
 };
 
-var line = function (settings, _this) {
+var line = function(settings, _this) {
   var canvas = _this.canvas,
     matrix = settings.matrix,
     lineWidth = settings.lineWidth,
@@ -1167,7 +1168,7 @@ var line = function (settings, _this) {
   });
 };
 
-var rectangle = function (settings, _this) {
+var rectangle = function(settings, _this) {
   var draw = function() {
     var canvas = _this.canvas;
 
@@ -1190,7 +1191,7 @@ var rectangle = function (settings, _this) {
   });
 };
 
-var text = function (settings, _this) {
+var text = function(settings, _this) {
   function text_ellipsis(ctx, str, maxWidth) {
     var width = ctx.measureText(str).width,
       ellipsis = '...',
@@ -1331,6 +1332,8 @@ var LCL = function LCL(config) {
 
   // init images
   this.images = config.images || [];
+
+  this.utils = utils;
 
   Object.keys(shapes).forEach(function (shape) {
     this$1[shape] = function(settings) {

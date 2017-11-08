@@ -28,9 +28,7 @@
   var width = document.body.clientWidth,
   	height = document.body.clientHeight;
 
-  var world = new LCL(); // draw shapes functions
-
-	var stage = world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: width,
 		height: height,
@@ -85,11 +83,11 @@
 	}).on('mouseenter', function() {
 		world.element.style.cursor = 'pointer';
 		demo1.backgroundColor = '#ef8454';
-		stage.redraw();
+		world.redraw();
 	}).on('mouseleave', function() {
 		world.element.style.cursor = 'default';
 		demo1.backgroundColor = '#ef4476';
-		stage.redraw();
+		world.redraw();
 	}).on('mousedown', function() {
 		window.location = './walk_control.html';
 	}).config({
@@ -111,11 +109,11 @@
 	}).on('mouseenter', function() {
 		world.element.style.cursor = 'pointer';
 		demo2.backgroundColor = '#ef8454';
-		stage.redraw();
+		world.redraw();
 	}).on('mouseleave', function() {
 		world.element.style.cursor = 'default';
 		demo2.backgroundColor = '#ef4476';
-		stage.redraw();
+		world.redraw();
 	}).on('mousedown', function() {
 		window.location = './shapes.html';
 	}).config({
@@ -137,11 +135,11 @@
 	}).on('mouseenter', function() {
 		world.element.style.cursor = 'pointer';
 		demo3.backgroundColor = '#ef8454';
-		stage.redraw();
+		world.redraw();
 	}).on('mouseleave', function() {
 		world.element.style.cursor = 'default';
 		demo3.backgroundColor = '#ef4476';
-		stage.redraw();
+		world.redraw();
 	}).on('mousedown', function() {
 		window.location = './big_data.html';
 	}).config({
@@ -163,11 +161,11 @@
 	}).on('mouseenter', function() {
 		world.element.style.cursor = 'pointer';
 		demo4.backgroundColor = '#ef8454';
-		stage.redraw();
+		world.redraw();
 	}).on('mouseleave', function() {
 		world.element.style.cursor = 'default';
 		demo4.backgroundColor = '#ef4476';
-		stage.redraw();
+		world.redraw();
 	}).on('mousedown', function() {
 		window.location = './multi_canvas.html';
 	}).config({
@@ -199,7 +197,7 @@
 		trash.text = '笼子(' + bear + ')';
 		world.objects.pop();
 		world._objects = world.utils.reverse(world.objects);
-		stage.redraw();
+		world.redraw();
 	});
 
 	var tip = world.text({
@@ -217,14 +215,7 @@
 		fixed: true
 	});
 
-	stage.addChild(demos);
-	stage.addChild(title);
-	stage.addChild(demo1);
-	stage.addChild(demo2);
-	stage.addChild(demo3);
-	stage.addChild(demo4);
-	stage.addChild(trash);
-	stage.addChild(tip);
+	world.addChild([demos, title, demo1, demo2, demo3, demo4, trash, tip]);
 
 	function createBear() {
 		var arr = [{
@@ -246,7 +237,7 @@
 		}];
 
 		var randomNum = Math.round(Math.random()*3);
-		stage.addChild(
+		world.addChild(
 			world.image({
 				startX: Math.random() * width - 50,
 				startY: Math.random() * height - 60,
@@ -268,8 +259,8 @@
 		createBear();
 	}
 
-	stage.show();
-	stage.animate(go);
+	world.show();
+	world.animate(go);
 
 	var num = 0;
 	function go() {
@@ -305,7 +296,7 @@
 			});
 		}
 
-		stage.redraw();
+		world.redraw();
 		num++;
 	}
 
