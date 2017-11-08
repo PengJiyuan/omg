@@ -44,7 +44,9 @@ jspm_packages
 
 # gh-pages
 examples/.gitignore
-examples/lcl.min.js
 
 # Mac files
 **/.DS_Store
+
+# npm file
+package-lock.json
