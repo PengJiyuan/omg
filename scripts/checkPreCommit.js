@@ -9,7 +9,7 @@
 const path = require('path');
 const fs = require('fs');
 const execFile = require('child_process').execFile;
-const scriptPath = path.resolve(__dirname, 'precommit-hook.sh');
+const scriptPath = path.resolve(__dirname, 'pre_commit.sh');
 require('colors');
 
 if(fs.existsSync(path.resolve(__dirname, '../.git/hooks/pre-commit'))) {

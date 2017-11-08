@@ -4,6 +4,7 @@
 	(global.lcl = factory());
 }(this, (function () { 'use strict';
 
+/* eslint-disable */
 // requestAnimationFrame polyfill
 (function () {
   var vendors = ['ms', 'moz', 'webkit', 'o'];
@@ -961,7 +962,7 @@ var coord = function(settings, _this) {
       canvas.save();
       canvas.strokeStyle = '#ccc';
       canvas.beginPath();
-      canvas.moveTo(0, -"yGapLength" * ii);
+      canvas.moveTo(0, -yGapLength * ii);
       canvas.lineTo(width - margin*2, -yGapLength * ii);
       canvas.stroke();
       canvas.restore();
