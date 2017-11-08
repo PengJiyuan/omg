@@ -33,15 +33,14 @@
 
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
-	var world = new LCL();
-	var stage = world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
 		enableGlobalTranslate: true
 	});
 
-	//stage.scaleCanvas(true);
+	//world.scaleCanvas(true);
 
 	var line = world.line({
 		matrix: [
@@ -74,10 +73,10 @@
 		changeIndex: true
 	}).on('mouseenter', function() {
 		arca.radius = 130;
-		stage.redraw();
+		world.redraw();
 	}).on('mouseleave', function() {
 		arca.radius = 100;
-		stage.redraw();
+		world.redraw();
 	});
 
 	var arcb = world.arc({
@@ -94,10 +93,10 @@
 		changeIndex: true
 	}).on('mouseenter', function() {
 		arcb.radius = 130;
-		stage.redraw();
+		world.redraw();
 	}).on('mouseleave', function() {
 		arcb.radius = 100;
-		stage.redraw();
+		world.redraw();
 	});
 
 	var arcc = world.arc({
@@ -114,10 +113,10 @@
 		changeIndex: true
 	}).on('mouseenter', function() {
 		arcc.radius = 130;
-		stage.redraw();
+		world.redraw();
 	}).on('mouseleave', function() {
 		arcc.radius = 100;
-		stage.redraw();
+		world.redraw();
 	});
 
 	var image = world.image({
@@ -178,7 +177,7 @@
 	}).on('dragend', function() {
 		arc.moveX = 0;
 		arc.moveY = 0;
-		stage.redraw();
+		world.redraw();
 	}).config({
 		drag: true,
 		changeIndex: true,
@@ -196,15 +195,15 @@
 		bg: true
 	});
 
-	stage.addChild(image);
-	stage.addChild(text);
-	stage.addChild(image3);
-	stage.addChild(arc2);
-	stage.addChild(arc);
-	stage.addChild(arca);
-	stage.addChild(arcb);
-	stage.addChild(arcc);
-		stage.addChild(
+	world.addChild(image);
+	world.addChild(text);
+	world.addChild(image3);
+	world.addChild(arc2);
+	world.addChild(arc);
+	world.addChild(arca);
+	world.addChild(arcb);
+	world.addChild(arcc);
+		world.addChild(
 		world.coord({
 			startX: 10,
 			startY: 0,
@@ -236,9 +235,9 @@
 			zindex: 0
 		})
 	);
-	stage.addChild(line);
+	world.addChild(line);
 
-	stage.show();
+	world.show();
 
 	// drag and drop
 
@@ -262,7 +261,7 @@
   	});
   	if(which.length > 0 ) {
   		which[0].fillColor = '#000';
-  		stage.redraw();
+  		world.redraw();
   	}
   }
 
@@ -280,18 +279,18 @@
 			console.log('click a');
 		}).on('mouseenter', function() {
 			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
+			world.redraw();
 		}).on('mouseleave', function() {
 			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
+			world.redraw();
 		}).config({
 			drag: true,
 			changeIndex: true
 		});
 
-    stage.addChild(a);
+    world.addChild(a);
 
-		stage.redraw();
+		world.redraw();
     return false;
 	};
 

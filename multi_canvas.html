@@ -31,9 +31,7 @@
 <script src="./lcl.min.js"></script>
 <script>
 
-	var world = new LCL();
-
-	var stage = new world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -41,7 +39,7 @@
 	});
 
 	function createRect() {
-		stage.addChild(
+		world.addChild(
 			world.arc({
 				x: Math.random()*400,
 				y: Math.random()*400,
@@ -56,11 +54,9 @@
 	}	
 
 	for(var i = 0;i < 200; i++) {createRect();}
-	stage.show();
+	world.show();
 
-	var world2 = new LCL();
-
-	var stage2 = world2.init({
+	var world2 = lcl({
 		element: document.getElementById('canvas2'),
 		width: 500,
 		height: 500,
@@ -68,7 +64,7 @@
 	});
 
 	function createRect2() {
-		stage2.addChild(
+		world2.addChild(
 			world2.arc({
 				x: Math.random()*500,
 				y: Math.random()*500,
@@ -83,7 +79,7 @@
 	}	
 
 	for(var i = 0;i < 200; i++) {createRect2();}
-	stage2.show();
+	world2.show();
 
 
 

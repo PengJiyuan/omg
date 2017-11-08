@@ -26,9 +26,6 @@
 </div>
 <button id="start">start</button>
 <button id="stop">stop</button>
-<ul class="drag">
-	<li id="dg" draggable="true">Drag</li>
-</ul>
 <script src="./lcl.min.js"></script>
 <script src="./fpsmeter.min.js"></script>
 <script>
@@ -41,8 +38,7 @@
 
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
-	var world = new LCL();
-	var stage = world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -92,15 +88,12 @@
 		var mx = arc.moveX,
 			my = arc.moveY,
 			r = arc2.radius;
-
 			if(Math.sqrt( mx*mx + my*my ) > r + 20) {
 				arc.moveX = 0;
 				arc.moveY = 0;
 			}
-
 			// direction
 			if(mx > 0 && my > 0) {
-
 				if(my / mx < 1) {
 					direction = 'right';
 					image3.sliceX = 3;
@@ -114,9 +107,7 @@
 					image3.sliceWidth = 97;
 					image3.width = 97;
 				}
-
 			} else if(mx > 0 && my < 0) {
-
 				if(my / mx > -1) {
 					direction = 'right';
 					image3.sliceX = 3;
@@ -130,9 +121,7 @@
 					image3.sliceWidth = 97;
 					image3.width = 97;
 				}
-
 			} else if(mx < 0 && my > 0) {
-
 				if(my / mx > -1) {
 					direction = 'left';
 					image3.sliceX = 7;
@@ -146,9 +135,7 @@
 					image3.sliceWidth = 97;
 					image3.width = 97;
 				}
-
 			} else if(mx < 0 && my < 0) {
-
 				if(my / mx < 1) {
 					direction = 'left';
 					image3.sliceX = 7;
@@ -167,7 +154,7 @@
 	}).on('dragend', function() {
 		arc.moveX = 0;
 		arc.moveY = 0;
-		stage.redraw();
+		world.redraw();
 	}).config({
 		drag: true,
 		changeIndex: true,
@@ -185,12 +172,8 @@
 		bg: true
 	});
 
-	stage.addChild(image);
-	stage.addChild(image3);
-	stage.addChild(arc2);
-	stage.addChild(arc);
-
-	stage.show();
+	world.addChild([image, image3, arc2, arc]);
+	world.show();
 
 	var num = 0;
 	function go() {
@@ -263,71 +246,16 @@
 		}
 
 		meter.tick();
-		stage.redraw();
+		world.redraw();
 
 		num ++;
 	}
 	start.onclick = function() {
-		flag = stage.animate(go);
+		flag = world.animate(go);
 	}
 	stop.onclick = function() {
-		stage.stop(flag);
+		world.stop(flag);
 	}
-
-	// drag and drop
-
-	var dg = document.getElementById('dg');
-	dg.onselectstart = function() {
-    return false;
-  };
-  dg.ondragstart = function(ev) {
-    ev.dataTransfer.effectAllowed = "move";
-    //ev.dataTransfer.setData("text", ev.target.innerHTML);
-    ev.dataTransfer.setDragImage(ev.target, 0, 0);
-    return true;
-  };
-
-  world.element.ondragover = function(e) {
-  	e.preventDefault();
-  	var x = world._event.getPos(e).x;
-  	var y = world._event.getPos(e).y;
-  	var which = world._objects.filter(function(item) {
-  		return item.isPointInner(x, y);
-  	});
-  	if(which.length > 0 ) {
-  		which[0].fillColor = '#000';
-  		stage.redraw();
-  	}
-  }
-
-  world.element.ondrop = function(ev) {
-  	var x = world._event.getPos(ev).x;
-  	var y = world._event.getPos(ev).y;
-  	var width = Math.random()*300;
-    var a = world.rectangle({
-			startX: x,
-			startY: y,
-			width: width,
-			height: width,
-			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-		}).on('mousedown', function() {
-			console.log('click a');
-		}).on('mouseenter', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
-		}).on('mouseleave', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
-		}).config({
-			drag: true,
-			changeIndex: true
-		});
-
-    stage.addChild(a);
-
-		stage.redraw();
-    return false;
-	};
 
 </script>
 </body>
