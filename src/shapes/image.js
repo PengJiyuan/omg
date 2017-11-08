@@ -1,6 +1,6 @@
 import display from '../display.js';
 
-export default (settings, _this) => {
+export default function(settings, _this) {
   // insert into images
   if(settings.src) {
     !~_this.images.indexOf(settings.src) && _this.images.push(settings.src);

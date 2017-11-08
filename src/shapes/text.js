@@ -1,6 +1,6 @@
 import display from '../display.js';
 
-export default (settings, _this) => {
+export default function(settings, _this) {
   function text_ellipsis(ctx, str, maxWidth) {
     let width = ctx.measureText(str).width,
       ellipsis = '...',

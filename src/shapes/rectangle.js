@@ -1,6 +1,6 @@
 import display from '../display.js';
 
-export default (settings, _this) => {
+export default function(settings, _this) {
   let draw = function() {
     let canvas = _this.canvas;
 

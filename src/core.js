@@ -59,6 +59,8 @@ export class LCL {
     // init images
     this.images = config.images || [];
 
+    this.utils = utils;
+
     Object.keys(shapes).forEach(shape => {
       this[shape] = function(settings) {
         return shapes[shape](settings, this);

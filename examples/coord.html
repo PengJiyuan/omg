@@ -23,15 +23,14 @@
 </div>
 <script src="../dist/lcl.js"></script>
 <script>
-	var world = new LCL();
-	var stage = world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
 		enableGlobalTranslate: true
 	});
 
-	stage.addChild(
+	world.addChild(
 		world.coord({
 			startX: 0,
 			startY: 0,
@@ -63,7 +62,7 @@
 			zindex: 0
 		})
 	);
-	stage.show();
+	world.show();
 
 </script>
 </body>

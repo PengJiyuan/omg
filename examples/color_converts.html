@@ -23,8 +23,7 @@
 </div>
 <script src="../dist/lcl.js"></script>
 <script>
-	var world = new LCL();
-	var stage = world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
@@ -49,19 +48,19 @@
 		}).on('mouseenter mousemove', function() {
 			world.element.style.cursor = 'pointer';
 			arc.color = lighten_color;
-			stage.redraw();
+			world.redraw();
 		}).on('mouseleave', function() {
 			world.element.style.cursor = 'default';
 			arc.color = color;
-			stage.redraw();
+			world.redraw();
 		}).config({
 			drag: true,
 			changeIndex: true
 		});
-		stage.addChild(arc);
+		world.addChild(arc);
 	}	
 	for(var i = 0;i < 2; i++) {createArc();}
-	stage.show();
+	world.show();
 
 </script>
 </body>

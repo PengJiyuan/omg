@@ -41,8 +41,7 @@
 
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
-	var world = new LCL();
-	var stage = world.init({
+	var world = lcl({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -167,7 +166,7 @@
 	}).on('dragend', function() {
 		arc.moveX = 0;
 		arc.moveY = 0;
-		stage.redraw();
+		world.redraw();
 	}).config({
 		drag: true,
 		changeIndex: true,
@@ -185,12 +184,12 @@
 		bg: true
 	});
 
-	stage.addChild(image);
-	stage.addChild(image3);
-	stage.addChild(arc2);
-	stage.addChild(arc);
+	world.addChild(image);
+	world.addChild(image3);
+	world.addChild(arc2);
+	world.addChild(arc);
 
-	stage.show();
+	world.show();
 
 	var num = 0;
 	function go() {
@@ -263,15 +262,15 @@
 		}
 
 		meter.tick();
-		stage.redraw();
+		world.redraw();
 
 		num ++;
 	}
 	start.onclick = function() {
-		flag = stage.animate(go);
+		flag = world.animate(go);
 	}
 	stop.onclick = function() {
-		stage.stop(flag);
+		world.stop(flag);
 	}
 
 	// drag and drop
@@ -296,7 +295,7 @@
   	});
   	if(which.length > 0 ) {
   		which[0].fillColor = '#000';
-  		stage.redraw();
+  		world.redraw();
   	}
   }
 
@@ -314,18 +313,18 @@
 			console.log('click a');
 		}).on('mouseenter', function() {
 			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
+			world.redraw();
 		}).on('mouseleave', function() {
 			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			stage.redraw();
+			world.redraw();
 		}).config({
 			drag: true,
 			changeIndex: true
 		});
 
-    stage.addChild(a);
+    world.addChild(a);
 
-		stage.redraw();
+		world.redraw();
     return false;
 	};
 

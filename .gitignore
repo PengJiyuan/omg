@@ -42,5 +42,9 @@ jspm_packages
 # my test
 /test
 
+# gh-pages
+examples/.gitignore
+examples/lcl.min.js
+
 # Mac files
 **/.DS_Store
