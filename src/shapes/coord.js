@@ -97,7 +97,7 @@ export default function(settings, _this) {
       canvas.save();
       canvas.strokeStyle = '#ccc';
       canvas.beginPath();
-      canvas.moveTo(0, -`yGapLength` * ii);
+      canvas.moveTo(0, -yGapLength * ii);
       canvas.lineTo(width - margin*2, -yGapLength * ii);
       canvas.stroke();
       canvas.restore();

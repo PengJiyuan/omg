@@ -1,17 +1,14 @@
 {
     "env": {
         "browser": true,
+        "es6": true,
         "node": true
     },
-    "globals": {
-        "LCL": true
-    },
     "extends": "eslint:recommended",
+    "parserOptions": {
+        "sourceType": "module"
+    },
     "rules": {
-        "comma-spacing": [
-            "error",
-            { "before": false, "after": true }
-        ],
         "indent": [
             "error",
             2
@@ -20,24 +17,13 @@
             "error",
             "unix"
         ],
+        "quotes": [
+            "error",
+            "single"
+        ],
         "semi": [
             "error",
             "always"
-        ],
-        "no-trailing-spaces": [
-            "error"
-        ],
-        "no-empty": [
-            "warn"
-        ],
-        "no-console": [
-            "error", 
-            { 
-                "allow": ["log", "error", "warn"]
-            }
-        ],
-        "no-alert": [
-            "error"
         ]
     }
 }

@@ -12,9 +12,10 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w"
+    "dev": "rollup -c -w",
+    "eslint": "eslint src/**/ --ext .js --cache"
   },
-  "author": "PengJiyuan <pengjiyuanzz@gmail.com>",
+  "author": "PengJiyuan <pjy@isweety.me>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,6 +27,8 @@
   "homepage": "https://github.com/PengJiyuan/LCL#readme",
   "dependencies": {},
   "devDependencies": {
+    "colors": "^1.1.2",
+    "eslint": "^4.10.0",
     "rollup": "^0.50.0",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-json": "^2.3.0"

@@ -10,4 +10,4 @@ if [ ! -e $FILE ]
     chmod +x $FILE
 fi
 
-echo -e "#!/bin/bash\n\n# CSC, Code Style Checker\n\ncd $1\nnpm run eslint" > $FILE
+echo -e "#!/bin/bash\n\n# CSC, Code Style Checker\n\ncd $1\nnpm run eslint && npm run build" > $FILE

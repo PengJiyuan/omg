@@ -1,8 +1,0 @@
-**/node_modules/**
-
-/disk
-
-/src/header.js
-/src/footer.js
-
-/testHtml

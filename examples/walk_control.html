@@ -26,9 +26,6 @@
 </div>
 <button id="start">start</button>
 <button id="stop">stop</button>
-<ul class="drag">
-	<li id="dg" draggable="true">Drag</li>
-</ul>
 <script src="../dist/lcl.js"></script>
 <script src="./fpsmeter.min.js"></script>
 <script>
@@ -82,7 +79,7 @@
 		y: 400,
 		radius: 30,
 		color: 'rgba(255, 255, 255, 0.5)',
-		type: 'fill'
+		style: 'fill'
 	}).on('mouseenter', function() {
 		world.element.style.cursor = 'pointer';
 	}).on('mouseleave', function() {
@@ -91,15 +88,12 @@
 		var mx = arc.moveX,
 			my = arc.moveY,
 			r = arc2.radius;
-
 			if(Math.sqrt( mx*mx + my*my ) > r + 20) {
 				arc.moveX = 0;
 				arc.moveY = 0;
 			}
-
 			// direction
 			if(mx > 0 && my > 0) {
-
 				if(my / mx < 1) {
 					direction = 'right';
 					image3.sliceX = 3;
@@ -113,9 +107,7 @@
 					image3.sliceWidth = 97;
 					image3.width = 97;
 				}
-
 			} else if(mx > 0 && my < 0) {
-
 				if(my / mx > -1) {
 					direction = 'right';
 					image3.sliceX = 3;
@@ -129,9 +121,7 @@
 					image3.sliceWidth = 97;
 					image3.width = 97;
 				}
-
 			} else if(mx < 0 && my > 0) {
-
 				if(my / mx > -1) {
 					direction = 'left';
 					image3.sliceX = 7;
@@ -145,9 +135,7 @@
 					image3.sliceWidth = 97;
 					image3.width = 97;
 				}
-
 			} else if(mx < 0 && my < 0) {
-
 				if(my / mx < 1) {
 					direction = 'left';
 					image3.sliceX = 7;
@@ -178,17 +166,13 @@
 		y: 400,
 		radius: 80,
 		color: 'rgba(255, 255, 255, 0.8)',
-		type: 'stroke'
+		style: 'stroke'
 	}).config({
 		fixed: true,
 		bg: true
 	});
 
-	world.addChild(image);
-	world.addChild(image3);
-	world.addChild(arc2);
-	world.addChild(arc);
-
+	world.addChild([image, image3, arc2, arc]);
 	world.show();
 
 	var num = 0;
@@ -272,61 +256,6 @@
 	stop.onclick = function() {
 		world.stop(flag);
 	}
-
-	// drag and drop
-
-	var dg = document.getElementById('dg');
-	dg.onselectstart = function() {
-    return false;
-  };
-  dg.ondragstart = function(ev) {
-    ev.dataTransfer.effectAllowed = "move";
-    //ev.dataTransfer.setData("text", ev.target.innerHTML);
-    ev.dataTransfer.setDragImage(ev.target, 0, 0);
-    return true;
-  };
-
-  world.element.ondragover = function(e) {
-  	e.preventDefault();
-  	var x = world._event.getPos(e).x;
-  	var y = world._event.getPos(e).y;
-  	var which = world._objects.filter(function(item) {
-  		return item.isPointInner(x, y);
-  	});
-  	if(which.length > 0 ) {
-  		which[0].fillColor = '#000';
-  		world.redraw();
-  	}
-  }
-
-  world.element.ondrop = function(ev) {
-  	var x = world._event.getPos(ev).x;
-  	var y = world._event.getPos(ev).y;
-  	var width = Math.random()*300;
-    var a = world.rectangle({
-			startX: x,
-			startY: y,
-			width: width,
-			height: width,
-			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-		}).on('mousedown', function() {
-			console.log('click a');
-		}).on('mouseenter', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			world.redraw();
-		}).on('mouseleave', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			world.redraw();
-		}).config({
-			drag: true,
-			changeIndex: true
-		});
-
-    world.addChild(a);
-
-		world.redraw();
-    return false;
-	};
 
 </script>
 </body>
