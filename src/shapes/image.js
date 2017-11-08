@@ -27,6 +27,6 @@ export default (settings, _this) => {
 
   return Object.assign({}, display(settings, _this), {
     type: 'image',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 }

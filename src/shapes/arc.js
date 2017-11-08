@@ -41,6 +41,6 @@ export default (settings, _this) => {
 
   return Object.assign({}, display(settings, _this), {
     type: 'arc',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 }
