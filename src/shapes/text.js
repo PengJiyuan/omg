@@ -76,6 +76,6 @@ export default (settings, _this) => {
 
   return Object.assign({}, display(settings, _this), {
     type: 'text',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 }

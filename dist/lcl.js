@@ -803,6 +803,8 @@ var display = function (settings, _this) {
 
     moveY: 0,
 
+    zindex: 0,
+
     on: display.on,
 
     isPointInner: display.isPointInner,
@@ -859,7 +861,7 @@ var arc = function (settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'arc',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 };
 
@@ -1034,7 +1036,7 @@ var coord = function (settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'coord',
-    draw: draw.bind(display(settings, _this)),
+    draw: draw,
     xLength: xLength,
     yLength: yLength,
     xSpace: xSpace,
@@ -1077,7 +1079,7 @@ var image = function (settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'image',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 };
 
@@ -1160,7 +1162,7 @@ var line = function (settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'line',
-    draw: draw.bind(display(settings, _this)),
+    draw: draw,
     totalLength: totalLength
   });
 };
@@ -1184,7 +1186,7 @@ var rectangle = function (settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 };
 
@@ -1264,7 +1266,7 @@ var text = function (settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'text',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 };
 
@@ -1276,8 +1278,6 @@ var shapes = {
   rectangle: rectangle,
   text: text
 };
-
-// console.log(utils);
 
 var LCL = function LCL(config) {
   var this$1 = this;

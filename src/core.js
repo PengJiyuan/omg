@@ -5,7 +5,6 @@ import { Color } from './utils/color';
 import { ImageLoader } from './utils/imageLoader';
 import utils from './utils/helpers';
 import shapes from './shapes/index';
-// console.log(utils);
 
 export class LCL {
 

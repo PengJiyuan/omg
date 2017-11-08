@@ -19,6 +19,6 @@ export default (settings, _this) => {
 
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
-    draw: draw.bind(display(settings, _this))
+    draw: draw
   });
 }

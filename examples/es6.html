@@ -16,7 +16,7 @@
     element: document.getElementById('canvas'),
     width: 500,
     height: 500,
-    enableGlobalTranslate: false
+    enableGlobalTranslate: true
   });
 
   console.log(world.getVersion());
@@ -29,13 +29,16 @@
   //   type: 'fill'
   // });
 
-  // var b = world.rectangle({
-  //   startX: 100,
-  //   startY: 0,
-  //   width: 110,
-  //   height: 110,
-  //   fillColor: '#514022'
-  // });
+  var b = world.rectangle({
+    startX: 100,
+    startY: 0,
+    width: 110,
+    height: 110,
+    fillColor: '#514022'
+  }).config({
+    drag: true,
+    changeIndex: true
+  });
 
   // var c = world.line({
   //   matrix: [
@@ -47,20 +50,20 @@
   //   zindex: 3
   // });
 
-  // var line = world.line({
-  //   matrix: [
-  //   {x: 10,y: 180}, 
-  //   {x: 40,y: 50}, 
-  //   {x: 80,y: 180}, 
-  //   {x: 90,y: 80},
-  //   {x: 110,y: 100}, 
-  //   {x: 140,y: 50},
-  //   {x: 260,y: 180}
-  //   ],
-  //   lineWidth: 2,
-  //   strokeColor: '#ef8376',
-  //   dash: [3, 3]
-  // })
+  var line = world.line({
+    matrix: [
+    {x: 10,y: 180}, 
+    {x: 40,y: 50}, 
+    {x: 80,y: 180}, 
+    {x: 90,y: 80},
+    {x: 110,y: 100}, 
+    {x: 140,y: 50},
+    {x: 260,y: 180}
+    ],
+    lineWidth: 2,
+    strokeColor: '#ef8376',
+    dash: [3, 3]
+  });
 
   // var arca = world.arc({
   //   x: 130,
@@ -93,7 +96,7 @@
   //   color: '#fd8915',
   //   style: 'fill',
   //   easingType: 'easeInOutQuint'
-  // })
+  // });
 
   // var image = world.image({
   //   startX: 0,
@@ -133,42 +136,46 @@
     changeIndex: true
   });
 
-  // var image3 = world.image({
-  //   startX: 300,
-  //   startY: 200,
-  //   width: 97,
-  //   height: 110,
-  //   sliceX: 5,
-  //   sliceY: 0,
-  //   sliceWidth: 97,
-  //   sliceHeight: 110,
-  //   src: './img/action.png'
-  // }).on('mousedown', function() {
-  //   console.log('image3');
-  // }).config({
-  //   drag: true,
-  //   changeIndex: true
-  // });
+  var image3 = world.image({
+    startX: 300,
+    startY: 200,
+    width: 97,
+    height: 110,
+    sliceX: 5,
+    sliceY: 0,
+    sliceWidth: 97,
+    sliceHeight: 110,
+    src: './img/action.png'
+  }).on('mousedown', function() {
+    console.log('image3');
+  }).config({
+    drag: true,
+    changeIndex: true
+  });
 
-  // var arc = world.arc({
-  //   x: 400,
-  //   y: 400,
-  //   radius: 30,
-  //   color: 'rgba(255, 255, 255, 0.5)',
-  //   style: 'fill'
-  // }).on('mouseenter', function() {
-  //   console.log('enter')
-  //   world.element.style.cursor = 'pointer';
-  // });
+  var arc = world.arc({
+    x: 400,
+    y: 400,
+    radius: 30,
+    color: 'rgba(255, 255, 255, 0.5)',
+    style: 'fill'
+  }).on('mouseenter', function() {
+    console.log('enter')
+    world.element.style.cursor = 'pointer';
+  }).config({
+    drag: true,
+    zindex: 100
+  });
 
-  // var arc2 = world.arc({
-  //   x: 400,
-  //   y: 400,
-  //   radius: 80,
-  //   color: 'rgba(255, 255, 255, 0.8)',
-  //   style: 'stroke'
-  // })
-  world.addChild([/*line, arca, arcb, arcc, */text/*, arc, arc2*/ ]);
+  var arc2 = world.arc({
+    x: 400,
+    y: 400,
+    radius: 80,
+    color: 'rgba(255, 255, 255, 0.8)',
+    style: 'stroke',
+    zindex: 1
+  });
+  world.addChild([b, line, image3, text, arc, arc2 ]);
   world.show();
 </script>
 </body>

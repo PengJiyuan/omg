@@ -209,6 +209,8 @@ export default (settings, _this) => {
 
     moveY: 0,
 
+    zindex: 0,
+
     on: display.on,
 
     isPointInner: display.isPointInner,

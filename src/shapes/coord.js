@@ -172,7 +172,7 @@ export default (settings, _this) => {
 
   return Object.assign({}, display(settings, _this), {
     type: 'coord',
-    draw: draw.bind(display(settings, _this)),
+    draw: draw,
     xLength: xLength,
     yLength: yLength,
     xSpace: xSpace,
