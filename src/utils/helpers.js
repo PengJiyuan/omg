@@ -117,4 +117,4 @@ export default {
     return Object.prototype.toString.call(obj) === '[object Array]';
   }
 
-}
+};

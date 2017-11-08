@@ -1,4 +1,4 @@
-<img src="assets/logo.png" />
+<img src=".github/logo.png" />
 
 
 

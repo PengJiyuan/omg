@@ -1,3 +1,4 @@
+/* eslint-disable */
 // requestAnimationFrame polyfill
 export default (() => {
   const vendors = ['ms', 'moz', 'webkit', 'o'];
