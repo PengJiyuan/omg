@@ -39,6 +39,7 @@
 
 #### v3.0.0
 *  重构代码。
+*  添加autoscale，解决Retina屏模糊问题。
 
 ## ToDo
 
