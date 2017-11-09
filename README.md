@@ -32,14 +32,15 @@ console.log(OMG); // ...
 
 ```javascript
 import omg from 'omg.js';
-const world = omg({
+
+const stage = omg({
   element: document.getElementById('canvas'),
   width: 500,
   height: 500,
   enableGlobalTranslate: true
 });
 
-const rect = world.rectangle({
+const rect = stage.rectangle({
   startX: 120,
   startY: 120,
   width: 200,
@@ -70,9 +71,9 @@ const rect = world.rectangle({
   changeIndex: true
 });
 
-world.addChild(rect);
+stage.addChild(rect);
 
-world.show();
+stage.show();
 ```
 
 ## Usage
@@ -80,20 +81,20 @@ world.show();
 import omg from 'omg.js';
 
 // Init
-const world = omg({
+const stage = omg({
   element: document.getElementById('canvas'),
   width: 500,
   height: 500,
   enableGlobalTranslate: true // 等同于 stage.globalTranslate(true)
 });
 
-world.getVersion(); // v x.x.x
+stage.getVersion(); // v x.x.x
 ```
 
 Enable global drag.
 
 ```javascript
- world.globalTranslate(true);
+ stage.globalTranslate(true);
 ```
 
 ### Shapes
@@ -101,7 +102,7 @@ Enable global drag.
 **Rectangle**
 
 ```javascript
-const rect = world.rectangle({
+const rect = stage.rectangle({
   startX: 0,
   startY: 0,
   width: 110,
@@ -114,7 +115,7 @@ const rect = world.rectangle({
 **Line**
 
 ```javascript
-const line = world.line({
+const line = stage.line({
   startX: 200,
   startY: 100,
   endX: 400,
@@ -126,7 +127,7 @@ const line = world.line({
 **Image**
 
 ```javascript
-const image = world.image({
+const image = stage.image({
   startX: 0,
   startY: 0,
   width: 800,
@@ -136,7 +137,7 @@ const image = world.image({
 });
 
 // For more detail, check canvas api.
-const image3 = world.image({
+const image3 = stage.image({
   startX: 200,
   startY: 200,
   width: 97,
@@ -153,7 +154,7 @@ const image3 = world.image({
 **Text**
 
 ```javascript
-const text = world.text({
+const text = stage.text({
   startX: 300,
   startY: 40,
   width: 150,
@@ -162,7 +163,7 @@ const text = world.text({
   center: true,  // 文字居中
   backgroundColor: 'blue', // 给文字添加背景颜色(矩形)
   font: 'italic bold 20px arial,sans-serif', // 文字样式
-  text: 'Hello World', // 文字内容
+  text: 'Hello stage', // 文字内容
   color: '#fff', // 文字颜色
   type: 'fill' // fill -- 填充， stroke -- 描边,
   zindex: 4
@@ -172,7 +173,7 @@ const text = world.text({
 **Circle**
 
 ```javascript
-const arc = world.arc({
+const arc = stage.arc({
   x: 400,
   y: 400,
   radius: 30,
@@ -185,7 +186,7 @@ const arc = world.arc({
 **Sector**
 
 ```javascript
-const arcb = world.arc({
+const arcb = stage.arc({
   x: 130,
   y: 380,
   radius: 100,
@@ -199,7 +200,7 @@ const arcb = world.arc({
 **Coordinate System**
 
 ```javascript
-const coord = world.coord({
+const coord = stage.coord({
   startX: 0, // 坐标系的左上起点的x坐标
   startY: 0, // 坐标系的左上起点的y坐标
   width: 800, // 坐标系的宽度
@@ -251,18 +252,18 @@ rect.on('mousedown', function(){
 ### Add shapes to stage.
 
 ```javascript
-world.addChild(rect);
-world.addChild(line);
+stage.addChild(rect);
+stage.addChild(line);
 
 // or
 
-world.addChild([rect, line, arc1, text1]);
+stage.addChild([rect, line, arc1, text1]);
 ```
 
 ### Draw
 
 ```javascript
-world.show();
+stage.show();
 ```
 
 ### Animation
@@ -271,16 +272,16 @@ world.show();
 function go() {
   rect.rotate++;
   line.rotate = line1.rotate + 2;
-  world.redraw();
+  stage.redraw();
 }
 
-const a = world.animate(go);
+const a = stage.animate(go);
 ```
 
 ### Stop animation
 
 ```javascript
-world.stop(a);
+stage.stop(a);
 ```
 
 ## [CHANGELOG](./.github/CHANGELOG.md)
