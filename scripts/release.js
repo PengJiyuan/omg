@@ -1,102 +1,86 @@
-var fs = require('fs');
-var path = require('path');
-var child_process = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const child_process = require('child_process');
 
-var PKG_PATH = path.join(__dirname, '../package.json');
+const PKG_PATH = path.join(__dirname, '../package.json');
 
-var pkg = require('../package.json');
-var pkgFile = fs.readFileSync(PKG_PATH, 'utf-8');
+const pkg = require('../package.json');
+const pkgFile = fs.readFileSync(PKG_PATH, 'utf-8');
 
-var args = process.argv.slice(2);
+const args = process.argv.slice(2);
 
-var currentVersion = pkg.version;
-var version = args[0];
-var commitMsg = args[1] || null;
+const currentVersion = pkg.version;
+const version = args[0] || pkg.version;
+const commitMsg = args[1] || 'Release version: v' + version;
+require('colors');
 
 function changeVersion(v) {
-  var newPkgFile = pkgFile.replace(
+  const newPkgFile = pkgFile.replace(
     /^(\s+"version": ").*?"/m, '$1' + v + '"'
   );
   fs.writeFileSync(PKG_PATH, newPkgFile);
 }
 
-if(!version || !/^(\d+\.){2}\d+$/.test(version)) {
-  console.log('please specify a version!');
-  process.exit(0);
-} else if(version <= currentVersion) {
-  console.log('The version you specified must bigger than current version!');
-  process.exit(0);
-}
-
 /*
  * Change version in package.json
  */
-
-console.log('Updating package.json version...');
-console.log('');
 changeVersion(version);
 
-console.log('package.json updated Success!');
+console.log('package.json updated Success!'.green);
 
 /*
  * Build & Commit & Add Tag & push tag origin & push origin & publish to NPM
  */
 
-console.log('');
-console.log('Build...');
+console.log('\nBuild...\n');
 
-child_process.exec('npm run build', function(err, stdout) {
+child_process.exec('npm run build', (err, stdout) => {
   if(err) {
     changeVersion(currentVersion);
-    console.log('Build failed!');
+    console.log('Build failed!'.red);
     console.error(err);
     process.exit(0);
   }
   console.log(stdout);
 
-  console.log('Git Commit..');
-  console.log('');
+  console.log('\nStart Git Commit...\n'.green);
 
-  child_process.exec('git add . && git commit -m "' + (commitMsg ? commitMsg : version) + '"', function(err, stdout) {
+  child_process.exec('git add . && git commit -m "' + commitMsg + '"', (err, stdout) => {
     if(err) {
       changeVersion(currentVersion);
-      console.log('Commit failed!');
+      console.log('Commit failed!'.red);
       console.error(err);
       process.exit(0);
     }
 
     console.log(stdout);
-    console.log('');
-    console.log('Commit Success!');
-    console.log('');
+    console.log('\nCommit Success!\n'.green);
 
-    console.log('Add Tag...');
+    console.log('\nAdd Tag...\n');
 
     child_process.exec('git tag v' + version, function(err, stdout) {
       if(err) {
         changeVersion(currentVersion);
-        console.log('Add Tag Failed!');
+        console.log('Add Tag Failed!'.red);
         console.error(err);
         process.exit(0);
       }
 
       console.log(stdout);
-      console.log('Add Tag v' + version + ' Success!');
-      console.log('');
+      console.log('Add Tag v' + version + ' Success!\n'.green);
 
-      console.log('Push Origin Tag...');
+      console.log('\nStart Push Origin Tag...\n'.green);
       child_process.exec('git push origin v' + version, function(err, stdout) {
         if(err) {
-          console.log('Push Origin Tag Failed!');
+          console.log('Push Origin Tag Failed!'.red);
           console.error(err);
           process.exit(0);
         }
 
         console.log(stdout);
-        console.log('Push Origin Tag Success!');
-        console.log('');
+        console.log('Push Origin Tag Success!\n'.green);
 
-        console.log('Push Origin...');
+        console.log('Start Push Origin...\n'.green);
         child_process.exec('git push origin master', function(err, stdout) {
           if(err) {
             console.log('Push Origin Failed!');
@@ -105,19 +89,17 @@ child_process.exec('npm run build', function(err, stdout) {
           }
 
           console.log(stdout);
-          console.log('Push Origin Success!');
-          console.log('');
+          console.log('Push Origin Success!\n'.green);
 
-          console.log('Publish to NPM!');
+          console.log('Start Publish to NPM!');
           child_process.exec('npm publish', function(err, stdout) {
             if(err) {
               console.log('NPM Publish Failed! Try again -- "npm publish"!');
               console.error(err);
             }
             console.log(stdout);
-            console.log('NPM Publish Success!');
-            console.log('');
-            console.log('################ All Done! ################');
+            console.log('NPM Publish Success!\n'.green);
+            console.log('################ All Done! ################'.green);
           });
         });
       });

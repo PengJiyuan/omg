@@ -13,7 +13,8 @@
   "scripts": {
     "build": "rm -rf dist/ && node rollup.config.js --beauty && node rollup.config.js --minify",
     "dev": "rm -rf dist/ && node rollup.config.js --example",
-    "eslint": "eslint src/**/ --ext .js --cache"
+    "eslint": "eslint src/**/ --ext .js --cache",
+    "release": "cd scripts && node release.js"
   },
   "author": "PengJiyuan <pjy@isweety.me>",
   "license": "MIT",
@@ -34,5 +35,8 @@
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-uglify": "^2.0.1"
-  }
+  },
+  "files": [
+    "dist/*"
+  ]
 }
