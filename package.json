@@ -9,7 +9,7 @@
     "draw"
   ],
   "description": "Oh my goodness! Awesome Canvas Render Library.",
-  "main": "index.js",
+  "main": "dist/omg.js",
   "scripts": {
     "build": "rm -rf dist/ && node rollup.config.js --beauty && node rollup.config.js --minify",
     "dev": "rm -rf dist/ && node rollup.config.js --example",
