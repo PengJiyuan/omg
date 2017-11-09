@@ -10,61 +10,51 @@ Light Canvas Library [Demo](https://pengjiyuan.github.io/omg.js)
 
 **通过 npm**    
 
-`npm install lcl --save`     
+`npm install omg.js --save`
 
 ```javascript
-var LCL = require('lcl');
-console.log(LCL); // ...
+var OMG = require('omg.js');
+console.log(OMG); // ...
 ```
 
 **下载**    
 
-下载源代码, 使用 `dist/lcl.min.js`    
+下载源代码, 使用 `dist/omg.min.js`
 
 ```html
-<script src="path/lcl.min.js"></script>
+<script src="path/omg.min.js"></script>
 <script>
-    console.log(LCL);// ...
+    console.log(OMG);// ...
 </script>
 ```
 
-## 使用
+## Usage
+```javascript
+import omg from 'omg.js';
+const world = omg({
+  element: document.getElementById('canvas'),
+  width: 500,
+  height: 500,
+  enableGlobalTranslate: true // 等同于 stage.globalTranslate(true)
+});
 
-1.3.0改版， 支持多canvas绘制， 使用方法基本没变，只添加一个world角色。
-
-* **Stage**    
-
-初始化
-
-var world = new LCL();
-
-初始化舞台(Canvas)
-
-```javascript 
-  var stage = world.init({
-    element: document.getElementById('canvas'),
-    width: 500,
-    height: 500,
-    enableGlobalTranslate: true // 等同于 stage.globalTranslate(true)
-  });
+world.getVersion(); // v x.x.x
 ```
 
 全局拖拽位移
 
 ```javascript
- stage.globalTranslate(true);
+ world.globalTranslate(true);
 ```
 
 * **添加形状**
-
-由 __LCL.shape__ 改为 __world.shape [ new LCL().shape ]__ 
 
 > 目前只支持画指定的图形，如需自定义图形可以拉下源代码之后在shapes中按照我给定的格式添加自定义图形。
 
 矩形
 
 ```javascript
-var rect = world.rectangle({
+const rect = world.rectangle({
   startX: 0,
   startY: 0,
   width: 110,
@@ -77,7 +67,7 @@ var rect = world.rectangle({
 线条
 
 ```javascript
-var line = world.line({
+const line = world.line({
   startX: 200,
   startY: 100,
   endX: 400,
@@ -90,7 +80,7 @@ var line = world.line({
 
 ```javascript
 // 简单图片， 只指定起始坐标和宽高
-var image = world.image({
+const image = world.image({
   startX: 0,
   startY: 0,
   width: 800,
@@ -100,7 +90,7 @@ var image = world.image({
 });
 
 // 图片切割 (对照原生api)
-var image3 = world.image({
+const image3 = world.image({
   startX: 200,
   startY: 200,
   width: 97,
@@ -117,7 +107,7 @@ var image3 = world.image({
 文字
 
 ```javascript
-var text = world.text({
+const text = world.text({
   startX: 300,
   startY: 40,
   width: 150,
@@ -136,7 +126,7 @@ var text = world.text({
 圆
 
 ```javascript
-var arc = world.arc({
+const arc = world.arc({
   x: 400,
   y: 400,
   radius: 30,
@@ -149,7 +139,7 @@ var arc = world.arc({
 扇形
 
 ```javascript
-var arcb = world.arc({
+const arcb = world.arc({
   x: 130,
   y: 380,
   radius: 100,
@@ -163,7 +153,7 @@ var arcb = world.arc({
 坐标系
 
 ```javascript
-world.coord({
+const coord = world.coord({
   startX: 0, // 坐标系的左上起点的x坐标
   startY: 0, // 坐标系的左上起点的y坐标
   width: 800, // 坐标系的宽度
@@ -215,18 +205,18 @@ rect.on('mousedown', function(){
 * **将画的形状添加到舞台中，没有这步的话无法渲染**
 
 ```javascript
-stage.addChild(rect);
-stage.addChild(line);
+world.addChild(rect);
+world.addChild(line);
 
 // or
 
-stage.addChild([rect, line, arc1, text1]);
+world.addChild([rect, line, arc1, text1]);
 ```
 
 * **渲染**
 
 ```javascript
-stage.show();
+world.show();
 ```
 
 * **动画**
@@ -235,29 +225,30 @@ stage.show();
 function go() {
   rect.rotate++;
   line.rotate = line1.rotate + 2;
-  stage.redraw();
+  world.redraw();
 }
 
-var a = stage.animate(go);
+var a = world.animate(go);
 ```
 
 * **停止动画**
 
 ```javascript
-stage.stop(a);
+world.stop(a);
 ```
 
-## 示例代码
+## Example
 
 ```javascript
-var stage = world.init({
+import omg from 'omg.js';
+const world = omg({
   element: document.getElementById('canvas'),
   width: 500,
   height: 500,
   enableGlobalTranslate: true
 });
 
-var rect = world.rectangle({
+const rect = world.rectangle({
   startX: 120,
   startY: 120,
   width: 200,
@@ -288,9 +279,9 @@ var rect = world.rectangle({
   changeIndex: true
 });
 
-stage.addChild(rect);
+world.addChild(rect);
 
-stage.show();
+world.show();
 ```
 
 ## History
@@ -333,6 +324,9 @@ stage.show();
 
 #### v1.3.5
 *  增加颜色函数，包括十六进制颜色转rgb颜色， rgb颜色转hsl颜色， 仿less的lighten和darken函数...
+
+#### v3.0.0
+*  重构代码。
 
 ## ToDo
 

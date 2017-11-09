@@ -100,10 +100,11 @@ child_process.exec('npm run build', (err, stdout) => {
             if(err) {
               console.log('NPM Publish Failed! Try again -- "npm publish"!'.red);
               console.error(err);
+            } else {
+              console.log(stdout);
+              console.log('NPM Publish Success!\n'.green);
+              console.log('################ All Done! ################'.green);
             }
-            console.log(stdout);
-            console.log('NPM Publish Success!\n'.green);
-            console.log('################ All Done! ################'.green);
           });
         });
       });
