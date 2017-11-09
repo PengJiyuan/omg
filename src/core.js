@@ -3,6 +3,7 @@ import { version } from '../package.json';
 import { Event } from './event';
 import { Color } from './utils/color';
 import { ImageLoader } from './utils/imageLoader';
+import autoscale from './utils/autoscale';
 import utils from './utils/helpers';
 import shapes from './shapes/index';
 
@@ -49,10 +50,15 @@ export class OMG {
 
     this.canvas =  this.element.getContext('2d');
 
-    // init the width and height
-    this.element.width = this.width = config.width;
+    // // init the width and height
+    this.width = config.width;
 
-    this.element.height = this.height = config.height;
+    this.height = config.height;
+
+    autoscale([this.element], {
+      width: this.width,
+      height: this.height
+    });
 
     this.enableGlobalTranslate = config.enableGlobalTranslate || false;
 

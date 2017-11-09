@@ -600,6 +600,33 @@ ImageLoader.prototype.getImg = function getImg (name) {
   return target;
 };
 
+// https://github.com/component/autoscale-canvas/blob/master/index.js
+
+/**
+ * Retina-enable the given `canvas`.
+ *
+ * @param {Canvas} canvas
+ * @return {Canvas}
+ * @api public
+ */
+
+var autoscale = function (canvasList, opt) {
+  var ratio = window.devicePixelRatio || 1,
+    ctx = null;
+
+  canvasList.forEach(function (canvas) {
+    ctx = canvas.getContext('2d');
+    canvas.style.position = 'absolute';
+    canvas.style.width = opt.width + 'px';
+    canvas.style.height = opt.height + 'px';
+    canvas.width = opt.width * ratio;
+    canvas.height = opt.height * ratio;
+    ctx.scale(ratio, ratio);
+  });
+
+  return canvasList;
+};
+
 var Display = function Display(settings, _this) {
 
   this._ = _this;
@@ -1328,10 +1355,15 @@ var OMG = function OMG(config) {
 
   this.canvas =this.element.getContext('2d');
 
-  // init the width and height
-  this.element.width = this.width = config.width;
+  // // init the width and height
+  this.width = config.width;
 
-  this.element.height = this.height = config.height;
+  this.height = config.height;
+
+  autoscale([this.element], {
+    width: this.width,
+    height: this.height
+  });
 
   this.enableGlobalTranslate = config.enableGlobalTranslate || false;
 
