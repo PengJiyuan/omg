@@ -234,19 +234,19 @@ rect.on('mousedown', function(){
 ### config
 
 ```javascript
-  rect.config({
-    drag: true, // 允许形状(对象)被拖拽  
-    changeIndex: true， // 在形状被选中的时候允许改变个形状展示的顺序
-    fixed: true, // 免受globalTranslate的影响
-    bg: true // 暂时没效果
-  });
-  
-  //equals
-  
-  rect.drag(true);
-  rect.changeIndex(true);
-  rect.fixed(true);
-  rect.bg(true);
+rect.config({
+  drag: true, // 允许形状(对象)被拖拽  
+  changeIndex: true， // 在形状被选中的时候允许改变个形状展示的顺序
+  fixed: true, // 免受globalTranslate的影响
+  bg: true // 暂时没效果
+});
+
+//equals
+
+rect.drag(true);
+rect.changeIndex(true);
+rect.fixed(true);
+rect.bg(true);
 ```
 
 ### Add shapes to stage.
