@@ -1,3 +1,7 @@
+/*!
+ * @Author: PengJiyuan
+ * Github release and npm publish
+ */
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
@@ -41,9 +45,9 @@ child_process.exec('npm run build', (err, stdout) => {
     console.error(err);
     process.exit(0);
   }
-  console.log(stdout);
+  console.log(stdout.grey);
 
-  console.log('\nStart Git Commit...\n'.green);
+  console.log('\nStart Git Commit...\n');
 
   child_process.exec('git add . && git commit -m "' + commitMsg + '"', (err, stdout) => {
     if(err) {
@@ -53,7 +57,7 @@ child_process.exec('npm run build', (err, stdout) => {
       process.exit(0);
     }
 
-    console.log(stdout);
+    console.log(stdout.green);
     console.log('\nCommit Success!\n'.green);
 
     console.log('\nAdd Tag...\n');
@@ -67,9 +71,9 @@ child_process.exec('npm run build', (err, stdout) => {
       }
 
       console.log(stdout);
-      console.log('Add Tag v' + version + ' Success!\n'.green);
+      console.log(('Add Tag v' + version + ' Success!\n').green);
 
-      console.log('\nStart Push Origin Tag...\n'.green);
+      console.log('\nStart Push Origin Tag...\n');
       child_process.exec('git push origin v' + version, function(err, stdout) {
         if(err) {
           console.log('Push Origin Tag Failed!'.red);
@@ -80,7 +84,7 @@ child_process.exec('npm run build', (err, stdout) => {
         console.log(stdout);
         console.log('Push Origin Tag Success!\n'.green);
 
-        console.log('Start Push Origin...\n'.green);
+        console.log('Start Push Origin...\n');
         child_process.exec('git push origin master', function(err, stdout) {
           if(err) {
             console.log('Push Origin Failed!');
@@ -94,7 +98,7 @@ child_process.exec('npm run build', (err, stdout) => {
           console.log('Start Publish to NPM!');
           child_process.exec('npm publish', function(err, stdout) {
             if(err) {
-              console.log('NPM Publish Failed! Try again -- "npm publish"!');
+              console.log('NPM Publish Failed! Try again -- "npm publish"!'.red);
               console.error(err);
             }
             console.log(stdout);
