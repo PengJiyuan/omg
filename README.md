@@ -8,7 +8,7 @@ Oh my goodness! Awesome Canvas Render Library. [Demo](https://pengjiyuan.github.
 
 ## Install
 
-**通过 npm**    
+**NPM**    
 
 `npm install omg.js --save`
 
@@ -17,14 +17,14 @@ const OMG = require('omg.js');
 console.log(OMG); // ...
 ```
 
-**下载**    
+**DOWNLOAD**    
 
-下载源代码, 使用 `dist/omg.min.js`
+[Source Code](dist/omg.min.js)
 
 ```html
 <script src="path/omg.min.js"></script>
 <script>
-    console.log(OMG);// ...
+  console.log(OMG);// ...
 </script>
 ```
 
@@ -79,6 +79,7 @@ world.show();
 ```javascript
 import omg from 'omg.js';
 
+// Init
 const world = omg({
   element: document.getElementById('canvas'),
   width: 500,
@@ -89,17 +90,15 @@ const world = omg({
 world.getVersion(); // v x.x.x
 ```
 
-全局拖拽位移
+Enable global drag.
 
 ```javascript
  world.globalTranslate(true);
 ```
 
-* **添加形状**
+### Shapes
 
-> 目前只支持画指定的图形，如需自定义图形可以拉下源代码之后在shapes中按照我给定的格式添加自定义图形。
-
-矩形
+**Rectangle**
 
 ```javascript
 const rect = world.rectangle({
@@ -112,7 +111,7 @@ const rect = world.rectangle({
 });
 ```
 
-线条
+**Line**
 
 ```javascript
 const line = world.line({
@@ -124,10 +123,9 @@ const line = world.line({
 });
 ```
 
-图片
+**Image**
 
 ```javascript
-// 简单图片， 只指定起始坐标和宽高
 const image = world.image({
   startX: 0,
   startY: 0,
@@ -137,7 +135,7 @@ const image = world.image({
   zindex: 1
 });
 
-// 图片切割 (对照原生api)
+// For more detail, check canvas api.
 const image3 = world.image({
   startX: 200,
   startY: 200,
@@ -152,7 +150,7 @@ const image3 = world.image({
 });
 ```
 
-文字
+**Text**
 
 ```javascript
 const text = world.text({
@@ -171,7 +169,7 @@ const text = world.text({
 });
 ```
 
-圆
+**Circle**
 
 ```javascript
 const arc = world.arc({
@@ -184,7 +182,7 @@ const arc = world.arc({
 });
 ```
 
-扇形
+**Sector**
 
 ```javascript
 const arcb = world.arc({
@@ -198,7 +196,7 @@ const arcb = world.arc({
 });
 ```
 
-坐标系
+**Coordinate System**
 
 ```javascript
 const coord = world.coord({
@@ -218,9 +216,9 @@ const coord = world.coord({
 })
 ```
 
-* **给添加的形状(对象)添加事件**
+### Add Event
 
-支持链式调用  
+Support chain call.
 
 ```javascript
 rect.on('mousedown', function(){
@@ -232,7 +230,7 @@ rect.on('mousedown', function(){
 }).drag(true).config(){...};
 ```
 
-* **config**
+### config
 
 ```javascript
   rect.config({
@@ -250,7 +248,7 @@ rect.on('mousedown', function(){
   rect.bg(true);
 ```
 
-* **将画的形状添加到舞台中，没有这步的话无法渲染**
+### Add shapes to stage.
 
 ```javascript
 world.addChild(rect);
@@ -261,13 +259,13 @@ world.addChild(line);
 world.addChild([rect, line, arc1, text1]);
 ```
 
-* **渲染**
+### Draw
 
 ```javascript
 world.show();
 ```
 
-* **动画**
+### Animation
 
 ```javascript
 function go() {
@@ -276,10 +274,10 @@ function go() {
   world.redraw();
 }
 
-var a = world.animate(go);
+const a = world.animate(go);
 ```
 
-* **停止动画**
+### Stop animation
 
 ```javascript
 world.stop(a);
