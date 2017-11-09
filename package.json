@@ -1,5 +1,5 @@
 {
-  "name": "lcl",
+  "name": "omg.js",
   "version": "3.0.0-beta",
   "keywords": [
     "canvas",
@@ -8,7 +8,7 @@
     "drop",
     "draw"
   ],
-  "description": "",
+  "description": "Oh my goodness! Awesome Canvas Render Library.",
   "main": "index.js",
   "scripts": {
     "build": "rm -rf dist/ && node rollup.config.js --beauty && node rollup.config.js --minify",
@@ -20,12 +20,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PengJiyuan/LCL.git"
+    "url": "git+https://github.com/PengJiyuan/omg.js.git"
   },
   "bugs": {
-    "url": "https://github.com/PengJiyuan/LCL/issues"
+    "url": "https://github.com/PengJiyuan/omg.js/issues"
   },
-  "homepage": "https://github.com/PengJiyuan/LCL#readme",
+  "homepage": "https://github.com/PengJiyuan/omg.js#readme",
   "dependencies": {},
   "devDependencies": {
     "colors": "^1.1.2",

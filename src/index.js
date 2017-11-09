@@ -1,5 +1,5 @@
-import { LCL } from './core.js';
+import { OMG } from './core.js';
 
 export default (config) => {
-  return new LCL(config);
+  return new OMG(config);
 }

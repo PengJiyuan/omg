@@ -6,7 +6,7 @@ import { ImageLoader } from './utils/imageLoader';
 import utils from './utils/helpers';
 import shapes from './shapes/index';
 
-export class LCL {
+export class OMG {
 
   constructor(config) {
 

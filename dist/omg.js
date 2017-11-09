@@ -1285,7 +1285,7 @@ var shapes = {
   text: text
 };
 
-var LCL = function LCL(config) {
+var OMG = function OMG(config) {
   var this$1 = this;
 
 
@@ -1348,12 +1348,12 @@ var LCL = function LCL(config) {
 
 };
 
-LCL.prototype.imgReady = function imgReady () {
+OMG.prototype.imgReady = function imgReady () {
   this.loader = new ImageLoader();
   this.loader.addImg(this.images);
 };
 
-LCL.prototype.addChild = function addChild (obj) {
+OMG.prototype.addChild = function addChild (obj) {
   // multi or single
   if(utils.isArr(obj)) {
     this.objects = this.objects.concat(obj);
@@ -1367,7 +1367,7 @@ LCL.prototype.addChild = function addChild (obj) {
   this._objects = utils.reverse(this.objects);
 };
 
-LCL.prototype.show = function show () {
+OMG.prototype.show = function show () {
   var _this = this;
   this.imgReady();
   this.loader.ready(function () {
@@ -1376,13 +1376,13 @@ LCL.prototype.show = function show () {
   });
 };
 
-LCL.prototype.draw = function draw () {
+OMG.prototype.draw = function draw () {
   this.objects.forEach(function (item) {
     item.draw();
   });
 };
 
-LCL.prototype.redraw = function redraw () {
+OMG.prototype.redraw = function redraw () {
   this.clear();
   this.canvas.save();
   this.canvas.translate(this.transX, this.transY);
@@ -1390,11 +1390,11 @@ LCL.prototype.redraw = function redraw () {
   this.canvas.restore();
 };
 
-LCL.prototype.clear = function clear () {
+OMG.prototype.clear = function clear () {
   this.canvas.clearRect(0, 0, this.width, this.height);
 };
 
-LCL.prototype.animate = function animate (func) {
+OMG.prototype.animate = function animate (func) {
     var this$1 = this;
 
   this._event.triggerEvents();
@@ -1407,22 +1407,22 @@ LCL.prototype.animate = function animate (func) {
   return id;
 };
 
-LCL.prototype.stop = function stop (id) {
+OMG.prototype.stop = function stop (id) {
   cancelAnimationFrame(this[id]);
 };
 
-LCL.prototype.globalTranslate = function globalTranslate (bool) {
+OMG.prototype.globalTranslate = function globalTranslate (bool) {
   if(typeof bool !== 'boolean' || !bool) {
     return;
   }
   this.enableGlobalTranslate = true;
 };
 
-LCL.prototype.getVersion = function getVersion () {
+OMG.prototype.getVersion = function getVersion () {
   return this.version;
 };
 
-LCL.prototype.scaleCanvas = function scaleCanvas (bool) {
+OMG.prototype.scaleCanvas = function scaleCanvas (bool) {
   if(typeof bool !== 'boolean' || !bool) {
     return;
   }
@@ -1443,7 +1443,7 @@ LCL.prototype.scaleCanvas = function scaleCanvas (bool) {
 };
 
 var index = function (config) {
-  return new LCL(config);
+  return new OMG(config);
 };
 
 return index;
