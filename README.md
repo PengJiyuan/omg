@@ -4,7 +4,7 @@
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 
-Light Canvas Library [Demo](https://pengjiyuan.github.io/omg.js)
+Oh my goodness! Awesome Canvas Render Library. [Demo](https://pengjiyuan.github.io/omg.js)
 
 ## Install
 
@@ -13,7 +13,7 @@ Light Canvas Library [Demo](https://pengjiyuan.github.io/omg.js)
 `npm install omg.js --save`
 
 ```javascript
-var OMG = require('omg.js');
+const OMG = require('omg.js');
 console.log(OMG); // ...
 ```
 
@@ -28,9 +28,57 @@ console.log(OMG); // ...
 </script>
 ```
 
+## Example
+
+```javascript
+import omg from 'omg.js';
+const world = omg({
+  element: document.getElementById('canvas'),
+  width: 500,
+  height: 500,
+  enableGlobalTranslate: true
+});
+
+const rect = world.rectangle({
+  startX: 120,
+  startY: 120,
+  width: 200,
+  height: 200,
+  fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+}).on('mousedown', function() {
+  console.log('click rect2');
+}).on('mouseenter', function() {
+  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  stage.redraw();
+}).on('mouseleave', function() {
+  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  stage.redraw();
+}).on('dragin', function() {
+  console.log('drag in rect2');
+  rect.fillColor = '#ffffff';
+  stage.redraw();
+}).on('dragout', function() {
+  console.log('drag out rect2');
+  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  stage.redraw();
+}).on('drop', function() {
+  console.log('you drop on the rect2!');
+  rect.fillColor = '#000';
+  stage.redraw();
+}).config({
+  drag: true,
+  changeIndex: true
+});
+
+world.addChild(rect);
+
+world.show();
+```
+
 ## Usage
 ```javascript
 import omg from 'omg.js';
+
 const world = omg({
   element: document.getElementById('canvas'),
   width: 500,
@@ -235,53 +283,6 @@ var a = world.animate(go);
 
 ```javascript
 world.stop(a);
-```
-
-## Example
-
-```javascript
-import omg from 'omg.js';
-const world = omg({
-  element: document.getElementById('canvas'),
-  width: 500,
-  height: 500,
-  enableGlobalTranslate: true
-});
-
-const rect = world.rectangle({
-  startX: 120,
-  startY: 120,
-  width: 200,
-  height: 200,
-  fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
-}).on('mousedown', function() {
-  console.log('click rect2');
-}).on('mouseenter', function() {
-  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-  stage.redraw();
-}).on('mouseleave', function() {
-  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-  stage.redraw();
-}).on('dragin', function() {
-  console.log('drag in rect2');
-  rect.fillColor = '#ffffff';
-  stage.redraw();
-}).on('dragout', function() {
-  console.log('drag out rect2');
-  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
-  stage.redraw();
-}).on('drop', function() {
-  console.log('you drop on the rect2!');
-  rect.fillColor = '#000';
-  stage.redraw();
-}).config({
-  drag: true,
-  changeIndex: true
-});
-
-world.addChild(rect);
-
-world.show();
 ```
 
 ## History
