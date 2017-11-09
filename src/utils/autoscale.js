@@ -14,7 +14,6 @@ export default (canvasList, opt) => {
 
   canvasList.forEach(canvas => {
     ctx = canvas.getContext('2d');
-    canvas.style.position = 'absolute';
     canvas.style.width = opt.width + 'px';
     canvas.style.height = opt.height + 'px';
     canvas.width = opt.width * ratio;
