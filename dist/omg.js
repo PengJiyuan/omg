@@ -1,5 +1,5 @@
 /*!
-* omg.js v3.0.0-beta
+* omg.js v3.0.0-beta.0
 * Author: PengJiyuan
 */
 (function (global, factory) {
@@ -33,7 +33,7 @@
   }
 })();
 
-var version = "3.0.0-beta";
+var version = "3.0.0-beta.0";
 
 var utils = {
 

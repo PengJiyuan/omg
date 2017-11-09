@@ -49,7 +49,7 @@ child_process.exec('npm run build', (err, stdout) => {
 
   console.log('\nStart Git Commit...\n');
 
-  child_process.exec('git add . && git commit -m "' + commitMsg + '"', (err, stdout) => {
+  child_process.exec(`git add . && git commit -m "${commitMsg}"`, (err, stdout) => {
     if(err) {
       changeVersion(currentVersion);
       console.log('Commit failed!'.red);
