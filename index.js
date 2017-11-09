@@ -1,1 +1,1 @@
-module.exports = require('./dist/lcl.js');
+module.exports = require('./dist/omg.js');

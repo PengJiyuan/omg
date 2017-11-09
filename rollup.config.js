@@ -22,11 +22,11 @@ const inputOptions = {
   ]
 };
 const outputOptions = {
-  file: 'dist/lcl.js',
-  name: 'lcl',
+  file: 'dist/omg.js',
+  name: 'omg',
   format: 'umd',
   banner: '/*!\n' +
-    '* LCL v' + version + '\n' +
+    '* omg.js v' + version + '\n' +
     '* Author: PengJiyuan\n' +
     '*/'
 };
@@ -49,7 +49,7 @@ function changeFilename() {
       comments: '/^!/'
     }
   }));
-  outputOptions.file = 'dist/lcl.min.js';
+  outputOptions.file = 'dist/omg.min.js';
 }
 
 async function build(beauty) {
@@ -69,8 +69,8 @@ async function dev() {
         console.log('\n[Task] '.grey, 'Starting '.green + ++num + 'th' + ' bundle\n'.green);
         break;
       case 'END':
-        const src = 'dist/lcl.min.js';
-        const dest = 'examples/lcl.min.js';
+        const src = 'dist/omg.min.js';
+        const dest = 'examples/omg.min.js';
         console.log('[Status] '.grey, 'All done!\n'.green);
         console.log('[Task] '.grey, 'Copy file to examples\n'.green);
         fs.copy(src, dest)

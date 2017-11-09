@@ -2,12 +2,12 @@
 
 
 
-# LCL
-[![Build Status](https://travis-ci.org/PengJiyuan/LCL.svg?branch=master)](https://travis-ci.org/PengJiyuan/LCL)
+# omg.js
+[![Build Status](https://travis-ci.org/PengJiyuan/omg.js.svg?branch=master)](https://travis-ci.org/PengJiyuan/omg.js)
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 
-Light Canvas Library [Demo](https://pengjiyuan.github.io/LCL)
+Light Canvas Library [Demo](https://pengjiyuan.github.io/omg.js)
 
 ## Install
 
@@ -349,7 +349,7 @@ stage.show();
 
 ## [MIT](./LICENSE)
 
-[npm-image]: https://img.shields.io/npm/v/lcl.svg
-[npm-url]: https://npmjs.org/package/lcl
-[downloads-image]: https://img.shields.io/npm/dm/lcl.svg
-[downloads-url]: https://npmjs.org/package/lcl
+[npm-image]: https://img.shields.io/npm/v/omg.js.svg
+[npm-url]: https://npmjs.org/package/omg.js
+[downloads-image]: https://img.shields.io/npm/dm/omg.js.svg
+[downloads-url]: https://npmjs.org/package/omg.js
