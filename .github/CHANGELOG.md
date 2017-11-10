@@ -40,6 +40,7 @@
 #### v3.0.0
 *  重构代码。
 *  添加autoscale，解决Retina屏模糊问题。
+*  Event callback添加参数self, 可以在callback中直接操作当前shape
 
 ## ToDo
 
