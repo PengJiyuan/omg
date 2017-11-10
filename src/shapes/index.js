@@ -1,9 +1,9 @@
-import arc       from './arc.js';
-import coord     from './coord.js';
-import image     from './image.js';
-import line      from './line.js';
-import rectangle from './rectangle.js';
-import text      from './text.js';
+import arc       from './arc';
+import coord     from './coord';
+import image     from './image';
+import line      from './line';
+import rectangle from './rectangle';
+import text      from './text';
 
 export default {
   arc,

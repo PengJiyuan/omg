@@ -1,5 +1,5 @@
-import display from '../display.js';
-import utils from '../utils/helpers.js';
+import display from '../display';
+import utils from '../utils/helpers';
 
 export default function(settings, _this) {
   let canvas = _this.canvas,

@@ -1,4 +1,4 @@
-import display from '../display.js';
+import display from '../display';
 
 export default function(settings, _this) {
   let draw = function() {
