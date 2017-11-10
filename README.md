@@ -1,9 +1,9 @@
 <!-- <img src=".github/logo.png" /> -->
 
 # omg.js
-[![Build Status](https://travis-ci.org/PengJiyuan/omg.js.svg?branch=master)](https://travis-ci.org/PengJiyuan/omg.js)
-[![NPM Version][npm-image]][npm-url]
-[![NPM Downloads][downloads-image]][downloads-url]
+[![](https://travis-ci.org/PengJiyuan/omg.js.svg?branch=master)](https://travis-ci.org/PengJiyuan/omg.js)
+[![][npm-image]][npm-url]
+[![][downloads-image]][downloads-url]
 
 Oh my goodness! Awesome Canvas Render Library. [Demo](https://pengjiyuan.github.io/omg.js)
 
