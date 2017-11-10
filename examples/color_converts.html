@@ -37,7 +37,6 @@
 		var rgb_color = rgb.rgb;
 		var hsl = world.color.rgbToHSL(rgb.r, rgb.g, rgb.b);
 		var lighten_color = world.color.lighten(color, '10%');
-		console.log(lighten_color)
 		var radius = Math.random()*500;
 		var arc = world.arc({
 			x: Math.random()*document.body.clientWidth,
@@ -45,15 +44,33 @@
 			radius: radius,
 			color: color,
 			style: 'fill'
-		}).on('mouseenter mousemove', function() {
-			world.element.style.cursor = 'pointer';
-			arc.color = lighten_color;
+		})
+		// .on('mouseenter mousemove', function(cur) {
+		// 	console.log(cur);
+		// 	world.element.style.cursor = 'pointer';
+		// 	arc.color = lighten_color;
+		// 	world.redraw();
+		// }).on('mouseleave', function() {
+		// 	world.element.style.cursor = 'default';
+		// 	arc.color = color;
+		// 	world.redraw();
+		// })
+		.on('dragin', function(cur) {
+			console.log(cur);
+			arc.color = 'red';
 			world.redraw();
-		}).on('mouseleave', function() {
-			world.element.style.cursor = 'default';
-			arc.color = color;
+		})
+		.on('dragout', function(cur) {
+			console.log(cur);
+			arc.color = 'green';
 			world.redraw();
-		}).config({
+		})
+		// .on('drop', function(cur) {
+		// 	console.log(cur);
+		// 	arc.color = 'red';
+		// 	world.redraw();
+		// })
+		.config({
 			drag: true,
 			changeIndex: true
 		});

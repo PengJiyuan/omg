@@ -22,7 +22,12 @@ export class Event {
 
     const hasEnterOrMove = this._.objects.some(item => {
       return item.events && item.events.some(i => {
-        return i.eventType === 'mouseenter' || i.eventType === 'mousemove';
+        return i.eventType === 'mouseenter'
+          || i.eventType === 'mousemove'
+          || i.eventType === 'drag'
+          || i.eventType === 'dragin'
+          || i.eventType === 'dragout'
+          || i.eventType === 'drop';
       });
     });
 
@@ -56,7 +61,7 @@ export class Event {
           movedOn[1].events && movedOn[1].events.forEach(i => {
             if(i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
               movedOn[1].hasDraggedIn = true;
-              i.callback && i.callback();
+              i.callback && i.callback(movedOn[1]);
             }
           });
         }
@@ -65,7 +70,7 @@ export class Event {
         const handleDragOut = item => {
           item.hasDraggedIn && item.events.forEach(i => {
             if(i.eventType === 'dragout') {
-              i.callback && i.callback();
+              i.callback && i.callback(movedOn[1]);
             }
           });
           item.hasDraggedIn = false;
@@ -82,9 +87,9 @@ export class Event {
           movedOn[0].events && movedOn[0].events.forEach(i => {
             if(i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
               movedOn[0].hasEnter = true;
-              i.callback && i.callback();
+              i.callback && i.callback(movedOn[0]);
             } else if(i.eventType === 'mousemove') {
-              i.callback && i.callback();
+              i.callback && i.callback(movedOn[0]);
             }
           });
         }
@@ -92,7 +97,7 @@ export class Event {
         const handleMoveOut = item => {
           item.hasEnter && item.events.forEach(i => {
             if(i.eventType === 'mouseleave') {
-              i.callback && i.callback();
+              i.callback && i.callback(item);
             }
           });
           item.hasEnter = false;
@@ -129,7 +134,7 @@ export class Event {
         that.changeOrder(whichDown[0]);
       }
       whichDown[0].events && whichDown[0].events.some(i => {
-        return i.eventType === 'mousedown' && i.callback && i.callback();
+        return i.eventType === 'mousedown' && i.callback && i.callback(whichDown[0]);
       });
     }
 
@@ -161,7 +166,7 @@ export class Event {
         whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
 
         // event drag
-        hasEventDrag && dragCb();
+        hasEventDrag && dragCb(whichDown[0]);
 
         that._.redraw();
         that.cacheX = mx;
@@ -181,17 +186,18 @@ export class Event {
           if(upOn[1].hasDraggedIn) {
             upOn[1].hasDraggedIn = false;
             const dp = upOn[1].events.some(i => {
-              return i.eventType === 'drop' && i.callback && i.callback(upOn[0]);
+              return i.eventType === 'drop' && i.callback && i.callback(upOn[1], upOn[0]);
             });
-
+            // if not defined event drop, check if event dragout exist
+            // if yes, trigger the callback dragout.
             !dp && upOn[1].events.some(i => {
-              return i.eventType === 'dragout' && i.callback && i.callback();
+              return i.eventType === 'dragout' && i.callback && i.callback(upOn[1]);
             });
           }
         }
 
         // event dragend
-        hasEventDragEnd && dragEndCb();
+        hasEventDragEnd && dragEndCb(whichDown[0]);
 
         utils.unbind(document, 'mousemove', move_Event);
         utils.unbind(document, 'mouseup', up_Event);

@@ -184,7 +184,12 @@ Event.prototype.triggerEvents = function triggerEvents () {
 
   var hasEnterOrMove = this._.objects.some(function (item) {
     return item.events && item.events.some(function (i) {
-      return i.eventType === 'mouseenter' || i.eventType === 'mousemove';
+      return i.eventType === 'mouseenter'
+        || i.eventType === 'mousemove'
+        || i.eventType === 'drag'
+        || i.eventType === 'dragin'
+        || i.eventType === 'dragout'
+        || i.eventType === 'drop';
     });
   });
 
@@ -218,7 +223,7 @@ Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
         movedOn[1].events && movedOn[1].events.forEach(function (i) {
           if(i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
             movedOn[1].hasDraggedIn = true;
-            i.callback && i.callback();
+            i.callback && i.callback(movedOn[1]);
           }
         });
       }
@@ -227,7 +232,7 @@ Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
       var handleDragOut = function (item) {
         item.hasDraggedIn && item.events.forEach(function (i) {
           if(i.eventType === 'dragout') {
-            i.callback && i.callback();
+            i.callback && i.callback(movedOn[1]);
           }
         });
         item.hasDraggedIn = false;
@@ -244,9 +249,9 @@ Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
         movedOn[0].events && movedOn[0].events.forEach(function (i) {
           if(i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
             movedOn[0].hasEnter = true;
-            i.callback && i.callback();
+            i.callback && i.callback(movedOn[0]);
           } else if(i.eventType === 'mousemove') {
-            i.callback && i.callback();
+            i.callback && i.callback(movedOn[0]);
           }
         });
       }
@@ -254,7 +259,7 @@ Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
       var handleMoveOut = function (item) {
         item.hasEnter && item.events.forEach(function (i) {
           if(i.eventType === 'mouseleave') {
-            i.callback && i.callback();
+            i.callback && i.callback(item);
           }
         });
         item.hasEnter = false;
@@ -291,7 +296,7 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
       that.changeOrder(whichDown[0]);
     }
     whichDown[0].events && whichDown[0].events.some(function (i) {
-      return i.eventType === 'mousedown' && i.callback && i.callback();
+      return i.eventType === 'mousedown' && i.callback && i.callback(whichDown[0]);
     });
   }
 
@@ -323,7 +328,7 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
       whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
 
       // event drag
-      hasEventDrag && dragCb();
+      hasEventDrag && dragCb(whichDown[0]);
 
       that._.redraw();
       that.cacheX = mx;
@@ -343,17 +348,18 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
         if(upOn[1].hasDraggedIn) {
           upOn[1].hasDraggedIn = false;
           var dp = upOn[1].events.some(function (i) {
-            return i.eventType === 'drop' && i.callback && i.callback(upOn[0]);
+            return i.eventType === 'drop' && i.callback && i.callback(upOn[1], upOn[0]);
           });
-
+          // if not defined event drop, check if event dragout exist
+          // if yes, trigger the callback dragout.
           !dp && upOn[1].events.some(function (i) {
-            return i.eventType === 'dragout' && i.callback && i.callback();
+            return i.eventType === 'dragout' && i.callback && i.callback(upOn[1]);
           });
         }
       }
 
       // event dragend
-      hasEventDragEnd && dragEndCb();
+      hasEventDragEnd && dragEndCb(whichDown[0]);
 
       utils.unbind(document, 'mousemove', move_Event);
       utils.unbind(document, 'mouseup', up_Event);
