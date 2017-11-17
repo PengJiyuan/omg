@@ -48,7 +48,8 @@
 		type: 'fill'
 	}).config({
 		fixed: true,
-		bg: true
+		bg: true,
+		zindex: -1
 	});
 
 	var title = world.text({
@@ -250,7 +251,8 @@
 				src: './img/action.png'
 			}).config({
 				drag: true,
-				changeIndex: true
+				changeIndex: true,
+				zindex: 2
 			})
 		);
 	}
