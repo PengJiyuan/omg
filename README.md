@@ -138,6 +138,22 @@ const polyline = stage.line({
 });
 ```
 
+**Polygon**
+```javascript
+const polygon = stage.polygon({
+  matrix: [
+    [310, 120],
+    [360, 120],
+    [348, 230],
+    [250, 340],
+    [146, 200]
+  ],
+  color: 'black',
+  type: 'stroke',
+  lineWidth: 4
+});
+```
+
 **Image**
 
 ```javascript
