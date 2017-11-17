@@ -44,19 +44,28 @@
 
 	var line = world.line({
 		matrix: [
-		{x: 10,y: 180}, 
-		{x: 40,y: 50}, 
-		{x: 80,y: 180}, 
-		{x: 90,y: 80},
-		{x: 110,y: 100}, 
-		{x: 140,y: 50},
-		{x: 260,y: 180}
+			[10, 180], 
+			[40, 50], 
+			[80, 180], 
+			[90, 80],
+			[110, 100], 
+			[140, 50],
+			[260, 180]
 		],
 		lineWidth: 2,
 		strokeColor: '#ef8376',
 		dash: [3, 3]
 	}).config({
 		fixed: true
+	});
+
+	var polygon = world.polygon({
+		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
+		color: 'black',
+		type: 'stroke',
+		lineWidth: 6
+	}).config({
+		zindex: 11
 	});
 
 	var arca = world.arc({
@@ -127,7 +136,8 @@
 		src: './img/timg.jpg'
 	}).config({
 		bg: true,
-		fixed: true
+		fixed: true,
+		zindex: -1
 	});
 
 	var text = world.text({
@@ -195,15 +205,9 @@
 		bg: true
 	});
 
-	world.addChild(image);
-	world.addChild(text);
-	world.addChild(image3);
-	world.addChild(arc2);
-	world.addChild(arc);
-	world.addChild(arca);
-	world.addChild(arcb);
-	world.addChild(arcc);
-		world.addChild(
+	world.addChild([image, text, image3, arc2, arc, arca, arcb, arcc, polygon]);
+
+	world.addChild(
 		world.coord({
 			startX: 10,
 			startY: 0,
