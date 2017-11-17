@@ -41,6 +41,10 @@ class Display {
   }
 
   on(eventTypes, callback) {
+    if(this.isBg) {
+      return;
+    }
+
     if(!eventTypes) {
       throw 'no eventTypes defined!';
     }

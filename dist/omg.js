@@ -288,7 +288,7 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
 
   // mousedown
   var whichDown = this._._objects.filter(function (item) {
-    return item.isPointInner(pX, pY);
+    return item.isPointInner(pX, pY) && !item.isBg;
   });
 
   if(whichDown && whichDown.length > 0) {
@@ -303,7 +303,7 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
   // mouseDrag
   if(hasDrags) {
     whichIn = that._._objects.filter(function (item) {
-      return item.isPointInner(pX, pY);
+      return item.isPointInner(pX, pY) && !item.isBg;
     });
 
     hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function (item) {
@@ -675,6 +675,10 @@ var Display = function Display(settings, _this) {
 Display.prototype.on = function on (eventTypes, callback) {
     var this$1 = this;
 
+  if(this.isBg) {
+    return;
+  }
+
   if(!eventTypes) {
     throw 'no eventTypes defined!';
   }
@@ -948,7 +952,6 @@ var coord = function(settings, _this) {
   var draw = function() {
 
     canvas.save();
-    canvas.translate(-0.5, -0.5);
     canvas.translate(this.moveX, this.moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);

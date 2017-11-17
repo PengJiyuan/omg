@@ -47,7 +47,6 @@ export default function(settings, _this) {
   let draw = function() {
 
     canvas.save();
-    canvas.translate(-0.5, -0.5);
     canvas.translate(this.moveX, this.moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);

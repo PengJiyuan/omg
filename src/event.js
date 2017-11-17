@@ -126,7 +126,7 @@ export class Event {
 
     // mousedown
     const whichDown = this._._objects.filter(item => {
-      return item.isPointInner(pX, pY);
+      return item.isPointInner(pX, pY) && !item.isBg;
     });
 
     if(whichDown && whichDown.length > 0) {
@@ -141,7 +141,7 @@ export class Event {
     // mouseDrag
     if(hasDrags) {
       whichIn = that._._objects.filter(item => {
-        return item.isPointInner(pX, pY);
+        return item.isPointInner(pX, pY) && !item.isBg;
       });
 
       hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(item => {
