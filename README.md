@@ -239,13 +239,8 @@ rect.config({
   drag: true, // 允许形状(对象)被拖拽  
   changeIndex: true， // 在形状被选中的时候允许改变个形状展示的顺序
   fixed: true, // 免受globalTranslate的影响
+  bg: true // 作为bg的话无法绑定事件，可触发globalTranslate
 });
-
-//equals
-
-rect.drag(true);
-rect.changeIndex(true);
-rect.fixed(true);
 ```
 
 ### Add shapes to stage.
