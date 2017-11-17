@@ -14,7 +14,6 @@ export default function(settings, _this) {
   let draw = function() {
 
     canvas.save();
-    canvas.translate(-0.5, -0.5);
     canvas.translate(this.moveX, this.moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
@@ -35,24 +34,24 @@ export default function(settings, _this) {
     if(smooth) {
       let getCtrlPoint = function(ps, i, a, b) {
         let pAx, pAy, pBx, pBy;
-        if(!a || !b){
+        if(!a || !b) {
           a = 0.25;
           b = 0.25;
         }
-        if( i < 1){
-          pAx = ps[0].x + (ps[1].x - ps[0].x)*a;
-          pAy = ps[0].y + (ps[1].y - ps[0].y)*a;
-        }else{
-          pAx = ps[i].x + (ps[i+1].x - ps[i-1].x)*a;
-          pAy = ps[i].y + (ps[i+1].y - ps[i-1].y)*a;
+        if( i < 1) {
+          pAx = ps[0][0] + (ps[1][0] - ps[0][0]) * a;
+          pAy = ps[0][1] + (ps[1][1] - ps[0][1]) * a;
+        } else {
+          pAx = ps[i][0] + (ps[i + 1][0] - ps[i - 1][0])*a;
+          pAy = ps[i][1] + (ps[i + 1][1] - ps[i - 1][1])*a;
         }
-        if(i > ps.length-3){
-          let last = ps.length-1;
-          pBx = ps[last].x - (ps[last].x - ps[last-1].x) * b;
-          pBy = ps[last].y - (ps[last].y - ps[last-1].y) * b;
-        }else{
-          pBx = ps[i + 1].x - (ps[i + 2].x - ps[i].x) * b;
-          pBy = ps[i + 1].y - (ps[i + 2].y - ps[i].y) * b;
+        if(i > ps.length-3) {
+          let last = ps.length - 1;
+          pBx = ps[last][0] - (ps[last][0] - ps[last - 1][0]) * b;
+          pBy = ps[last][1] - (ps[last][1] - ps[last - 1][1]) * b;
+        } else {
+          pBx = ps[i + 1][0] - (ps[i + 2][0] - ps[i][0]) * b;
+          pBy = ps[i + 1][1] - (ps[i + 2][1] - ps[i][1]) * b;
         }
         return {
           pA:{x: pAx, y: pAy},
@@ -60,16 +59,16 @@ export default function(settings, _this) {
         };
       };
       for(let i = 0; i < matrix.length; i++) {
-        if(i === 0){
-          canvas.moveTo(matrix[i].x, matrix[i].y);
-        }else{
-          let cMatrix = getCtrlPoint(matrix, i-1);
+        if(i === 0) {
+          canvas.moveTo(matrix[i][0], matrix[i][1]);
+        } else {
+          let cMatrix = getCtrlPoint(matrix, i - 1);
           canvas.bezierCurveTo(cMatrix.pA.x, cMatrix.pA.y, cMatrix.pB.x, cMatrix.pB.y, matrix[i].x, matrix[i].y);
         }
       }
     } else {
       matrix.forEach(function(point, i) {
-        i === 0 ? canvas.moveTo(point.x, point.y) : canvas.lineTo(point.x, point.y);
+        i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
       });
     }
     canvas.stroke();
