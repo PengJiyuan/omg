@@ -125,6 +125,24 @@ const line = stage.line({
 });
 ```
 
+**Polyline**
+```javascript
+const polyline = stage.line({
+  matrix: [
+    [10, 180],
+    [40, 50],
+    [80, 180],
+    [90, 80],
+    [110, 100],
+    [140, 50],
+    [260, 180]
+  ],
+  endX: 400,
+  endY: 420，
+  zindex: 3
+});
+```
+
 **Image**
 
 ```javascript
