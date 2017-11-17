@@ -59,6 +59,15 @@
 		fixed: true
 	});
 
+	var polygon = world.polygon({
+		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
+		color: '#ef8376',
+		type: 'stroke',
+		lineWidth: 3
+	}).config({
+		zindex: 11
+	});
+
 	var arca = world.arc({
 		x: 130,
 		y: 380,
@@ -127,7 +136,8 @@
 		src: './img/timg.jpg'
 	}).config({
 		bg: true,
-		fixed: true
+		fixed: true,
+		zindex: -1
 	});
 
 	var text = world.text({
@@ -195,15 +205,9 @@
 		bg: true
 	});
 
-	world.addChild(image);
-	world.addChild(text);
-	world.addChild(image3);
-	world.addChild(arc2);
-	world.addChild(arc);
-	world.addChild(arca);
-	world.addChild(arcb);
-	world.addChild(arcc);
-		world.addChild(
+	world.addChild([image, text, image3, arc2, arc, arca, arcb, arcc, polygon]);
+
+	world.addChild(
 		world.coord({
 			startX: 10,
 			startY: 0,
