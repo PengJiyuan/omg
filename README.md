@@ -108,8 +108,7 @@ const rect = stage.rectangle({
   startY: 0,
   width: 110,
   height: 110,
-  fillColor: '#514022'，
-  zindex: 2 // 设置图形的z-index
+  fillColor: '#514022'
 });
 ```
 
@@ -120,8 +119,7 @@ const line = stage.line({
   startX: 200,
   startY: 100,
   endX: 400,
-  endY: 420，
-  zindex: 3
+  endY: 420
 });
 ```
 
@@ -136,8 +134,7 @@ const polyline = stage.line({
     [110, 100],
     [140, 50],
     [260, 180]
-  ],
-  zindex: 3
+  ]
 });
 ```
 
@@ -149,8 +146,7 @@ const image = stage.image({
   startY: 0,
   width: 800,
   height: 500,
-  src: './img/timg.jpg',
-  zindex: 1
+  src: './img/timg.jpg'
 });
 
 // For more detail, check canvas api.
@@ -163,8 +159,7 @@ const image3 = stage.image({
   sliceY: 0,
   sliceWidth: 97,
   sliceHeight: 110,
-  src: './img/action.png',
-  zindex: 10
+  src: './img/action.png'
 });
 ```
 
@@ -182,8 +177,7 @@ const text = stage.text({
   font: 'italic bold 20px arial,sans-serif', // 文字样式
   text: 'Hello stage', // 文字内容
   color: '#fff', // 文字颜色
-  type: 'fill' // fill -- 填充， stroke -- 描边,
-  zindex: 4
+  type: 'fill' // fill -- 填充， stroke -- 描边
 });
 ```
 
@@ -195,8 +189,7 @@ const arc = stage.arc({
   y: 400,
   radius: 30,
   color: 'rgba(255, 255, 255, 0.5)',
-  type: 'fill' // fill -- 填充， stroke -- 描边,
-  zindex: 2
+  type: 'fill' // fill -- 填充， stroke -- 描边
 });
 ```
 
