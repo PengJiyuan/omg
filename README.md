@@ -137,8 +137,6 @@ const polyline = stage.line({
     [140, 50],
     [260, 180]
   ],
-  endX: 400,
-  endY: 420，
   zindex: 3
 });
 ```
