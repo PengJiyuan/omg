@@ -42,6 +42,7 @@
 *  添加autoscale，解决Retina屏模糊问题。
 *  Event callback添加参数self, 可以在callback中直接操作当前shape
 *  添加不规则图形的绘制。
+*  添加点在不规则图形内的判断。
 
 ## ToDo
 
