@@ -643,9 +643,14 @@ var isPointInner = function(x, y) {
   var yBottom = y < this.y + this.height + my + lty;
 
   switch(this.type) {
-
+    /**
+     * @type: Rectangle, image, text, coord
+     */
     case 'rectangle':
       return !!(xRight && xLeft && yTop && yBottom);
+    /**
+     * @type: Arc
+     */
     case 'arc':
       var cx = this.x, // center x
         cy = this.y, // center y
@@ -703,6 +708,25 @@ var isPointInner = function(x, y) {
         isIn = !!( Math.sqrt( dx * dx + dy * dy ) <= r );
       }
       return isIn;
+    /**
+     * @type: polygon
+     *
+     * Return true if the given point is contained inside the boundary.
+     * See: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+     * @return true if the point is inside the boundary, false otherwise
+     */
+    case 'polygon':
+      var points = this.matrix;
+      var pgx = x - mx - ltx;
+      var pgy = y - my - lty;
+      var result = false;
+      for (var i = 0, j = points.length - 1; i < points.length; j = i++) {
+        if ((points[i][1] > pgy) != (points[j][1] > pgy) &&
+            (pgx < (points[j][0] - points[i][0]) * (pgy - points[i][1]) / (points[j][1] - points[i][1]) + points[i][0])) {
+          result = !result;
+        }
+      }
+      return result;
     default:
       break;
   }
@@ -1290,8 +1314,6 @@ var text = function(settings, _this) {
 
 var polygon = function(settings, _this) {
   var canvas = _this.canvas,
-    matrix = settings.matrix,
-    color = settings.color,
     lineWidth = settings.lineWidth || 1,
     type = settings.type || 'fill';
 
@@ -1304,16 +1326,16 @@ var polygon = function(settings, _this) {
     }
     canvas.beginPath();
 
-    matrix.forEach(function (point, i) {
+    this.matrix.forEach(function (point, i) {
       i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
     });
-    canvas.lineTo(matrix[0][0], matrix[0][1]);
+    canvas.lineTo(this.matrix[0][0], this.matrix[0][1]);
     
     if(type === 'fill') {
-      canvas.fillStyle = color;
+      canvas.fillStyle = this.color;
       canvas.fill();
     } else {
-      canvas.strokeStyle = color;
+      canvas.strokeStyle = this.color;
       canvas.lineWidth = lineWidth;
       canvas.stroke();
     }
@@ -1323,7 +1345,8 @@ var polygon = function(settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'polygon',
-    draw: draw
+    draw: draw,
+    matrix: settings.matrix
   });
 };
 

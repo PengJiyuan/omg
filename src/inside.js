@@ -10,9 +10,14 @@ export default function(x, y) {
   const yBottom = y < this.y + this.height + my + lty;
 
   switch(this.type) {
-
+    /**
+     * @type: Rectangle, image, text, coord
+     */
     case 'rectangle':
       return !!(xRight && xLeft && yTop && yBottom);
+    /**
+     * @type: Arc
+     */
     case 'arc':
       var cx = this.x, // center x
         cy = this.y, // center y
@@ -70,6 +75,25 @@ export default function(x, y) {
         isIn = !!( Math.sqrt( dx * dx + dy * dy ) <= r );
       }
       return isIn;
+    /**
+     * @type: polygon
+     *
+     * Return true if the given point is contained inside the boundary.
+     * See: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+     * @return true if the point is inside the boundary, false otherwise
+     */
+    case 'polygon':
+      const points = this.matrix;
+      const pgx = x - mx - ltx;
+      const pgy = y - my - lty;
+      let result = false;
+      for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+        if ((points[i][1] > pgy) != (points[j][1] > pgy) &&
+            (pgx < (points[j][0] - points[i][0]) * (pgy - points[i][1]) / (points[j][1] - points[i][1]) + points[i][0])) {
+          result = !result;
+        }
+      }
+      return result;
     default:
       break;
   }

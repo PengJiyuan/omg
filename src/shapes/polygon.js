@@ -2,8 +2,6 @@ import display from '../display';
 
 export default function(settings, _this) {
   const canvas = _this.canvas,
-    matrix = settings.matrix,
-    color = settings.color,
     lineWidth = settings.lineWidth || 1,
     type = settings.type || 'fill';
 
@@ -16,16 +14,16 @@ export default function(settings, _this) {
     }
     canvas.beginPath();
 
-    matrix.forEach((point, i) => {
+    this.matrix.forEach((point, i) => {
       i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
     });
-    canvas.lineTo(matrix[0][0], matrix[0][1]);
+    canvas.lineTo(this.matrix[0][0], this.matrix[0][1]);
     
     if(type === 'fill') {
-      canvas.fillStyle = color;
+      canvas.fillStyle = this.color;
       canvas.fill();
     } else {
-      canvas.strokeStyle = color;
+      canvas.strokeStyle = this.color;
       canvas.lineWidth = lineWidth;
       canvas.stroke();
     }
@@ -35,6 +33,7 @@ export default function(settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'polygon',
-    draw: draw
+    draw: draw,
+    matrix: settings.matrix
   });
 }
