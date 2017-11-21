@@ -46,26 +46,26 @@ const rect = stage.rectangle({
   y: 120,
   width: 200,
   height: 200,
-  fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+  color: '#'+(~~(Math.random()*(1<<24))).toString(16)
 }).on('mousedown', function() {
   console.log('click rect2');
 }).on('mouseenter', function() {
-  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  rect.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
   stage.redraw();
 }).on('mouseleave', function() {
-  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  rect.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
   stage.redraw();
 }).on('dragin', function() {
   console.log('drag in rect2');
-  rect.fillColor = '#ffffff';
+  rect.color = '#ffffff';
   stage.redraw();
 }).on('dragout', function() {
   console.log('drag out rect2');
-  rect.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+  rect.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
   stage.redraw();
 }).on('drop', function() {
   console.log('you drop on the rect2!');
-  rect.fillColor = '#000';
+  rect.color = '#000';
   stage.redraw();
 }).config({
   drag: true,
@@ -108,7 +108,7 @@ const rect = stage.rectangle({
   y: 0,
   width: 110,
   height: 110,
-  fillColor: '#514022'
+  color: '#514022'
 });
 ```
 
