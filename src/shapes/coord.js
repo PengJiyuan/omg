@@ -161,11 +161,6 @@ export default function(settings, _this) {
       });
 
     }
-    //else {
-    //   let maxX = getMaxMin(true).max,
-    //     minX = getMaxMin(true).min;
-
-    // }
 
     canvas.restore();
   };
@@ -184,6 +179,7 @@ export default function(settings, _this) {
     gap: gap,
     margin: margin,
     TO_TOP: TO_TOP,
-    boundaryGap: boundaryGap
+    boundaryGap: boundaryGap,
+    backgroundColor: settings.backgroundColor || '#F3F3F3'
   });
 }

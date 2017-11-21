@@ -12,7 +12,7 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    canvas.fillStyle = this.fillColor ? this.fillColor : '#000';
+    canvas.fillStyle = this.color ? this.color : '#000';
     canvas.fillRect(this.x, this.y, this.width, this.height);
     canvas.restore();
   };

@@ -712,37 +712,23 @@ var Display = function Display(settings, _this) {
 
   this._ = _this;
 
-  this.settingsData = {
+  this.commonData = {
 
-    color: settings.color, // arc
+    color: settings.color,
 
     x: settings.x,
 
     y: settings.y,
 
-    dash: settings.dash, // line
+    width: settings.width,
 
-    offset: settings.offset ? settings.offset : 0, // line
+    height: settings.height,
 
-    fillColor: settings.fillColor, // rectangle fillcolor
+    moveX: 0,
 
-    sliceX: settings.sliceX, // image sliceX
+    moveY: 0,
 
-    sliceY: settings.sliceY, // image sliceY
-
-    width: settings.width, // image
-
-    height: settings.height, // image
-
-    sliceWidth: settings.sliceWidth, // image
-
-    sliceHeight: settings.sliceHeight, // image
-
-    backgroundColor: settings.backgroundColor, //text
-
-    text: settings.text, // text,
-
-    radius: settings.radius //arc
+    zindex: 0
 
   };
 
@@ -825,19 +811,13 @@ Display.prototype.changeIndex = function changeIndex (bool) {
 var display = function (settings, _this) {
   var display = new Display(settings, _this);
 
-  return Object.assign({}, display.settingsData, {
+  return Object.assign({}, display.commonData, {
 
     isDragging: false,
 
     hasEnter: false,
 
     hasDraggedIn: false,
-
-    moveX: 0,
-
-    moveY: 0,
-
-    zindex: 0,
 
     on: display.on,
 
@@ -895,7 +875,8 @@ var arc = function(settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'arc',
-    draw: draw
+    draw: draw,
+    radius: settings.radius
   });
 };
 
@@ -1059,11 +1040,6 @@ var coord = function(settings, _this) {
       });
 
     }
-    //else {
-    //   let maxX = getMaxMin(true).max,
-    //     minX = getMaxMin(true).min;
-
-    // }
 
     canvas.restore();
   };
@@ -1082,7 +1058,8 @@ var coord = function(settings, _this) {
     gap: gap,
     margin: margin,
     TO_TOP: TO_TOP,
-    boundaryGap: boundaryGap
+    boundaryGap: boundaryGap,
+    backgroundColor: settings.backgroundColor || '#F3F3F3'
   });
 };
 
@@ -1113,7 +1090,11 @@ var image = function(settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
-    draw: draw
+    draw: draw,
+    sliceWidth: settings.sliceWidth,
+    sliceHeight: settings.sliceHeight,
+    sliceX: settings.sliceX,
+    sliceY: settings.sliceY
   });
 };
 
@@ -1196,7 +1177,9 @@ var line = function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'line',
     draw: draw,
-    totalLength: totalLength
+    totalLength: totalLength,
+    dash: settings.dash,
+    offset: settings.offset || 0
   });
 };
 
@@ -1212,7 +1195,7 @@ var rectangle = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    canvas.fillStyle = this.fillColor ? this.fillColor : '#000';
+    canvas.fillStyle = this.color ? this.color : '#000';
     canvas.fillRect(this.x, this.y, this.width, this.height);
     canvas.restore();
   };
@@ -1299,7 +1282,9 @@ var text = function(settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
-    draw: draw
+    draw: draw,
+    backgroundColor: settings.backgroundColor,
+    text: settings.text
   });
 };
 

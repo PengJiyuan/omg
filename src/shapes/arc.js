@@ -41,6 +41,7 @@ export default function(settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'arc',
-    draw: draw
+    draw: draw,
+    radius: settings.radius
   });
 }

@@ -6,37 +6,23 @@ class Display {
 
     this._ = _this;
 
-    this.settingsData = {
+    this.commonData = {
 
-      color: settings.color, // arc
+      color: settings.color,
 
       x: settings.x,
 
       y: settings.y,
 
-      dash: settings.dash, // line
+      width: settings.width,
 
-      offset: settings.offset ? settings.offset : 0, // line
+      height: settings.height,
 
-      fillColor: settings.fillColor, // rectangle fillcolor
+      moveX: 0,
 
-      sliceX: settings.sliceX, // image sliceX
+      moveY: 0,
 
-      sliceY: settings.sliceY, // image sliceY
-
-      width: settings.width, // image
-
-      height: settings.height, // image
-
-      sliceWidth: settings.sliceWidth, // image
-
-      sliceHeight: settings.sliceHeight, // image
-
-      backgroundColor: settings.backgroundColor, //text
-
-      text: settings.text, // text,
-
-      radius: settings.radius //arc
+      zindex: 0
 
     };
 
@@ -119,19 +105,13 @@ class Display {
 export default (settings, _this) => {
   const display = new Display(settings, _this);
 
-  return Object.assign({}, display.settingsData, {
+  return Object.assign({}, display.commonData, {
 
     isDragging: false,
 
     hasEnter: false,
 
     hasDraggedIn: false,
-
-    moveX: 0,
-
-    moveY: 0,
-
-    zindex: 0,
 
     on: display.on,
 

@@ -79,6 +79,8 @@ export default function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'line',
     draw: draw,
-    totalLength: totalLength
+    totalLength: totalLength,
+    dash: settings.dash,
+    offset: settings.offset || 0
   });
 }

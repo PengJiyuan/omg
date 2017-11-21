@@ -27,6 +27,10 @@ export default function(settings, _this) {
 
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
-    draw: draw
+    draw: draw,
+    sliceWidth: settings.sliceWidth,
+    sliceHeight: settings.sliceHeight,
+    sliceX: settings.sliceX,
+    sliceY: settings.sliceY
   });
 }
