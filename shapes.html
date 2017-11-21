@@ -45,10 +45,16 @@
 	var polygon = world.polygon({
 		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
 		color: 'black',
-		type: 'stroke',
-		lineWidth: 6
+		type: 'fill'
 	}).config({
-		zindex: 11
+		zindex: 11,
+		drag: true
+	}).on('mouseenter', function() {
+		polygon.color = 'green';
+		world.redraw();
+	}).on('mouseleave', function() {
+		polygon.color = 'black';
+		world.redraw();
 	});
 
 	var arca = world.arc({
