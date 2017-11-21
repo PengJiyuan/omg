@@ -26,7 +26,7 @@ export default function(settings, _this) {
   };
 
   return Object.assign({}, display(settings, _this), {
-    type: 'image',
+    type: 'rectangle',
     draw: draw
   });
 }

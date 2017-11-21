@@ -171,7 +171,7 @@ export default function(settings, _this) {
   };
 
   return Object.assign({}, display(settings, _this), {
-    type: 'coord',
+    type: 'rectangle',
     draw: draw,
     xLength: xLength,
     yLength: yLength,

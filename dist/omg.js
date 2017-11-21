@@ -632,6 +632,82 @@ var autoscale = function (canvasList, opt) {
   return canvasList;
 };
 
+var isPointInner = function(x, y) {
+  var mx = this.moveX;
+  var my = this.moveY;
+  var ltx = this.fixed ? 0 : this._.transX;
+  var lty = this.fixed ? 0 : this._.transY;
+  var xRight = x > this.x + mx + ltx;
+  var xLeft = x < this.x + this.width + mx + ltx;
+  var yTop = y > this.y + my + lty;
+  var yBottom = y < this.y + this.height + my + lty;
+
+  switch(this.type) {
+
+    case 'rectangle':
+      return !!(xRight && xLeft && yTop && yBottom);
+    case 'arc':
+      var cx = this.x, // center x
+        cy = this.y, // center y
+        pi = Math.PI,
+        sa = this.startAngle < 0 ? 2*pi + pi/180*this.startAngle : pi/180*this.startAngle,
+        ea = this.endAngle < 0 ? 2*pi + pi/180*this.endAngle : pi/180*this.endAngle,
+        r = this.radius,
+        dx = x - cx - mx -ltx,
+        dy = y - cy - my - lty,
+        isIn, dis;
+      // Sector
+      if(!isNaN(sa) && !isNaN(ea)) {
+        var angle;
+        // 4th quadrant
+        if(dx >= 0 && dy >= 0) {
+          if(dx === 0) {
+            angle = pi/2;
+          } else {
+            angle = Math.atan( (dy / dx) );
+          }
+        }
+        // 3th quadrant
+        else if(dx <= 0 && dy >= 0) {
+          if(dx === 0) {
+            angle = pi;
+          } else {
+            angle = pi - Math.atan(dy / Math.abs(dx));
+          }
+        }
+        // secend quadrant
+        else if(dx <= 0 && dy <= 0) {
+          if(dx === 0) {
+            angle = pi;
+          } else {
+            angle = Math.atan(Math.abs(dy) / Math.abs(dx)) + pi;
+          }
+        }
+        // first quadrant
+        else if(dx >= 0 && dy<= 0) {
+          if(dx === 0) {
+            angle = pi*3/2;
+          } else {
+            angle = 2*pi - Math.atan(Math.abs(dy) / dx);
+          }
+        }
+        dis = Math.sqrt( dx * dx + dy * dy );
+        if(sa < ea) {
+          isIn = !!(angle >= sa && angle <= ea && dis <= r);
+        } else {
+          isIn = !!( ( (angle >= 0 && angle <= ea) || (angle >= sa && angle <= 2*pi) ) && dis <= r);
+        }
+      }
+      // normal arc
+      else {
+        isIn = !!( Math.sqrt( dx * dx + dy * dy ) <= r );
+      }
+      return isIn;
+    default:
+      break;
+  }
+};
+
 var Display = function Display(settings, _this) {
 
   this._ = _this;
@@ -706,91 +782,8 @@ Display.prototype.on = function on (eventTypes, callback) {
 };
 
 // whether pointer is inner this shape
-Display.prototype.isPointInner = function isPointInner (x, y) {
-  var mx = this.moveX;
-  var my = this.moveY;
-  var ltx = this.fixed ? 0 : this._.transX;
-  var lty = this.fixed ? 0 : this._.transY;
-  var xRight = x > this.x + mx + ltx;
-  var xLeft = x < this.x + this.width + mx + ltx;
-  var yTop = y > this.y + my + lty;
-  var yBottom = y < this.y + this.height + my + lty;
-
-  switch(this.type) {
-
-    case 'rectangle':
-    case 'image':
-    case 'text':
-    case 'coord':
-      return !!(xRight && xLeft && yTop && yBottom);
-    case 'arc':
-      var cx = this.x, // center x
-        cy = this.y, // center y
-        pi = Math.PI,
-        sa = this.startAngle < 0 ? 2*pi + pi/180*this.startAngle : pi/180*this.startAngle,
-        ea = this.endAngle < 0 ? 2*pi + pi/180*this.endAngle : pi/180*this.endAngle,
-        r = this.radius,
-        dx = x - cx - mx -ltx,
-        dy = y - cy - my - lty,
-        isIn, dis;
-      // Sector
-      if(!isNaN(sa) && !isNaN(ea)) {
-        var angle;
-        // 4th quadrant
-        if(dx >= 0 && dy >= 0) {
-          if(dx === 0) {
-            angle = pi/2;
-          } else {
-            angle = Math.atan( (dy / dx) );
-          }
-        }
-        // 3th quadrant
-        else if(dx <= 0 && dy >= 0) {
-          if(dx === 0) {
-            angle = pi;
-          } else {
-            angle = pi - Math.atan(dy / Math.abs(dx));
-          }
-        }
-        // secend quadrant
-        else if(dx <= 0 && dy <= 0) {
-          if(dx === 0) {
-            angle = pi;
-          } else {
-            angle = Math.atan(Math.abs(dy) / Math.abs(dx)) + pi;
-          }
-        }
-        // first quadrant
-        else if(dx >= 0 && dy<= 0) {
-          if(dx === 0) {
-            angle = pi*3/2;
-          } else {
-            angle = 2*pi - Math.atan(Math.abs(dy) / dx);
-          }
-        }
-        dis = Math.sqrt( dx * dx + dy * dy );
-        if(sa < ea) {
-          isIn = !!(angle >= sa && angle <= ea && dis <= r);
-        } else {
-          isIn = !!( ( (angle >= 0 && angle <= ea) || (angle >= sa && angle <= 2*pi) ) && dis <= r);
-        }
-      }
-      // normal arc
-      else {
-        isIn = !!( Math.sqrt( dx * dx + dy * dy ) <= r );
-      }
-      return isIn;
-    default:
-      break;
-  }
-
-  // expand isPointerInner
-  // const arr = that.pointerInnerArray;
-  // for(let i = 0; i < arr.length; i++) {
-  // if(that.type === arr[i].type) {
-  //   return arr[i].isPointInner(that, x, y);
-  // }
-  // }
+Display.prototype.isPointInner = function isPointInner$1 (x, y) {
+  return isPointInner.bind(this)(x, y);
 };
 
 Display.prototype.config = function config (obj) {
@@ -1076,7 +1069,7 @@ var coord = function(settings, _this) {
   };
 
   return Object.assign({}, display(settings, _this), {
-    type: 'coord',
+    type: 'rectangle',
     draw: draw,
     xLength: xLength,
     yLength: yLength,
@@ -1119,7 +1112,7 @@ var image = function(settings, _this) {
   };
 
   return Object.assign({}, display(settings, _this), {
-    type: 'image',
+    type: 'rectangle',
     draw: draw
   });
 };
@@ -1305,7 +1298,7 @@ var text = function(settings, _this) {
   };
 
   return Object.assign({}, display(settings, _this), {
-    type: 'text',
+    type: 'rectangle',
     draw: draw
   });
 };

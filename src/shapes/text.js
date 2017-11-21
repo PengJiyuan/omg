@@ -75,7 +75,7 @@ export default function(settings, _this) {
   };
 
   return Object.assign({}, display(settings, _this), {
-    type: 'text',
+    type: 'rectangle',
     draw: draw
   });
 }
