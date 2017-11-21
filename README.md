@@ -42,8 +42,8 @@ const stage = omg({
 });
 
 const rect = stage.rectangle({
-  startX: 120,
-  startY: 120,
+  x: 120,
+  y: 120,
   width: 200,
   height: 200,
   fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
@@ -104,8 +104,8 @@ Enable global drag.
 
 ```javascript
 const rect = stage.rectangle({
-  startX: 0,
-  startY: 0,
+  x: 0,
+  y: 0,
   width: 110,
   height: 110,
   fillColor: '#514022'
@@ -116,8 +116,8 @@ const rect = stage.rectangle({
 
 ```javascript
 const line = stage.line({
-  startX: 200,
-  startY: 100,
+  x: 200,
+  y: 100,
   endX: 400,
   endY: 420
 });
@@ -158,8 +158,8 @@ const polygon = stage.polygon({
 
 ```javascript
 const image = stage.image({
-  startX: 0,
-  startY: 0,
+  x: 0,
+  y: 0,
   width: 800,
   height: 500,
   src: './img/timg.jpg'
@@ -167,8 +167,8 @@ const image = stage.image({
 
 // For more detail, check canvas api.
 const image3 = stage.image({
-  startX: 200,
-  startY: 200,
+  x: 200,
+  y: 200,
   width: 97,
   height: 110,
   sliceX: 5,
@@ -183,10 +183,10 @@ const image3 = stage.image({
 
 ```javascript
 const text = stage.text({
-  startX: 300,
-  startY: 40,
+  x: 300,
+  y: 40,
   width: 150,
-  height: 40, // startX, startY, width, height指定了一个矩形， 文字就在其中
+  height: 40, // x, y, width, height指定了一个矩形， 文字就在其中
   paddingTop: 8, // 用于调整文字在矩形中的位置
   center: true,  // 文字居中
   backgroundColor: 'blue', // 给文字添加背景颜色(矩形)
@@ -227,8 +227,8 @@ const arcb = stage.arc({
 
 ```javascript
 const coord = stage.coord({
-  startX: 0, // 坐标系的左上起点的x坐标
-  startY: 0, // 坐标系的左上起点的y坐标
+  x: 0, // 坐标系的左上起点的x坐标
+  y: 0, // 坐标系的左上起点的y坐标
   width: 800, // 坐标系的宽度
   height: 600, // 坐标系的高度
   xAxis: {
