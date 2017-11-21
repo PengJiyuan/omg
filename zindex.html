@@ -31,14 +31,14 @@
 		enableGlobalTranslate: true
 	});
 
-	function createRect(startX, startY, width, height, zindex) {
+	function createRect(x, y, width, height, zindex) {
 		return world.rectangle({
-				startX: startX,
-				startY: startY,
+				x: x,
+				y: y,
 				width: width,
 				height: height,
 				zindex: zindex,
-				fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+				color: '#'+(~~(Math.random()*(1<<24))).toString(16)
 			}).config({
 				drag: true
 			});

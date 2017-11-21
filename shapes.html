@@ -42,23 +42,6 @@
 
 	//world.scaleCanvas(true);
 
-	var line = world.line({
-		matrix: [
-			[10, 180], 
-			[40, 50], 
-			[80, 180], 
-			[90, 80],
-			[110, 100], 
-			[140, 50],
-			[260, 180]
-		],
-		lineWidth: 2,
-		strokeColor: '#ef8376',
-		dash: [3, 3]
-	}).config({
-		fixed: true
-	});
-
 	var polygon = world.polygon({
 		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
 		color: 'black',
@@ -129,8 +112,8 @@
 	});
 
 	var image = world.image({
-		startX: 0,
-		startY: 0,
+		x: 0,
+		y: 0,
 		width: 800,
 		height: 500,
 		src: './img/timg.jpg'
@@ -141,8 +124,8 @@
 	});
 
 	var text = world.text({
-		startX: 300,
-		startY: 40,
+		x: 300,
+		y: 40,
 		width: 150,
 		height: 40,
 		paddingTop: 8, //text padding top
@@ -158,8 +141,8 @@
 	});
 
 	var image3 = world.image({
-		startX: 300,
-		startY: 200,
+		x: 300,
+		y: 200,
 		width: 97,
 		height: 110,
 		sliceX: 5,
@@ -209,8 +192,8 @@
 
 	world.addChild(
 		world.coord({
-			startX: 10,
-			startY: 0,
+			x: 10,
+			y: 0,
 			width: 300,
 			height: 250,
 			xAxis: {
@@ -221,13 +204,6 @@
 			},
 			series: [{
 				data: [-0.11358, -0.622, 0.33, 0.44, 0.5555]
-				// data: [
-				// 	[0.25, -0.11358],
-				// 	[-0.36, -0.622],
-				// 	[0.28, 0.33],
-				// 	[0.251, 0.44],
-				// 	[-0.24, 0.5555]
-				// ]
 			}],
 			boundaryGap: true,
 			backgroundColor: '#F3F3F3',//'#'+(~~(Math.random()*(1<<24))).toString(16)
@@ -239,6 +215,25 @@
 			zindex: 0
 		})
 	);
+
+	var line = world.line({
+		matrix: [
+			[10, 180], 
+			[40, 50], 
+			[80, 180], 
+			[90, 80],
+			[110, 100], 
+			[140, 50],
+			[260, 180]
+		],
+		lineWidth: 2,
+		strokeColor: '#ef8376',
+		dash: [3, 3]
+	}).config({
+		zindex: 2,
+		fixed: true
+	});
+
 	world.addChild(line);
 
 	world.show();
@@ -264,7 +259,7 @@
   		return item.isPointInner(x, y);
   	});
   	if(which.length > 0 ) {
-  		which[0].fillColor = '#000';
+  		which[0].color = '#000';
   		world.redraw();
   	}
   }
@@ -274,18 +269,18 @@
   	var y = world._event.getPos(ev).y;
   	var width = Math.random()*300;
     var a = world.rectangle({
-			startX: x,
-			startY: y,
+			x: x,
+			y: y,
 			width: width,
 			height: width,
-			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)
+			color: '#'+(~~(Math.random()*(1<<24))).toString(16)
 		}).on('mousedown', function() {
 			console.log('click a');
 		}).on('mouseenter', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
 			world.redraw();
 		}).on('mouseleave', function() {
-			a.fillColor = '#'+(~~(Math.random()*(1<<24))).toString(16);
+			a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
 			world.redraw();
 		}).config({
 			drag: true,
