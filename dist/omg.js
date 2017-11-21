@@ -640,9 +640,9 @@ var Display = function Display(settings, _this) {
 
     color: settings.color, // arc
 
-    startX: settings.startX,
+    x: settings.x,
 
-    startY: settings.startY,
+    y: settings.y,
 
     dash: settings.dash, // line
 
@@ -711,10 +711,10 @@ Display.prototype.isPointInner = function isPointInner (x, y) {
   var my = this.moveY;
   var ltx = this.fixed ? 0 : this._.transX;
   var lty = this.fixed ? 0 : this._.transY;
-  var xRight = x > this.startX + mx + ltx;
-  var xLeft = x < this.startX + this.width + mx + ltx;
-  var yTop = y > this.startY + my + lty;
-  var yBottom = y < this.startY + this.height + my + lty;
+  var xRight = x > this.x + mx + ltx;
+  var xLeft = x < this.x + this.width + mx + ltx;
+  var yTop = y > this.y + my + lty;
+  var yBottom = y < this.y + this.height + my + lty;
 
   switch(this.type) {
 
@@ -908,8 +908,8 @@ var arc = function(settings, _this) {
 
 var coord = function(settings, _this) {
   var canvas = _this.canvas,
-    startX = this.startX = settings.startX,
-    startY = this.startY = settings.startY,
+    x = this.x = settings.x,
+    y = this.y = settings.y,
     width = settings.width,
     height = settings.height,
     xAxis = settings.xAxis,
@@ -959,7 +959,7 @@ var coord = function(settings, _this) {
     if(this.backgroundColor) {
       canvas.save();
       canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(startX, startY, width, height);
+      canvas.fillRect(x, y, width, height);
       canvas.restore();
     }
 
@@ -982,7 +982,7 @@ var coord = function(settings, _this) {
     // draw yAxis
 
     // coordinate origin
-    canvas.translate(startX + margin, startY + margin + upCount * yGapLength + TO_TOP);
+    canvas.translate(x + margin, y + margin + upCount * yGapLength + TO_TOP);
 
     // yAxis
     canvas.beginPath();
@@ -1101,8 +1101,8 @@ var image = function(settings, _this) {
 
   var draw = function() {
     var canvas = _this.canvas,
-      startX = this.startX = settings.startX,
-      startY = this.startY = settings.startY,
+      x = this.x = settings.x,
+      y = this.y = settings.y,
       src = settings.src;
 
     canvas.save();
@@ -1111,9 +1111,9 @@ var image = function(settings, _this) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     if(this.sliceWidth && this.sliceHeight) {
-      canvas.drawImage(_this.loader.getImg(src), this.sliceX, this.sliceY, this.sliceWidth, this.sliceHeight, startX, startY, this.width, this.height);
+      canvas.drawImage(_this.loader.getImg(src), this.sliceX, this.sliceY, this.sliceWidth, this.sliceHeight, x, y, this.width, this.height);
     } else {
-      canvas.drawImage(_this.loader.getImg(src), startX, startY, this.width, this.height);
+      canvas.drawImage(_this.loader.getImg(src), x, y, this.width, this.height);
     }
     canvas.restore();
   };
@@ -1212,15 +1212,15 @@ var rectangle = function(settings, _this) {
     var canvas = _this.canvas;
 
     canvas.save();
-    // canvas.translate( startX + width/2 + this.moveX, startY + height/2 + this.moveY);
+    // canvas.translate( x + width/2 + this.moveX, y + height/2 + this.moveY);
     // canvas.rotate((Math.PI/180)*this.rotate);
-    // canvas.translate(-( startX + width/2 + this.moveX), -( startY + height/2 + this.moveY));
+    // canvas.translate(-( x + width/2 + this.moveX), -( y + height/2 + this.moveY));
     canvas.translate(this.moveX, this.moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     canvas.fillStyle = this.fillColor ? this.fillColor : '#000';
-    canvas.fillRect(this.startX, this.startY, this.width, this.height);
+    canvas.fillRect(this.x, this.y, this.width, this.height);
     canvas.restore();
   };
 
@@ -1250,8 +1250,8 @@ var text = function(settings, _this) {
 
   var draw = function() {
     var canvas = _this.canvas,
-      startX = this.startX = settings.startX,
-      startY = this.startY = settings.startY,
+      x = this.x = settings.x,
+      y = this.y = settings.y,
       width = settings.width,
       height = settings.height,
       pt = settings.paddingTop ? settings.paddingTop : 0,
@@ -1273,7 +1273,7 @@ var text = function(settings, _this) {
     if(this.backgroundColor) {
       canvas.save();
       canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(startX, startY, width, height);
+      canvas.fillRect(x, y, width, height);
       canvas.restore();
     }
     canvas.font = font;
@@ -1286,19 +1286,19 @@ var text = function(settings, _this) {
       canvas.strokeStyle = color;
       if(center) {
         if(textWidth < width - 8) {
-          canvas.strokeText(ellipsisText, startX + 4 + (width - textWidth - 8)/2, startY + pt);
+          canvas.strokeText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
         }
       } else {
-        canvas.strokeText(ellipsisText, startX + 4, startY + pt);
+        canvas.strokeText(ellipsisText, x + 4, y + pt);
       }
     } else {
       canvas.fillStyle = color;
       if(center) {
         if(textWidth < width - 8) {
-          canvas.fillText(ellipsisText, startX + 4 + (width - textWidth - 8)/2, startY + pt);
+          canvas.fillText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
         }
       } else {
-        canvas.fillText(ellipsisText, startX + 4, startY + pt);
+        canvas.fillText(ellipsisText, x + 4, y + pt);
       }
     }
     canvas.restore();

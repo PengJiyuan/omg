@@ -3,8 +3,8 @@ import utils from '../utils/helpers';
 
 export default function(settings, _this) {
   let canvas = _this.canvas,
-    startX = this.startX = settings.startX,
-    startY = this.startY = settings.startY,
+    x = this.x = settings.x,
+    y = this.y = settings.y,
     width = settings.width,
     height = settings.height,
     xAxis = settings.xAxis,
@@ -54,7 +54,7 @@ export default function(settings, _this) {
     if(this.backgroundColor) {
       canvas.save();
       canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(startX, startY, width, height);
+      canvas.fillRect(x, y, width, height);
       canvas.restore();
     }
 
@@ -77,7 +77,7 @@ export default function(settings, _this) {
     // draw yAxis
 
     // coordinate origin
-    canvas.translate(startX + margin, startY + margin + upCount * yGapLength + TO_TOP);
+    canvas.translate(x + margin, y + margin + upCount * yGapLength + TO_TOP);
 
     // yAxis
     canvas.beginPath();

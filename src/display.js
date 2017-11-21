@@ -8,9 +8,9 @@ class Display {
 
       color: settings.color, // arc
 
-      startX: settings.startX,
+      x: settings.x,
 
-      startY: settings.startY,
+      y: settings.y,
 
       dash: settings.dash, // line
 
@@ -78,10 +78,10 @@ class Display {
     const my = this.moveY;
     const ltx = this.fixed ? 0 : this._.transX;
     const lty = this.fixed ? 0 : this._.transY;
-    const xRight = x > this.startX + mx + ltx;
-    const xLeft = x < this.startX + this.width + mx + ltx;
-    const yTop = y > this.startY + my + lty;
-    const yBottom = y < this.startY + this.height + my + lty;
+    const xRight = x > this.x + mx + ltx;
+    const xLeft = x < this.x + this.width + mx + ltx;
+    const yTop = y > this.y + my + lty;
+    const yBottom = y < this.y + this.height + my + lty;
 
     switch(this.type) {
 

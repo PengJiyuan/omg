@@ -129,8 +129,8 @@
 	});
 
 	var image = world.image({
-		startX: 0,
-		startY: 0,
+		x: 0,
+		y: 0,
 		width: 800,
 		height: 500,
 		src: './img/timg.jpg'
@@ -141,8 +141,8 @@
 	});
 
 	var text = world.text({
-		startX: 300,
-		startY: 40,
+		x: 300,
+		y: 40,
 		width: 150,
 		height: 40,
 		paddingTop: 8, //text padding top
@@ -158,8 +158,8 @@
 	});
 
 	var image3 = world.image({
-		startX: 300,
-		startY: 200,
+		x: 300,
+		y: 200,
 		width: 97,
 		height: 110,
 		sliceX: 5,
@@ -209,8 +209,8 @@
 
 	world.addChild(
 		world.coord({
-			startX: 10,
-			startY: 0,
+			x: 10,
+			y: 0,
 			width: 300,
 			height: 250,
 			xAxis: {
@@ -274,8 +274,8 @@
   	var y = world._event.getPos(ev).y;
   	var width = Math.random()*300;
     var a = world.rectangle({
-			startX: x,
-			startY: y,
+			x: x,
+			y: y,
 			width: width,
 			height: width,
 			fillColor: '#'+(~~(Math.random()*(1<<24))).toString(16)

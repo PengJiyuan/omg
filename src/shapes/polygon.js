@@ -1,13 +1,13 @@
 import display from '../display';
 
 export default function(settings, _this) {
-  let canvas = _this.canvas,
+  const canvas = _this.canvas,
     matrix = settings.matrix,
     color = settings.color,
     lineWidth = settings.lineWidth || 1,
     type = settings.type || 'fill';
 
-  let draw = function() {
+  const draw = function() {
 
     canvas.save();
     canvas.translate(this.moveX, this.moveY);

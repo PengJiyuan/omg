@@ -1,8 +1,8 @@
 import display from '../display';
 
 export default function(settings, _this) {
-  let draw = function() {
-    let canvas = _this.canvas,
+  const draw = function() {
+    const canvas = _this.canvas,
       x = this.x = settings.x,
       y = this.y = settings.y,
       style = this.style = settings.style,

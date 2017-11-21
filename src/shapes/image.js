@@ -8,8 +8,8 @@ export default function(settings, _this) {
 
   let draw = function() {
     let canvas = _this.canvas,
-      startX = this.startX = settings.startX,
-      startY = this.startY = settings.startY,
+      x = this.x = settings.x,
+      y = this.y = settings.y,
       src = settings.src;
 
     canvas.save();
@@ -18,9 +18,9 @@ export default function(settings, _this) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     if(this.sliceWidth && this.sliceHeight) {
-      canvas.drawImage(_this.loader.getImg(src), this.sliceX, this.sliceY, this.sliceWidth, this.sliceHeight, startX, startY, this.width, this.height);
+      canvas.drawImage(_this.loader.getImg(src), this.sliceX, this.sliceY, this.sliceWidth, this.sliceHeight, x, y, this.width, this.height);
     } else {
-      canvas.drawImage(_this.loader.getImg(src), startX, startY, this.width, this.height);
+      canvas.drawImage(_this.loader.getImg(src), x, y, this.width, this.height);
     }
     canvas.restore();
   };

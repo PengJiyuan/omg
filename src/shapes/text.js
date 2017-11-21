@@ -20,8 +20,8 @@ export default function(settings, _this) {
 
   let draw = function() {
     let canvas = _this.canvas,
-      startX = this.startX = settings.startX,
-      startY = this.startY = settings.startY,
+      x = this.x = settings.x,
+      y = this.y = settings.y,
       width = settings.width,
       height = settings.height,
       pt = settings.paddingTop ? settings.paddingTop : 0,
@@ -43,7 +43,7 @@ export default function(settings, _this) {
     if(this.backgroundColor) {
       canvas.save();
       canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(startX, startY, width, height);
+      canvas.fillRect(x, y, width, height);
       canvas.restore();
     }
     canvas.font = font;
@@ -56,19 +56,19 @@ export default function(settings, _this) {
       canvas.strokeStyle = color;
       if(center) {
         if(textWidth < width - 8) {
-          canvas.strokeText(ellipsisText, startX + 4 + (width - textWidth - 8)/2, startY + pt);
+          canvas.strokeText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
         }
       } else {
-        canvas.strokeText(ellipsisText, startX + 4, startY + pt);
+        canvas.strokeText(ellipsisText, x + 4, y + pt);
       }
     } else {
       canvas.fillStyle = color;
       if(center) {
         if(textWidth < width - 8) {
-          canvas.fillText(ellipsisText, startX + 4 + (width - textWidth - 8)/2, startY + pt);
+          canvas.fillText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
         }
       } else {
-        canvas.fillText(ellipsisText, startX + 4, startY + pt);
+        canvas.fillText(ellipsisText, x + 4, y + pt);
       }
     }
     canvas.restore();
