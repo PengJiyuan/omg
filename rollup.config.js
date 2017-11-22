@@ -60,7 +60,7 @@ async function build(beauty) {
 }
 
 async function dev() {
-  changeFilename();
+  outputOptions.file = 'dist/omg.min.js';
   const watcher = rollup.watch(watchOptions);
   watcher.on('event', event => {
     switch(event.code) {
