@@ -69,35 +69,30 @@ class Display {
       return;
     }
     if(obj.drag) {
-      this.enableDrag = true;
+      this.enableDrag = obj.drag;
     }
     if(obj.changeIndex) {
-      this.enableChangeIndex = true;
+      this.enableChangeIndex = obj.changeIndex;
     }
     if(obj.fixed) {
-      this.fixed = true;
+      this.fixed = obj.fixed;
     }
     if(obj.bg) {
-      this.isBg = true;
+      this.isBg = obj.bg;
     }
-    this.zindex = obj.zindex ? obj.zindex : 0;
+    this.zindex = obj.zindex || 0;
+
     return this;
   }
 
   // whether this shape can be dragged
   drag(bool) {
-    if(!bool || typeof bool !== 'boolean') {
-      return;
-    }
-    this.enableDrag = true;
+    this.enableDrag = bool;
   };
 
   // when select this shape, whether it should be changed the index
   changeIndex(bool) {
-    if(!bool || typeof bool !== 'boolean') {
-      return;
-    }
-    this.enableChangeIndex = true;
+    this.enableChangeIndex = bool;
   };
 
 }
