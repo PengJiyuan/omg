@@ -37,12 +37,15 @@
 #### v1.3.5
 *  增加颜色函数，包括十六进制颜色转rgb颜色， rgb颜色转hsl颜色， 仿less的lighten和darken函数...
 
-#### v3.0.0
+#### v3.0.0-beta.0
 *  重构代码。
 *  添加autoscale，解决Retina屏模糊问题。
 *  Event callback添加参数self, 可以在callback中直接操作当前shape
 *  添加不规则图形的绘制。
 *  添加点在不规则图形内的判断。
+
+#### v3.0.0-beta.1
+* config配置的时候不能传入false，bugfix。
 
 ## ToDo
 
