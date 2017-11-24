@@ -28,6 +28,8 @@ export class OMG {
 
     this.isDragging = false;
 
+    this.alreadyShow = false;
+
     // support event types
     this.eventTypes = [
       'mousedown',
@@ -98,6 +100,10 @@ export class OMG {
     const _this = this;
     this.imgReady();
     this.loader.ready(() => {
+      if(_this.alreadyShow) {
+        throw 'show function already call and only can call once!';
+      }
+      _this.alreadyShow = true;
       _this.draw();
       _this._event.triggerEvents();
     });

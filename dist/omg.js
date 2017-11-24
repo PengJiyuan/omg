@@ -1410,6 +1410,8 @@ var OMG = function OMG(config) {
 
   this.isDragging = false;
 
+  this.alreadyShow = false;
+
   // support event types
   this.eventTypes = [
     'mousedown',
@@ -1480,6 +1482,10 @@ OMG.prototype.show = function show () {
   var _this = this;
   this.imgReady();
   this.loader.ready(function () {
+    if(_this.alreadyShow) {
+      throw 'show function already call and only can call once!';
+    }
+    _this.alreadyShow = true;
     _this.draw();
     _this._event.triggerEvents();
   });
