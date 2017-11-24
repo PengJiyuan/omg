@@ -46,6 +46,7 @@
 
 #### v3.0.0-beta.1
 * config配置的时候不能传入false，bugfix。
+* 添加全局mousedown, mousemove事件配置。
 
 ## ToDo
 
