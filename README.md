@@ -260,7 +260,7 @@ stage.mousemove(function(e) {
 Support chain call.
 
 ```javascript
-rect.on('mousedown', function(){
+shape.on('mousedown', function(){
   console.log('you click rect');
 }).on('mousemove', function() {
   console.log('you move!');
