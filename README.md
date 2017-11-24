@@ -245,6 +245,18 @@ const coord = stage.coord({
 
 ### Add Event
 
+Global event (mousedown, mousemove) for whole omg.
+
+```javascript
+world.mousedown(function(e) {
+  console.log(world.utils.getPos(e));
+});
+
+world.mousemove(function(e) {
+  console.log(world.utils.getPos(e));
+});
+```
+
 Support chain call.
 
 ```javascript
