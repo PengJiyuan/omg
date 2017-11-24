@@ -86,17 +86,36 @@ export class OMG {
     this.loader.addImg(this.images);
   }
 
-  addChild(obj) {
+  addChild(child) {
     // multi or single
-    if(utils.isArr(obj)) {
-      this.objects = this.objects.concat(obj);
+    if(utils.isArr(child)) {
+      this.objects = this.objects.concat(child);
     } else {
-      this.objects.push(obj);
+      this.objects.push(child);
     }
     this.objects.sort((a, b) => {
       return a.zindex - b.zindex;
     });
     // copy the reverse events array
+    this._objects = utils.reverse(this.objects);
+  }
+
+  removeChild(child) {
+    if(utils.isArr(child)) {
+      this.objects = this.objects.filter(o => !~child.indexOf(o));
+    } else {
+      this.objects = this.objects.filter(o => o !== child);
+    }
+    this._objects = utils.reverse(this.objects);
+  }
+
+  removeFirstChild() {
+    this.objects.pop();
+    this._objects = utils.reverse(this.objects);
+  }
+
+  removeLastChild() {
+    this.objects.shift();
     this._objects = utils.reverse(this.objects);
   }
 

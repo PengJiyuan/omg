@@ -1475,17 +1475,36 @@ OMG.prototype.imgReady = function imgReady () {
   this.loader.addImg(this.images);
 };
 
-OMG.prototype.addChild = function addChild (obj) {
+OMG.prototype.addChild = function addChild (child) {
   // multi or single
-  if(utils.isArr(obj)) {
-    this.objects = this.objects.concat(obj);
+  if(utils.isArr(child)) {
+    this.objects = this.objects.concat(child);
   } else {
-    this.objects.push(obj);
+    this.objects.push(child);
   }
   this.objects.sort(function (a, b) {
     return a.zindex - b.zindex;
   });
   // copy the reverse events array
+  this._objects = utils.reverse(this.objects);
+};
+
+OMG.prototype.removeChild = function removeChild (child) {
+  if(utils.isArr(child)) {
+    this.objects = this.objects.filter(function (o) { return !~child.indexOf(o); });
+  } else {
+    this.objects = this.objects.filter(function (o) { return o !== child; });
+  }
+  this._objects = utils.reverse(this.objects);
+};
+
+OMG.prototype.removeFirstChild = function removeFirstChild () {
+  this.objects.pop();
+  this._objects = utils.reverse(this.objects);
+};
+
+OMG.prototype.removeLastChild = function removeLastChild () {
+  this.objects.shift();
   this._objects = utils.reverse(this.objects);
 };
 
