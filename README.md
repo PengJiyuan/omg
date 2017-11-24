@@ -303,10 +303,17 @@ stage.removeFirstChild();
 stage.removeLastChild();
 ```
 
-### Draw
+### Show
+Draw and trigger events. Only can call once.
 
 ```javascript
 stage.show();
+```
+
+### Draw and Redraw
+```javascript
+stage.draw();
+stage.redraw();
 ```
 
 ### Animation
