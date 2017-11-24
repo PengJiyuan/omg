@@ -245,6 +245,8 @@ const coord = stage.coord({
 
 ### Add Event
 
+#### global events
+
 Global event (mousedown, mousemove) for whole omg.
 
 ```javascript
@@ -257,14 +259,32 @@ stage.mousemove(function(e) {
 });
 ```
 
+#### shape events
+
+All types supported:
+
+* mousedown
+* mouseup
+* mouseenter
+* mouseleave
+* mousemove'
+* drag
+* dragend
+* dragin
+* dragout
+* drop
+
 Support chain call.
 
 ```javascript
-shape.on('mousedown', function(){
+/*!
+ * @cur: current shape.
+ */
+shape.on('mousedown', function( cur ) {
   console.log('you click rect');
-}).on('mousemove', function() {
+}).on('mousemove', function( cur ) {
   console.log('you move!');
-}).on('mouseleave', function() {
+}).on('mouseleave', function( cur ) {
   console.log('you leave!');
 }).drag(true).config(){...};
 ```
