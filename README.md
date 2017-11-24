@@ -248,12 +248,12 @@ const coord = stage.coord({
 Global event (mousedown, mousemove) for whole omg.
 
 ```javascript
-world.mousedown(function(e) {
-  console.log(world.utils.getPos(e));
+stage.mousedown(function(e) {
+  console.log(stage.utils.getPos(e));
 });
 
-world.mousemove(function(e) {
-  console.log(world.utils.getPos(e));
+stage.mousemove(function(e) {
+  console.log(stage.utils.getPos(e));
 });
 ```
 
