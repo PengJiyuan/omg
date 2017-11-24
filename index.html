@@ -192,12 +192,11 @@
 		trash.backgroundColor = 'red';
 	}).on('dragout', function() {
 		trash.backgroundColor = '#ef4476';
-	}).on('drop', function( item ) {
+	}).on('drop', function( item, cur ) {
 		bear++;
 		trash.backgroundColor = '#ef4476';
 		trash.text = '笼子(' + bear + ')';
-		world.objects.pop();
-		world._objects = world.utils.reverse(world.objects);
+		world.removeChild(cur);
 		world.redraw();
 	});
 
