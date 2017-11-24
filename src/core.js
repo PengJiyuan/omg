@@ -26,6 +26,10 @@ export class OMG {
 
     this.pointerInnerArray = [];
 
+    this.globalMousedown = void(0);
+
+    this.globalMousemove = void(0);
+
     this.isDragging = false;
 
     this.alreadyShow = false;
@@ -171,6 +175,14 @@ export class OMG {
         }
       }
     });
+  }
+
+  mousedown(func) {
+    this.globalMousedown = func;
+  }
+
+  mousemove(func) {
+    this.globalMousemove = func;
   }
 
 }

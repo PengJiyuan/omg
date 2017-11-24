@@ -29,7 +29,7 @@ export class Event {
           || i.eventType === 'dragout'
           || i.eventType === 'drop';
       });
-    });
+    }) || this._.globalMousemove;
 
     // mouseenter mousemove
     if(hasEnterOrMove) {
@@ -42,9 +42,12 @@ export class Event {
   mouseEnterOrMove() {
     const that = this;
     let isDragging;
+
     utils.bind(this._.element, 'mousemove', e_moveOrEnter => {
       const mX = that.getPos(e_moveOrEnter).x;
       const mY = that.getPos(e_moveOrEnter).y;
+
+      that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
 
       isDragging = that._.objects.some(item => {
         return item.isDragging;
@@ -114,6 +117,10 @@ export class Event {
 
   mouseDown(e_down) {
     let that = this, whichIn, hasEventDrag, hasEventDragEnd, dragCb, dragEndCb;
+
+    // global setting event mousedown
+    this._.globalMousedown && this._.globalMousedown(e_down);
+
     const hasDrags = this._.objects.some(item => {
       return item.enableDrag;
     });

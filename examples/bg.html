@@ -31,6 +31,14 @@
 		enableGlobalTranslate: true
 	});
 
+	world.mousedown(function(e) {
+		console.log(world.utils.getPos(e));
+	});
+
+	world.mousemove(function(e) {
+		console.log(world.utils.getPos(e));
+	});
+
 	var bg = world.rectangle({
 		x: 50,
 		y: 50,

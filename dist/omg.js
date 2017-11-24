@@ -225,7 +225,7 @@ Event.prototype.triggerEvents = function triggerEvents () {
         || i.eventType === 'dragout'
         || i.eventType === 'drop';
     });
-  });
+  }) || this._.globalMousemove;
 
   // mouseenter mousemove
   if(hasEnterOrMove) {
@@ -238,9 +238,12 @@ Event.prototype.triggerEvents = function triggerEvents () {
 Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
   var that = this;
   var isDragging;
+
   utils.bind(this._.element, 'mousemove', function (e_moveOrEnter) {
     var mX = that.getPos(e_moveOrEnter).x;
     var mY = that.getPos(e_moveOrEnter).y;
+
+    that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
 
     isDragging = that._.objects.some(function (item) {
       return item.isDragging;
@@ -310,6 +313,10 @@ Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
 
 Event.prototype.mouseDown = function mouseDown (e_down) {
   var that = this, whichIn, hasEventDrag, hasEventDragEnd, dragCb, dragEndCb;
+
+  // global setting event mousedown
+  this._.globalMousedown && this._.globalMousedown(e_down);
+
   var hasDrags = this._.objects.some(function (item) {
     return item.enableDrag;
   });
@@ -1408,6 +1415,10 @@ var OMG = function OMG(config) {
 
   this.pointerInnerArray = [];
 
+  this.globalMousedown = void(0);
+
+  this.globalMousemove = void(0);
+
   this.isDragging = false;
 
   this.alreadyShow = false;
@@ -1555,6 +1566,14 @@ OMG.prototype.scaleCanvas = function scaleCanvas (bool) {
       }
     }
   });
+};
+
+OMG.prototype.mousedown = function mousedown (func) {
+  this.globalMousedown = func;
+};
+
+OMG.prototype.mousemove = function mousemove (func) {
+  this.globalMousemove = func;
 };
 
 var index = function (config) {
