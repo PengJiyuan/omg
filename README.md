@@ -291,6 +291,18 @@ stage.addChild(line);
 stage.addChild([rect, line, arc1, text1]);
 ```
 
+### Remove shapes from stage.
+
+```javascript
+stage.removeChild(rect);
+
+stage.removeChild([rect, arc, line]);
+
+stage.removeFirstChild();
+
+stage.removeLastChild();
+```
+
 ### Draw
 
 ```javascript
