@@ -26,9 +26,9 @@ const outputOptions = {
   name: 'omg',
   format: 'umd',
   banner: '/*!\n' +
-    '* omg.js v' + version + '\n' +
-    '* Author: PengJiyuan\n' +
-    '*/'
+    ' * omg.js v' + version + '\n' +
+    ' * Author: PengJiyuan\n' +
+    ' */'
 };
 const watchOptions = {
   ...inputOptions,
