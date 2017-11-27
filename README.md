@@ -339,8 +339,8 @@ stage.show()
 ```
 or
 ```javascript
-stage._events.triggerEvents();
 stage.draw();
+stage._events.triggerEvents();
 ```
 
 ### Draw and Redraw
