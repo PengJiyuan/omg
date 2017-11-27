@@ -35,8 +35,13 @@ export class Event {
 
     // mouseenter mousemove
     if(hasEnterOrMove && !this.triggeredMouseMove) {
-      this.mouseEnterOrMove();
+      this.bindMouseMove();
       this.triggeredMouseMove = true;
+    }
+
+    if(!hasEnterOrMove && this.triggeredMouseMove) {
+      this.unBindMouseMove();
+      this.triggeredMouseMove = false;
     }
 
     if(!this.triggeredMouseDown) {
@@ -45,80 +50,86 @@ export class Event {
     }
   }
 
-  mouseEnterOrMove() {
+  bindMouseMove() {
+    utils.bind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+  }
+
+  unBindMouseMove() {
+    utils.unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+  }
+
+  mouseEnterOrMove(e_moveOrEnter) {
     const that = this;
     let isDragging;
 
-    utils.bind(this._.element, 'mousemove', e_moveOrEnter => {
-      const mX = that.getPos(e_moveOrEnter).x;
-      const mY = that.getPos(e_moveOrEnter).y;
+    const mX = that.getPos(e_moveOrEnter).x;
+    const mY = that.getPos(e_moveOrEnter).y;
 
-      that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
+    that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
 
-      isDragging = that._.objects.some(item => {
-        return item.isDragging;
-      });
+    isDragging = that._.objects.some(item => {
+      return item.isDragging;
+    });
 
-      // trigger mouseenter and mousemove
-      const movedOn = that._._objects.filter(item => {
-        return item.isPointInner(mX, mY);
-      });
+    // trigger mouseenter and mousemove
+    const movedOn = that._._objects.filter(item => {
+      return item.isPointInner(mX, mY);
+    });
 
-      if(isDragging) {
-        // dragin
-        if(movedOn && movedOn.length > 1) {
-          movedOn[1].events && movedOn[1].events.forEach(i => {
-            if(i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
-              movedOn[1].hasDraggedIn = true;
-              i.callback && i.callback(movedOn[1]);
-            }
-          });
-        }
-
-        // dragout handler
-        const handleDragOut = item => {
-          item.hasDraggedIn && item.events.forEach(i => {
-            if(i.eventType === 'dragout') {
-              i.callback && i.callback(movedOn[1]);
-            }
-          });
-          item.hasDraggedIn = false;
-        };
-
-        // Determine whether the mouse is dragged out from the shape and trigger dragout handler
-        that._._objects.some(item => {
-          return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
-        });
-
-      } else {
-        // normal mousemove
-        if(movedOn && movedOn.length > 0) {
-          movedOn[0].events && movedOn[0].events.forEach(i => {
-            if(i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
-              movedOn[0].hasEnter = true;
-              i.callback && i.callback(movedOn[0]);
-            } else if(i.eventType === 'mousemove') {
-              i.callback && i.callback(movedOn[0]);
-            }
-          });
-        }
-        // mouseleave handler
-        const handleMoveOut = item => {
-          item.hasEnter && item.events.forEach(i => {
-            if(i.eventType === 'mouseleave') {
-              i.callback && i.callback(item);
-            }
-          });
-          item.hasEnter = false;
-        };
-
-        // Determine whether the mouse is removed from the shape and trigger mouseleave handler
-        that._._objects.some(item => {
-          return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
+    if(isDragging) {
+      // dragin
+      if(movedOn && movedOn.length > 1) {
+        movedOn[1].events && movedOn[1].events.forEach(i => {
+          if(i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
+            movedOn[1].hasDraggedIn = true;
+            i.callback && i.callback(movedOn[1]);
+          }
         });
       }
 
-    });
+      // dragout handler
+      const handleDragOut = item => {
+        item.hasDraggedIn && item.events.forEach(i => {
+          if(i.eventType === 'dragout') {
+            i.callback && i.callback(movedOn[1]);
+          }
+        });
+        item.hasDraggedIn = false;
+      };
+
+      // Determine whether the mouse is dragged out from the shape and trigger dragout handler
+      that._._objects.some(item => {
+        return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
+      });
+
+    } else {
+      // normal mousemove
+      if(movedOn && movedOn.length > 0) {
+        movedOn[0].events && movedOn[0].events.forEach(i => {
+          if(i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
+            movedOn[0].hasEnter = true;
+            i.callback && i.callback(movedOn[0]);
+          } else if(i.eventType === 'mousemove') {
+            i.callback && i.callback(movedOn[0]);
+          }
+        });
+      }
+      // mouseleave handler
+      const handleMoveOut = item => {
+        item.hasEnter && item.events.forEach(i => {
+          if(i.eventType === 'mouseleave') {
+            i.callback && i.callback(item);
+          }
+        });
+        item.hasEnter = false;
+      };
+
+      // Determine whether the mouse is removed from the shape and trigger mouseleave handler
+      that._._objects.some(item => {
+        return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
+      });
+    }
+
   }
 
   mouseDown(e_down) {

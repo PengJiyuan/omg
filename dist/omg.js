@@ -231,8 +231,13 @@ Event.prototype.triggerEvents = function triggerEvents () {
 
   // mouseenter mousemove
   if(hasEnterOrMove && !this.triggeredMouseMove) {
-    this.mouseEnterOrMove();
+    this.bindMouseMove();
     this.triggeredMouseMove = true;
+  }
+
+  if(!hasEnterOrMove && this.triggeredMouseMove) {
+    this.unBindMouseMove();
+    this.triggeredMouseMove = false;
   }
 
   if(!this.triggeredMouseDown) {
@@ -241,80 +246,86 @@ Event.prototype.triggerEvents = function triggerEvents () {
   }
 };
 
-Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
+Event.prototype.bindMouseMove = function bindMouseMove () {
+  utils.bind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+};
+
+Event.prototype.unBindMouseMove = function unBindMouseMove () {
+  utils.unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+};
+
+Event.prototype.mouseEnterOrMove = function mouseEnterOrMove (e_moveOrEnter) {
   var that = this;
   var isDragging;
 
-  utils.bind(this._.element, 'mousemove', function (e_moveOrEnter) {
-    var mX = that.getPos(e_moveOrEnter).x;
-    var mY = that.getPos(e_moveOrEnter).y;
+  var mX = that.getPos(e_moveOrEnter).x;
+  var mY = that.getPos(e_moveOrEnter).y;
 
-    that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
+  that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
 
-    isDragging = that._.objects.some(function (item) {
-      return item.isDragging;
-    });
+  isDragging = that._.objects.some(function (item) {
+    return item.isDragging;
+  });
 
-    // trigger mouseenter and mousemove
-    var movedOn = that._._objects.filter(function (item) {
-      return item.isPointInner(mX, mY);
-    });
+  // trigger mouseenter and mousemove
+  var movedOn = that._._objects.filter(function (item) {
+    return item.isPointInner(mX, mY);
+  });
 
-    if(isDragging) {
-      // dragin
-      if(movedOn && movedOn.length > 1) {
-        movedOn[1].events && movedOn[1].events.forEach(function (i) {
-          if(i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
-            movedOn[1].hasDraggedIn = true;
-            i.callback && i.callback(movedOn[1]);
-          }
-        });
-      }
-
-      // dragout handler
-      var handleDragOut = function (item) {
-        item.hasDraggedIn && item.events.forEach(function (i) {
-          if(i.eventType === 'dragout') {
-            i.callback && i.callback(movedOn[1]);
-          }
-        });
-        item.hasDraggedIn = false;
-      };
-
-      // Determine whether the mouse is dragged out from the shape and trigger dragout handler
-      that._._objects.some(function (item) {
-        return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
-      });
-
-    } else {
-      // normal mousemove
-      if(movedOn && movedOn.length > 0) {
-        movedOn[0].events && movedOn[0].events.forEach(function (i) {
-          if(i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
-            movedOn[0].hasEnter = true;
-            i.callback && i.callback(movedOn[0]);
-          } else if(i.eventType === 'mousemove') {
-            i.callback && i.callback(movedOn[0]);
-          }
-        });
-      }
-      // mouseleave handler
-      var handleMoveOut = function (item) {
-        item.hasEnter && item.events.forEach(function (i) {
-          if(i.eventType === 'mouseleave') {
-            i.callback && i.callback(item);
-          }
-        });
-        item.hasEnter = false;
-      };
-
-      // Determine whether the mouse is removed from the shape and trigger mouseleave handler
-      that._._objects.some(function (item) {
-        return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
+  if(isDragging) {
+    // dragin
+    if(movedOn && movedOn.length > 1) {
+      movedOn[1].events && movedOn[1].events.forEach(function (i) {
+        if(i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
+          movedOn[1].hasDraggedIn = true;
+          i.callback && i.callback(movedOn[1]);
+        }
       });
     }
 
-  });
+    // dragout handler
+    var handleDragOut = function (item) {
+      item.hasDraggedIn && item.events.forEach(function (i) {
+        if(i.eventType === 'dragout') {
+          i.callback && i.callback(movedOn[1]);
+        }
+      });
+      item.hasDraggedIn = false;
+    };
+
+    // Determine whether the mouse is dragged out from the shape and trigger dragout handler
+    that._._objects.some(function (item) {
+      return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
+    });
+
+  } else {
+    // normal mousemove
+    if(movedOn && movedOn.length > 0) {
+      movedOn[0].events && movedOn[0].events.forEach(function (i) {
+        if(i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
+          movedOn[0].hasEnter = true;
+          i.callback && i.callback(movedOn[0]);
+        } else if(i.eventType === 'mousemove') {
+          i.callback && i.callback(movedOn[0]);
+        }
+      });
+    }
+    // mouseleave handler
+    var handleMoveOut = function (item) {
+      item.hasEnter && item.events.forEach(function (i) {
+        if(i.eventType === 'mouseleave') {
+          i.callback && i.callback(item);
+        }
+      });
+      item.hasEnter = false;
+    };
+
+    // Determine whether the mouse is removed from the shape and trigger mouseleave handler
+    that._._objects.some(function (item) {
+      return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
+    });
+  }
+
 };
 
 Event.prototype.mouseDown = function mouseDown (e_down) {
