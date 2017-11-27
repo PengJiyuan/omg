@@ -4,6 +4,8 @@ export class Event {
   constructor(_this) {
     // global this
     this._ = _this;
+    this.triggeredMouseDown = false;
+    this.triggeredMouseMove = false;
   }
 
   getPos(e) {
@@ -32,11 +34,15 @@ export class Event {
     }) || this._.globalMousemove;
 
     // mouseenter mousemove
-    if(hasEnterOrMove) {
+    if(hasEnterOrMove && !this.triggeredMouseMove) {
       this.mouseEnterOrMove();
+      this.triggeredMouseMove = true;
     }
 
-    utils.bind(this._.element, 'mousedown', this.mouseDown.bind(this));
+    if(!this.triggeredMouseDown) {
+      utils.bind(this._.element, 'mousedown', this.mouseDown.bind(this));
+      this.triggeredMouseDown = true;
+    }
   }
 
   mouseEnterOrMove() {

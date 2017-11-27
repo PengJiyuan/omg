@@ -198,6 +198,8 @@ var utils = {
 var Event = function Event(_this) {
   // global this
   this._ = _this;
+  this.triggeredMouseDown = false;
+  this.triggeredMouseMove = false;
 };
 
 Event.prototype.getPos = function getPos (e) {
@@ -228,11 +230,15 @@ Event.prototype.triggerEvents = function triggerEvents () {
   }) || this._.globalMousemove;
 
   // mouseenter mousemove
-  if(hasEnterOrMove) {
+  if(hasEnterOrMove && !this.triggeredMouseMove) {
     this.mouseEnterOrMove();
+    this.triggeredMouseMove = true;
   }
 
-  utils.bind(this._.element, 'mousedown', this.mouseDown.bind(this));
+  if(!this.triggeredMouseDown) {
+    utils.bind(this._.element, 'mousedown', this.mouseDown.bind(this));
+    this.triggeredMouseDown = true;
+  }
 };
 
 Event.prototype.mouseEnterOrMove = function mouseEnterOrMove () {
@@ -1421,8 +1427,6 @@ var OMG = function OMG(config) {
 
   this.isDragging = false;
 
-  this.alreadyShow = false;
-
   // support event types
   this.eventTypes = [
     'mousedown',
@@ -1508,14 +1512,15 @@ OMG.prototype.removeLastChild = function removeLastChild () {
   this._objects = utils.reverse(this.objects);
 };
 
+OMG.prototype.removeAllChilds = function removeAllChilds () {
+  this.objects = [];
+  this._objects = [];
+};
+
 OMG.prototype.show = function show () {
   var _this = this;
   this.imgReady();
   this.loader.ready(function () {
-    if(_this.alreadyShow) {
-      throw 'show function already call and only can call once!';
-    }
-    _this.alreadyShow = true;
     _this.draw();
     _this._event.triggerEvents();
   });
