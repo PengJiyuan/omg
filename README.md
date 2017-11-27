@@ -321,13 +321,26 @@ stage.removeChild([rect, arc, line]);
 stage.removeFirstChild();
 
 stage.removeLastChild();
+
+stage.removeAllChilds();
 ```
 
+
 ### Show
-Draw and trigger events. Only can call once.
+Draw and trigger events.
 
 ```javascript
 stage.show();
+```
+
+If you call function addChild or removeChild and bind some new events or unbind some events, you shold reset events trigger by:
+```javascript
+stage.show()
+```
+or
+```javascript
+stage._events.triggerEvents();
+stage.draw();
 ```
 
 ### Draw and Redraw
