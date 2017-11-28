@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test html</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		#canvas {
+			margin: 0;
+			background-color: #fff;
+		}
+
+	</style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+		<canvas id="canvas"></canvas>
+</div>
+<script src="./omg.min.js"></script>
+<script>
+	var world = omg({
+		element: document.getElementById('canvas'),
+		width: 500,
+		height: 500,
+		enableGlobalTranslate: false
+	});
+
+	var rect2 = world.rectangle({
+		x: 200,
+		y: 200,
+		width: 100,
+		height: 100,
+		zindex: 2,
+		color: 'black'
+	}).on('mouseenter', function(cur) {
+		// 测试代码，应该要封装到omg中
+		world.element.style.cursor = 'pointer';
+		var tween = new world.Tween({
+			from: {
+				x: 200,
+				y: 200,
+				width: 100,
+				height: 100
+			},
+			to: {
+				x: 150,
+				y: 150,
+				width: 200,
+				height: 200
+			},
+			duration: 500,
+			easing: 'bounceOut',
+			onUpdate: function(keys) {
+				cur.x = keys.x;
+				cur.y = keys.y;
+				cur.width = keys.width;
+				cur.height = keys.height;
+				world.redraw();
+			}
+		});
+
+		var tick = function() {
+			tween.update();
+			requestAnimationFrame(tick);
+		};
+		tick();
+
+	}).on('mouseleave', function(cur) {
+		world.element.style.cursor = 'default';
+		var tween = new world.Tween({
+			to: {
+				x: 200,
+				y: 200,
+				width: 100,
+				height: 100
+			},
+			from: {
+				x: 150,
+				y: 150,
+				width: 200,
+				height: 200
+			},
+			duration: 500,
+			easing: 'bounceIn',
+			onUpdate: function(keys) {
+				cur.x = keys.x;
+				cur.y = keys.y;
+				cur.width = keys.width;
+				cur.height = keys.height;
+				world.redraw();
+			}
+		});
+
+		var tick = function() {
+			tween.update();
+			requestAnimationFrame(tick);
+		};
+		tick();
+	});
+
+	world.addChild([rect2]);
+
+	world.show();
+
+</script>
+</body>
+</html>

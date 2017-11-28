@@ -1413,6 +1413,117 @@ var shapes = {
   polygon: polygon
 };
 
+/**!
+ * code from https://github.com/LiikeJS/Liike/blob/master/src/ease.js
+ */
+var easeInBy = function (power) { return function (t) { return Math.pow(t, power); }; };
+var easeOutBy = function (power) { return function (t) { return 1 - Math.abs(Math.pow(t - 1, power)); }; };
+var easeInOutBy = function (power) { return function (t) { return t < 0.5 ? easeInBy(power)(t * 2) / 2 : easeOutBy(power)(t * 2 - 1) / 2 + 0.5; }; };
+
+var linear = function (t) { return t; };
+var quadIn = easeInBy(2);
+var quadOut = easeOutBy(2);
+var quadInOut = easeInOutBy(2);
+var cubicIn = easeInBy(3);
+var cubicOut = easeOutBy(3);
+var cubicInOut = easeInOutBy(3);
+var quartIn = easeInBy(4);
+var quartOut = easeOutBy(4);
+var quartInOut = easeInOutBy(4);
+var quintIn = easeInBy(5);
+var quintOut = easeOutBy(5);
+var quintInOut = easeInOutBy(5);
+var sineIn = function (t) { return 1 + Math.sin(Math.PI / 2 * t - Math.PI / 2); };
+var sineOut = function (t) { return Math.sin(Math.PI / 2 * t); };
+var sineInOut = function (t) { return (1 + Math.sin(Math.PI * t - Math.PI / 2)) / 2; };
+var bounceOut = function (t) {
+  var s = 7.5625;
+  var p = 2.75;
+
+  if (t < 1 / p) {
+    return s * t * t;
+  }
+  if (t < 2 / p) {
+    t -= 1.5 / p;
+    return s * t * t + 0.75;
+  }
+  if (t < 2.5 / p) {
+    t -= 2.25 / p;
+    return s * t * t + 0.9375;
+  }
+  t -= 2.625 / p;
+  return s * t * t + 0.984375;
+};
+var bounceIn = function (t) { return 1 - bounceOut(1 - t); };
+var bounceInOut = function (t) { return t < 0.5 ? bounceIn(t * 2) * 0.5 : bounceOut(t * 2 - 1) * 0.5 + 0.5; };
+
+
+var easing = Object.freeze({
+	linear: linear,
+	quadIn: quadIn,
+	quadOut: quadOut,
+	quadInOut: quadInOut,
+	cubicIn: cubicIn,
+	cubicOut: cubicOut,
+	cubicInOut: cubicInOut,
+	quartIn: quartIn,
+	quartOut: quartOut,
+	quartInOut: quartInOut,
+	quintIn: quintIn,
+	quintOut: quintOut,
+	quintInOut: quintInOut,
+	sineIn: sineIn,
+	sineOut: sineOut,
+	sineInOut: sineInOut,
+	bounceOut: bounceOut,
+	bounceIn: bounceIn,
+	bounceInOut: bounceInOut
+});
+
+var Tween = function Tween(settings) {
+  var from = settings.from;
+  var to = settings.to;
+  var duration = settings.duration;
+  var delay = settings.delay;
+  var easing = settings.easing;
+  var onUpdate = settings.onUpdate;
+
+  for(var key in from) {
+    if(to[key] === undefined) {
+      to[key] = from[key];
+    }
+  }
+  for(var key$1 in to) {
+    if(from[key$1] === undefined) {
+      from[key$1] = to[key$1];
+    }
+  }
+
+  this.from = from;
+  this.to = to;
+  this.duration = duration || 500;
+  this.delay = delay || 0;
+  this.easing = easing || 'linear';
+  this.onUpdate = onUpdate || function() {};
+  this.startTime = Date.now() + this.delay;
+  this.keys = {};
+};
+
+Tween.prototype.update = function update () {
+    var this$1 = this;
+
+  if(this.elapsed === this.duration) {
+    return;
+  }
+  this.time = this.time ? Date.now() : this.startTime;
+  this.elapsed = this.time - this.startTime;
+  this.elapsed = this.elapsed > this.duration ? this.duration : this.elapsed;
+  for(var key in this$1.to) {
+    this$1.keys[key] = this$1.from[key] + ( this$1.to[key] - this$1.from[key] ) * easing[this$1.easing](this$1.elapsed / this$1.duration);
+  }
+  this.onUpdate(this.keys);
+};
+
 var OMG = function OMG(config) {
   var this$1 = this;
 
@@ -1437,6 +1548,8 @@ var OMG = function OMG(config) {
   this.globalMousemove = void(0);
 
   this.isDragging = false;
+
+  this.Tween = Tween; 
 
   // support event types
   this.eventTypes = [

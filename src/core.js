@@ -6,6 +6,7 @@ import { ImageLoader } from './utils/imageLoader';
 import autoscale from './utils/autoscale';
 import utils from './utils/helpers';
 import shapes from './shapes/index';
+import { Tween } from './tween/index';
 
 export class OMG {
 
@@ -31,6 +32,8 @@ export class OMG {
     this.globalMousemove = void(0);
 
     this.isDragging = false;
+
+    this.Tween = Tween; 
 
     // support event types
     this.eventTypes = [
