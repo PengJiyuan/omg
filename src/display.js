@@ -101,8 +101,12 @@ class Display {
         this[key] = keys[key];
       }
     };
+    data.onFinish = (keys) => {
+      configs.onFinish && configs.onFinish(keys);
+      this._.removeAnimation(tween.update.bind(tween));
+    };
     for(let key in configs) {
-      if(key !== 'onUpdate') {
+      if(key !== 'onUpdate' || key !== 'onFinish') {
         data[key] = configs[key];
       }
     }

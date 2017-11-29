@@ -1023,8 +1023,12 @@ Display.prototype.animateTo = function animateTo (keys, configs) {
       this$1[key] = keys[key];
     }
   };
+  data.onFinish = function (keys) {
+    configs.onFinish && configs.onFinish(keys);
+    this$1._.removeAnimation(tween.update.bind(tween));
+  };
   for(var key$1 in configs) {
-    if(key$1 !== 'onUpdate') {
+    if(key$1 !== 'onUpdate' || key$1 !== 'onFinish') {
       data[key$1] = configs[key$1];
     }
   }
@@ -1744,6 +1748,15 @@ OMG.prototype.tick = function tick () {
     cancelAnimationFrame(this.animationId);
   }
   return this.animationId;
+};
+
+OMG.prototype.removeAnimation = function removeAnimation (animation) {
+  if(utils.isArr(animation)) {
+    this.animationList = this.animationList.filter(function (o) { return !~child.indexOf(o); });
+  } else {
+    this.animationList = this.animationList.filter(function (o) { return o !== child; });
+  }
+  this.tick();
 };
 
 OMG.prototype.clearAnimation = function clearAnimation () {

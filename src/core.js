@@ -177,6 +177,15 @@ export class OMG {
     return this.animationId;
   }
 
+  removeAnimation(animation) {
+    if(utils.isArr(animation)) {
+      this.animationList = this.animationList.filter(o => !~child.indexOf(o));
+    } else {
+      this.animationList = this.animationList.filter(o => o !== child);
+    }
+    this.tick();
+  }
+
   clearAnimation() {
     this.animationList = [];
     this.tick();
