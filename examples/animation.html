@@ -26,10 +26,12 @@
 <script>
 	var world = omg({
 		element: document.getElementById('canvas'),
-		width: 500,
-		height: 500,
+		width: document.body.clientWidth,
+		height: document.body.clientHeight,
 		enableGlobalTranslate: false
 	});
+
+	var moving = false;
 
 	var rect2 = world.rectangle({
 		x: 200,
@@ -39,29 +41,56 @@
 		zindex: 2,
 		color: 'black'
 	}).on('mouseenter', function(cur) {
+		var from = {};
+		var to = {};
+		if(moving) {
+			return;
+		}
+
+		if(cur.x === 800) {
+			from = {
+				x: 800,
+				y: 200,
+				width: 200,
+				height: 200
+			};
+			to = {
+				x: 200,
+				y: 200,
+				width: 100,
+				height: 100
+			};
+		} else {
+			to = {
+				x: 800,
+				y: 200,
+				width: 200,
+				height: 200
+			};
+			from = {
+				x: 200,
+				y: 200,
+				width: 100,
+				height: 100
+			};
+		}
 		// 测试代码，应该要封装到omg中
 		world.element.style.cursor = 'pointer';
 		var tween = new world.Tween({
-			from: {
-				x: 200,
-				y: 200,
-				width: 100,
-				height: 100
-			},
-			to: {
-				x: 150,
-				y: 150,
-				width: 200,
-				height: 200
-			},
-			duration: 500,
+			from: from,
+			to: to,
+			duration: 300,
 			easing: 'bounceOut',
 			onUpdate: function(keys) {
+				moving = true;
 				cur.x = keys.x;
 				cur.y = keys.y;
 				cur.width = keys.width;
 				cur.height = keys.height;
 				world.redraw();
+			},
+			onFinish: function(keys) {
+				moving = false;
 			}
 		});
 
@@ -71,37 +100,6 @@
 		};
 		tick();
 
-	}).on('mouseleave', function(cur) {
-		world.element.style.cursor = 'default';
-		var tween = new world.Tween({
-			to: {
-				x: 200,
-				y: 200,
-				width: 100,
-				height: 100
-			},
-			from: {
-				x: 150,
-				y: 150,
-				width: 200,
-				height: 200
-			},
-			duration: 500,
-			easing: 'bounceIn',
-			onUpdate: function(keys) {
-				cur.x = keys.x;
-				cur.y = keys.y;
-				cur.width = keys.width;
-				cur.height = keys.height;
-				world.redraw();
-			}
-		});
-
-		var tick = function() {
-			tween.update();
-			requestAnimationFrame(tick);
-		};
-		tick();
 	});
 
 	world.addChild([rect2]);

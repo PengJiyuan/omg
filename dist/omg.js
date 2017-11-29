@@ -1487,6 +1487,7 @@ var Tween = function Tween(settings) {
   var delay = settings.delay;
   var easing = settings.easing;
   var onUpdate = settings.onUpdate;
+  var onFinish = settings.onFinish;
 
   for(var key in from) {
     if(to[key] === undefined) {
@@ -1505,7 +1506,9 @@ var Tween = function Tween(settings) {
   this.delay = delay || 0;
   this.easing = easing || 'linear';
   this.onUpdate = onUpdate || function() {};
+  this.onFinish = onFinish || function() {};
   this.startTime = Date.now() + this.delay;
+  this.finished = false;
   this.keys = {};
 };
 
@@ -1513,6 +1516,10 @@ Tween.prototype.update = function update () {
     var this$1 = this;
 
   if(this.elapsed === this.duration) {
+    if(!this.finished) {
+      this.onFinish(this.keys);
+      this.finished = true;
+    }
     return;
   }
   this.time = this.time ? Date.now() : this.startTime;

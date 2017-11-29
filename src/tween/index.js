@@ -8,7 +8,8 @@ export class Tween {
       duration,
       delay,
       easing,
-      onUpdate
+      onUpdate,
+      onFinish
     } = settings;
 
     for(let key in from) {
@@ -28,12 +29,18 @@ export class Tween {
     this.delay = delay || 0;
     this.easing = easing || 'linear';
     this.onUpdate = onUpdate || function() {};
+    this.onFinish = onFinish || function() {};
     this.startTime = Date.now() + this.delay;
+    this.finished = false;
     this.keys = {};
   }
 
   update() {
     if(this.elapsed === this.duration) {
+      if(!this.finished) {
+        this.onFinish(this.keys);
+        this.finished = true;
+      }
       return;
     }
     this.time = this.time ? Date.now() : this.startTime;
