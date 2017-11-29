@@ -58,7 +58,7 @@ export class Tween {
       this.keys[key] = this.from[key] + ( this.to[key] - this.from[key] ) * easing[this.easing](this.elapsed / this.duration);
     }
     if(!this.started) {
-      this.onStart && this.onStart();
+      this.onStart && this.onStart(this.keys);
       this.started = true;
     }
     this.onUpdate(this.keys);

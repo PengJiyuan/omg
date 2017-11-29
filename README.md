@@ -351,20 +351,52 @@ stage.redraw();
 
 ### Animation
 
+#### Global Animation
+
 ```javascript
 function go() {
   rect.rotate++;
   line.rotate = line1.rotate + 2;
-  stage.redraw();
 }
 
 const a = stage.animate(go);
 ```
 
-### Stop animation
-
+#### Shap Animation
 ```javascript
-stage.stop(a);
+/**
+ * @param: {keys | Object}   -- the end value of your tween
+ * @param: {config | Object} -- the tween settings
+ */
+shape.animateTo({
+  x: 100,
+  y: 100,
+  width: 200,
+  height: 200
+}, {
+  duration: 1000, //default = 500
+  delay: 500, // defalut = 0
+  easing: 'bounceOut', // defalut = 'linear'
+  onStart: function(keys) {
+    /**
+     * @param: keys
+     * the values during you tween
+     * same below
+     */
+    console.log(keys.x, keys.y, keys.width, keys.height);
+  }, // defalut = undefined
+  onUpdate: function(keys) {
+    console.log(keys.x, keys.y, keys.width, keys.height);
+  }, // defalut = undefined
+  onFinish: function(keys) {
+    console.log(keys.x, keys.y, keys.width, keys.height);
+  }, // defalut = undefined
+});
+```
+
+#### Clear Animation
+```javascript
+stage.clearAnimation();
 ```
 
 ## [CHANGELOG](./.github/CHANGELOG.md)

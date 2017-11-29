@@ -914,7 +914,7 @@ Tween.prototype.update = function update () {
     this$1.keys[key] = this$1.from[key] + ( this$1.to[key] - this$1.from[key] ) * easing[this$1.easing](this$1.elapsed / this$1.duration);
   }
   if(!this.started) {
-    this.onStart && this.onStart();
+    this.onStart && this.onStart(this.keys);
     this.started = true;
   }
   this.onUpdate(this.keys);
