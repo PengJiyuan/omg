@@ -355,8 +355,9 @@ stage.redraw();
 
 ```javascript
 function go() {
-  rect.rotate++;
-  line.rotate = line1.rotate + 2;
+  rect.x++;
+  line.y = line.y + 2;
+  arc.radius++;
 }
 
 const a = stage.animate(go);
