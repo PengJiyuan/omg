@@ -903,8 +903,8 @@ Tween.prototype.update = function update () {
   // finish animation
   if(this.elapsed === this.duration) {
     if(!this.finished) {
-      this.onFinish && this.onFinish(this.keys);
       this.finished = true;
+      this.onFinish && this.onFinish(this.keys);
     }
     return;
   }
@@ -1023,17 +1023,13 @@ Display.prototype.animateTo = function animateTo (keys, configs) {
       this$1[key] = keys[key];
     }
   };
-  data.onFinish = function (keys) {
-    configs.onFinish && configs.onFinish(keys);
-    this$1._.removeAnimation(tween.update.bind(tween));
-  };
   for(var key$1 in configs) {
-    if(key$1 !== 'onUpdate' || key$1 !== 'onFinish') {
+    if(key$1 !== 'onUpdate') {
       data[key$1] = configs[key$1];
     }
   }
   var tween = new Tween(data);
-  this._.animationList.push(tween.update.bind(tween));
+  this._.animationList.push(tween);
   this._.tick();
 
   return this;
@@ -1733,8 +1729,13 @@ OMG.prototype.tick = function tick () {
     var this$1 = this;
 
   var func = function () {
-    this$1.animationList.forEach(function (t) {
-      t();
+    this$1.animationList.forEach(function (t, i) {
+      // if finished, remove it
+      if(t.finished) {
+        this$1.animationList.splice(i--, 1);
+      } else {
+        t.update();
+      }
     });
     this$1.redraw();
     this$1[this$1.animationId] = requestAnimationFrame(func);
@@ -1750,15 +1751,6 @@ OMG.prototype.tick = function tick () {
   return this.animationId;
 };
 
-OMG.prototype.removeAnimation = function removeAnimation (animation) {
-  if(utils.isArr(animation)) {
-    this.animationList = this.animationList.filter(function (o) { return !~child.indexOf(o); });
-  } else {
-    this.animationList = this.animationList.filter(function (o) { return o !== child; });
-  }
-  this.tick();
-};
-
 OMG.prototype.clearAnimation = function clearAnimation () {
   this.animationList = [];
   this.tick();
@@ -1766,7 +1758,7 @@ OMG.prototype.clearAnimation = function clearAnimation () {
 
 OMG.prototype.animate = function animate (func) {
   this._event.triggerEvents();
-  var id = new Date().getTime();
+  var id = Date.now();
   this.animationList.push(func);
   this.tick();
   return id;

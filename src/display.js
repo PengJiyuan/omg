@@ -101,17 +101,13 @@ class Display {
         this[key] = keys[key];
       }
     };
-    data.onFinish = (keys) => {
-      configs.onFinish && configs.onFinish(keys);
-      this._.removeAnimation(tween.update.bind(tween));
-    };
     for(let key in configs) {
-      if(key !== 'onUpdate' || key !== 'onFinish') {
+      if(key !== 'onUpdate') {
         data[key] = configs[key];
       }
     }
     const tween = new Tween(data);
-    this._.animationList.push(tween.update.bind(tween));
+    this._.animationList.push(tween);
     this._.tick();
 
     return this;

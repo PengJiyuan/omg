@@ -160,8 +160,13 @@ export class OMG {
 
   tick() {
     const func = () => {
-      this.animationList.forEach(t => {
-        t();
+      this.animationList.forEach((t, i) => {
+        // if finished, remove it
+        if(t.finished) {
+          this.animationList.splice(i--, 1);
+        } else {
+          t.update();
+        }
       });
       this.redraw();
       this[this.animationId] = requestAnimationFrame(func);
@@ -177,15 +182,6 @@ export class OMG {
     return this.animationId;
   }
 
-  removeAnimation(animation) {
-    if(utils.isArr(animation)) {
-      this.animationList = this.animationList.filter(o => !~child.indexOf(o));
-    } else {
-      this.animationList = this.animationList.filter(o => o !== child);
-    }
-    this.tick();
-  }
-
   clearAnimation() {
     this.animationList = [];
     this.tick();
@@ -193,7 +189,7 @@ export class OMG {
 
   animate(func) {
     this._event.triggerEvents();
-    const id = new Date().getTime();
+    const id = Date.now();
     this.animationList.push(func);
     this.tick();
     return id;

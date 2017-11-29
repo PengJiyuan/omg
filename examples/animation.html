@@ -38,9 +38,7 @@
 		height: 100,
 		zindex: 2,
 		color: '#ef8376'
-	}).on('mouseenter', function(cur) {
-		move(cur, 500);
-  });
+	});
   var rect2 = world.rectangle({
 		x: 200,
 		y: 500,
@@ -48,9 +46,7 @@
 		height: 100,
 		zindex: 2,
 		color: '#ef5412'
-	}).on('mouseenter', function(cur) {
-		move(cur, 0);
-  });
+	});
 
   function move(cur, delay) {
   	cur.animateTo({
@@ -60,7 +56,7 @@
 			height: 200
 		}, {
 			easing: 'bounceOut',
-			duration: 300,
+			duration: 500,
 			delay: delay,
 			onFinish: function() {
 				setTimeout(function() {
@@ -71,8 +67,13 @@
 						height: 100
 					}, {
 						easing: 'bounceOut',
-						duration: 300,
-					})
+						duration: 500,
+						onFinish: function() {
+							setTimeout(function() {
+  							move(cur, delay);
+							}, 1000);
+						}
+					});
 				}, 1000);
 			}
 		});
@@ -81,6 +82,11 @@
 	world.addChild([rect1, rect2]);
 
 	world.show();
+
+	move(rect1, 0);
+	setTimeout(function() {
+		move(rect2, 0);
+	}, 500);
 
 </script>
 </body>

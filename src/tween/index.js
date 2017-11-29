@@ -47,8 +47,8 @@ export class Tween {
     // finish animation
     if(this.elapsed === this.duration) {
       if(!this.finished) {
-        this.onFinish && this.onFinish(this.keys);
         this.finished = true;
+        this.onFinish && this.onFinish(this.keys);
       }
       return;
     }
