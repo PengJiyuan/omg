@@ -364,6 +364,9 @@ const a = stage.animate(go);
 ```
 
 #### Shap Animation
+
+[Demo](https://pengjiyuan.github.io/omg.js/animation.html)
+
 ```javascript
 /**
  * @param: {keys | Object}   -- the end value of your tween
