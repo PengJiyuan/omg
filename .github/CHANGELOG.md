@@ -48,6 +48,7 @@
 * config配置的时候不能传入false，bugfix。
 * 添加全局mousedown, mousemove事件配置。
 * stage添加removeChild, removeFirstChild, removeLastChild, removeAllChilds方法.
+* 添加动画接口，包括全局动画和指定图形的补间动画（支持各种曲线缓动）。
 
 ## ToDo
 
