@@ -1733,8 +1733,10 @@ OMG.prototype.tick = function tick () {
       // if finished, remove it
       if(t.finished) {
         this$1.animationList.splice(i--, 1);
-      } else {
+      } else if(t.update) {
         t.update();
+      } else {
+        t();
       }
     });
     this$1.redraw();

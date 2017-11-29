@@ -164,8 +164,10 @@ export class OMG {
         // if finished, remove it
         if(t.finished) {
           this.animationList.splice(i--, 1);
-        } else {
+        } else if(t.update) {
           t.update();
+        } else {
+          t();
         }
       });
       this.redraw();
