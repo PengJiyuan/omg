@@ -1,4 +1,5 @@
 import isPointInner from './inside';
+import { Tween } from './tween/index';
 
 class Display {
 
@@ -85,6 +86,33 @@ class Display {
     return this;
   }
 
+  animateTo(keys, configs = {}) {
+    let data = {};
+    const to = keys;
+    const from = {};
+    for (let key in to) {
+      from[key] = this[key];
+    }
+    data.from = from;
+    data.to = to;
+    data.onUpdate = (keys) => {
+      configs.onUpdate && configs.onUpdate(keys);
+      for (let key in to) {
+        this[key] = keys[key];
+      }
+    };
+    for(let key in configs) {
+      if(key !== 'onUpdate') {
+        data[key] = configs[key];
+      }
+    }
+    const tween = new Tween(data);
+    this._.animationList.push(tween.update.bind(tween));
+    this._.tick();
+
+    return this;
+  }
+
   // whether this shape can be dragged
   drag(bool) {
     this.enableDrag = bool;
@@ -109,6 +137,8 @@ export default (settings, _this) => {
     hasDraggedIn: false,
 
     on: display.on,
+
+    animateTo: display.animateTo,
 
     isPointInner: display.isPointInner,
 

@@ -33,7 +33,13 @@ export class OMG {
 
     this.isDragging = false;
 
-    this.Tween = Tween; 
+    this.Tween = Tween;
+
+    this.animationList = [];
+
+    this.animationId = null;
+
+    this.animating = false;
 
     // support event types
     this.eventTypes = [
@@ -152,14 +158,35 @@ export class OMG {
     this.canvas.clearRect(0, 0, this.width, this.height);
   }
 
+  tick() {
+    const func = () => {
+      this.animationList.forEach(t => {
+        t();
+      });
+      this.redraw();
+      this[this.animationId] = requestAnimationFrame(func);
+    };
+    if(this.animationList.length > 0 && !this.animating) {
+      this.animating = true;
+      this.animationId = Date.now();
+      func();
+    } else if(this.animationList.length === 0 && this.animating) {
+      this.animating = false;
+      cancelAnimationFrame(this.animationId);
+    }
+    return this.animationId;
+  }
+
+  clearAnimation() {
+    this.animationList = [];
+    this.tick();
+  }
+
   animate(func) {
     this._event.triggerEvents();
     const id = new Date().getTime();
-    const _func = () => {
-      func();
-      this[id] = requestAnimationFrame(_func);
-    };
-    _func();
+    this.animationList.push(func);
+    this.tick();
     return id;
   }
 
