@@ -398,6 +398,27 @@ shape.animateTo({
 });
 ```
 
+#### Easing Types
+* linear
+* quadIn
+* quadOut
+* quadInOut
+* cubicIn
+* cubicOut
+* cubicInOut
+* quartIn
+* quartOut
+* quartInOut
+* quintIn
+* quintOut
+* quintInOut
+* sineIn
+* sineOut
+* sineInOut
+* bounceOut
+* bounceIn
+* bounceInOut
+
 #### Clear Animation
 ```javascript
 stage.clearAnimation();
