@@ -24,9 +24,6 @@
 <div class="container">
 		<canvas id="canvas"></canvas>
 </div>
-<ul class="drag">
-	<li id="dg" draggable="true">Drag</li>
-</ul>
 <script src="./omg.min.js"></script>
 <script>
   var flag;
@@ -39,8 +36,6 @@
 		height: 500,
 		enableGlobalTranslate: true
 	});
-
-	//world.scaleCanvas(true);
 
 	var polygon = world.polygon({
 		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
@@ -255,58 +250,58 @@
 
 	// drag and drop
 
-	var dg = document.getElementById('dg');
-	dg.onselectstart = function() {
-    return false;
-  };
-  dg.ondragstart = function(ev) {
-    ev.dataTransfer.effectAllowed = "move";
-    //ev.dataTransfer.setData("text", ev.target.innerHTML);
-    ev.dataTransfer.setDragImage(ev.target, 0, 0);
-    return true;
-  };
+	// var dg = document.getElementById('dg');
+	// dg.onselectstart = function() {
+ //    return false;
+ //  };
+ //  dg.ondragstart = function(ev) {
+ //    ev.dataTransfer.effectAllowed = "move";
+ //    //ev.dataTransfer.setData("text", ev.target.innerHTML);
+ //    ev.dataTransfer.setDragImage(ev.target, 0, 0);
+ //    return true;
+ //  };
 
-  world.element.ondragover = function(e) {
-  	e.preventDefault();
-  	var x = world._event.getPos(e).x;
-  	var y = world._event.getPos(e).y;
-  	var which = world._objects.filter(function(item) {
-  		return item.isPointInner(x, y);
-  	});
-  	if(which.length > 0 ) {
-  		which[0].color = '#000';
-  		world.redraw();
-  	}
-  }
+ //  world.element.ondragover = function(e) {
+ //  	e.preventDefault();
+ //  	var x = world._event.getPos(e).x;
+ //  	var y = world._event.getPos(e).y;
+ //  	var which = world._objects.filter(function(item) {
+ //  		return item.isPointInner(x, y);
+ //  	});
+ //  	if(which.length > 0 ) {
+ //  		which[0].color = '#000';
+ //  		world.redraw();
+ //  	}
+ //  }
 
-  world.element.ondrop = function(ev) {
-  	var x = world._event.getPos(ev).x;
-  	var y = world._event.getPos(ev).y;
-  	var width = Math.random()*300;
-    var a = world.rectangle({
-			x: x,
-			y: y,
-			width: width,
-			height: width,
-			color: '#'+(~~(Math.random()*(1<<24))).toString(16)
-		}).on('mousedown', function() {
-			console.log('click a');
-		}).on('mouseenter', function() {
-			a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			world.redraw();
-		}).on('mouseleave', function() {
-			a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
-			world.redraw();
-		}).config({
-			drag: true,
-			changeIndex: true
-		});
+ //  world.element.ondrop = function(ev) {
+ //  	var x = world._event.getPos(ev).x;
+ //  	var y = world._event.getPos(ev).y;
+ //  	var width = Math.random()*300;
+ //    var a = world.rectangle({
+	// 		x: x,
+	// 		y: y,
+	// 		width: width,
+	// 		height: width,
+	// 		color: '#'+(~~(Math.random()*(1<<24))).toString(16)
+	// 	}).on('mousedown', function() {
+	// 		console.log('click a');
+	// 	}).on('mouseenter', function() {
+	// 		a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
+	// 		world.redraw();
+	// 	}).on('mouseleave', function() {
+	// 		a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
+	// 		world.redraw();
+	// 	}).config({
+	// 		drag: true,
+	// 		changeIndex: true
+	// 	});
 
-    world.addChild(a);
+ //    world.addChild(a);
 
-		world.redraw();
-    return false;
-	};
+	// 	world.redraw();
+ //    return false;
+	// };
 
 </script>
 </body>
