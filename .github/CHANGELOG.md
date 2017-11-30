@@ -49,6 +49,7 @@
 * 添加全局mousedown, mousemove事件配置。
 * stage添加removeChild, removeFirstChild, removeLastChild, removeAllChilds方法.
 * 添加动画接口，包括全局动画和指定图形的补间动画（支持各种曲线缓动）。
+* 优化动画接口，全局动画和图形补间动画在一个动画队列中，保证多个动画的有序进行。
 
 ## ToDo
 
