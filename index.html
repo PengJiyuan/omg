@@ -13,291 +13,186 @@
 		#canvas {
 			margin: 0;
 			background-color: #fff;
+			z-index: 1;
+		}
+		.holder {
+			position: absolute;
+			width: 500px;
+			height: 100%;
+			left: 50%;
+			margin-left: -250px;
+			background-color: rgba(152, 142, 170, 0.9);
+			-webkit-transform: skew(-30deg, 0deg);
+			-moz-transform: skew(-30deg, 0deg);
+			-ms-transform: skew(-30deg, 0deg);
+			transform: skew(-30deg, 0deg);
+			z-index: 2;
+		}
+		.logo {
+			margin: 0 0 0 10px;
+			position: absolute;
+			z-index: 2;
+			display: block;
+			width: 100px;
+			height: 50px;
+			font-size: 40px;
+			line-height: 40px;
+			color: #000;
+			text-decoration: none;
+		}
+		.wrapper {
+			border-radius: 8px;
+			z-index: 3;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-top: -148px;
+			margin-left: -130px;
+			width: 260px;
+			height: 296px;
+			background-color: #000;
+		}
+		.wrapper > .title {
+			width: 100%;
+			height: 40px;
+			line-height: 40px;
+			text-align: center;
+			font-size: 30px;
+			color: #fff;
+		}
+		.wrapper > .examples {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 216px;
+			background: #fff;
+			overflow: hidden;
+			box-shadow: #bbbbbb 0 0 10px;
+		}
+		.wrapper > .examples > a {
+			text-decoration: none;
+			color: #000;
+			display: block;
+			width: 400px;
+			height: 36px;
+			line-height: 36px;
+			padding-left: 20px;
+			box-sizing: border-box;
+			transition: all 0.3s;
+			cursor: pointer;
+		}
+		.wrapper > .examples > a:hover {
+			-webkit-transform: rotateY(-20deg);
+			-moz-transform: rotateY(-20deg);
+			-ms-transform: rotateY(-20deg);
+			transform: rotateY(-20deg);
+			box-shadow: black 0 0 10px;
 		}
 	</style>
 </head>
 <body>
 <div id="fps"></div>
 <div class="container">
-		<canvas id="canvas"></canvas>
+	<a href="https://github.com/PengJiyuan/omg.js" class="logo">omg.js</a>
+	<div class="wrapper">
+		<div class="title">Examples</div>
+		<ul class="examples">
+			<a href="./animation.html">Animation</a>
+			<a href="./shapes.html">Shapes</a>
+			<a href="./big_data.html">Big Data</a>
+			<a href="./drag_drop.html">Drag Drop</a>
+			<a href="./multi_canvas.html">Multi-instance</a>
+			<a href="./walk_control.html">Walk control</a>
+		</ul>
+	</div>
+	<!-- <div id="holder" class="holder"></div> -->
+	<canvas id="canvas"></canvas>
 </div>
 <script src="./omg.min.js"></script>
 <script>
-  var flag;
-  var bear = 0;
-  var width = document.body.clientWidth,
-  	height = document.body.clientHeight;
-
-	var world = omg({
+	var width = document.body.clientWidth;
+	var height = document.body.clientHeight;
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: width,
 		height: height,
-		enableGlobalTranslate: true
+		enableGlobalTranslate: false
 	});
 
-	var demos = world.text({
-		x: (width - 200)/2,
-		y: 0,
-		width: 200,
-		height: 50,
-		paddingTop: 0, //text padding top
-		center: true, 
-		font: 'italic bold 20px arial,sans-serif',
-		text: 'examples',
-		color: 'blue',
-		type: 'fill'
-	}).config({
-		fixed: true,
-		bg: true,
-		zindex: -1
-	});
+	// document.getElementById('holder').style.backgroundColor = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.9)';
+	// console.log(document.getElementById('holder').style.backgroundColor)
 
-	var title = world.text({
-		x: (width - 800)/2,
-		y: (height - 300)/2,
-		width: 800,
-		height: 300,
-		paddingTop: 0, //text padding top
-		center: true, 
-		backgroundColor: 'blue', // optional
-		font: 'italic bold 220px arial,sans-serif',
-		text: 'omg',
-		color: '#fff',
-		type: 'fill'
-	}).config({
-		fixed: true,
-		bg: true
-	});
+	var rr = [10, 50];
+	var rectList = [];
+	var createRect = function() {
+		var w = Math.random() * (rr[1] - rr[0]) + rr[0];
+		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.5)';
+		var rect = stage.rectangle({
+			x: Math.random() * width,
+			y: Math.random() * height,
+			rotate: Math.ceil(Math.random() * 90),
+			width: w,
+			height: w,
+			color: color
+		});
 
-	var demo1 = world.text({
-		x: (width - 300)/2,
-		y: 20,
-		width: 300,
-		height: 40,
-		paddingTop: 2, //text padding top
-		center: true, 
-		backgroundColor: '#ef4476', // optional
-		font: 'italic bold 30px arial,sans-serif',
-		text: 'Walking Control',
-		color: '#fff',
-		type: 'fill'
-	}).on('mouseenter', function() {
-		world.element.style.cursor = 'pointer';
-		demo1.backgroundColor = '#ef8454';
-		world.redraw();
-	}).on('mouseleave', function() {
-		world.element.style.cursor = 'default';
-		demo1.backgroundColor = '#ef4476';
-		world.redraw();
-	}).on('mousedown', function() {
-		window.location = './walk_control.html';
-	}).config({
-		fixed: true
-	});
+		rectList.push(rect);
+	};
 
-	var demo2 = world.text({
-		x: (width - 300)/2,
-		y: 60,
-		width: 300,
-		height: 40,
-		paddingTop: 2, //text padding top
-		center: true, 
-		backgroundColor: '#ef4476', // optional
-		font: 'italic bold 30px arial,sans-serif',
-		text: 'Shapes',
-		color: '#fff',
-		type: 'fill'
-	}).on('mouseenter', function() {
-		world.element.style.cursor = 'pointer';
-		demo2.backgroundColor = '#ef8454';
-		world.redraw();
-	}).on('mouseleave', function() {
-		world.element.style.cursor = 'default';
-		demo2.backgroundColor = '#ef4476';
-		world.redraw();
-	}).on('mousedown', function() {
-		window.location = './shapes.html';
-	}).config({
-		fixed: true
-	});
-
-	var demo3 = world.text({
-		x: (width - 300)/2,
-		y: 100,
-		width: 300,
-		height: 40,
-		paddingTop: 2, //text padding top
-		center: true, 
-		backgroundColor: '#ef4476', // optional
-		font: 'italic bold 30px arial,sans-serif',
-		text: 'Big Data',
-		color: '#fff',
-		type: 'fill'
-	}).on('mouseenter', function() {
-		world.element.style.cursor = 'pointer';
-		demo3.backgroundColor = '#ef8454';
-		world.redraw();
-	}).on('mouseleave', function() {
-		world.element.style.cursor = 'default';
-		demo3.backgroundColor = '#ef4476';
-		world.redraw();
-	}).on('mousedown', function() {
-		window.location = './big_data.html';
-	}).config({
-		fixed: true
-	});
-
-	var demo4 = world.text({
-		x: (width - 300)/2,
-		y: 140,
-		width: 300,
-		height: 40,
-		paddingTop: 2, //text padding top
-		center: true, 
-		backgroundColor: '#ef4476', // optional
-		font: 'italic bold 30px arial,sans-serif',
-		text: 'Multi-Canvas',
-		color: '#fff',
-		type: 'fill'
-	}).on('mouseenter', function() {
-		world.element.style.cursor = 'pointer';
-		demo4.backgroundColor = '#ef8454';
-		world.redraw();
-	}).on('mouseleave', function() {
-		world.element.style.cursor = 'default';
-		demo4.backgroundColor = '#ef4476';
-		world.redraw();
-	}).on('mousedown', function() {
-		window.location = './multi_canvas.html';
-	}).config({
-		fixed: true
-	});
-
-	var trash = world.text({
-		x: width - 300,
-		y: 40,
-		width: 280,
-		height: 120,
-		paddingTop: 30, //text padding top
-		center: true, 
-		backgroundColor: '#ef4476', // optional
-		font: 'italic bold 54px arial,sans-serif',
-		text: '笼子(' + bear + ')',
-		color: '#fff',
-		type: 'fill'
-	}).config({
-		fixed: true,
-		drag: true
-	}).on('dragin', function() {
-		trash.backgroundColor = 'red';
-	}).on('dragout', function() {
-		trash.backgroundColor = '#ef4476';
-	}).on('drop', function( item, cur ) {
-		bear++;
-		trash.backgroundColor = '#ef4476';
-		trash.text = '笼子(' + bear + ')';
-		world.removeChild(cur);
-		world.redraw();
-	});
-
-	var tip = world.text({
-		x: width - 300,
-		y: -20,
-		width: 280,
-		height: 40,
-		paddingTop: 30, //text padding top
-		center: true, 
-		font: 'italic bold 20px arial,sans-serif',
-		text: '把草尼马拖进笼子',
-		color: 'blue',
-		type: 'fill'
-	}).config({
-		fixed: true
-	});
-
-	world.addChild([demos, title, demo1, demo2, demo3, demo4, trash, tip]);
-
-	function createBear() {
-		var arr = [{
-			w: 97,
-			sx: 5,
-			sy: 0
-		}, {
-			w: 97,
-			sx: 5,
-			sy: 470
-		}, {
-			w: 64,
-			sx: 3,
-			sy: 238
-		}, {
-			w: 82,
-			sx: 7,
-			sy: 718
-		}];
-
-		var randomNum = Math.round(Math.random()*3);
-		world.addChild(
-			world.image({
-				x: Math.random() * width - 50,
-				y: Math.random() * height - 60,
-				width: arr[randomNum].w,
-				height: 110,
-				sliceX: arr[randomNum].sx,
-				sliceY: arr[randomNum].sy,
-				sliceWidth: arr[randomNum].w,
-				sliceHeight: 110,
-				src: './img/action.png'
-			}).config({
-				drag: true,
-				changeIndex: true,
-				zindex: 2
-			})
-		);
-	}
-	
-	for(var i = 0;i < 100; i++) {
-		createBear();
+	for(var i = 0; i < 80; i++) {
+		createRect();
 	}
 
-	world.show();
-	world.animate(go);
+	stage.addChild(rectList);
 
-	var num = 0;
-	function go() {
-		if(num % 4 === 0) {
-			world.objects.forEach(function(item) {
+	var arcList = [];
+	var createArc = function() {
+		var r = Math.random() * (rr[1] - rr[0]) + rr[0];
+		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.3)';
+		var arc = stage.arc({
+			x: Math.random() * width - 80,
+			y: Math.random() * height - 80,
+			radius: r,
+			color: color,
+			style: 'fill'
+		});
+		arcList.push(arc);
+	};
 
-				if(item.sliceY === 0) {
-					if(item.sliceX > 102 * 7) {
-						item.sliceX = 5;
-					} else {
-						item.sliceX = item.sliceX + 102;
-					}
-				} else if(item.sliceY === 238) {
-					if(item.sliceX > 64 * 7) {
-						item.sliceX = 3;
-					} else {
-						item.sliceX = item.sliceX + 64;
-					}
-				} else if(item.sliceY === 470) {
-					if(item.sliceX > 104 * 7) {
-						item.sliceX = 5;
-					} else {
-						item.sliceX = item.sliceX + 104;
-					}
-				} else if(item.sliceY === 718) {
-					if(item.sliceX > 82 * 7) {
-						item.sliceX = 7;
-					} else {
-						item.sliceX = item.sliceX + 82;
-					}
-				}
-
-			});
-		}
-		num++;
+	for(var i = 0; i < 60; i++) {
+		createArc();
 	}
+
+	stage.addChild(arcList);
+
+	function bounce(shape, r) {
+		shape.animateTo({
+			radius: shape.radius + r
+		}, {
+			easing: 'quadOut',
+			duration: 2000,
+			onFinish: function(keys) {
+				bounce(shape, -r);
+			}
+		});
+	}
+
+	arcList.forEach(function(a) {
+		var random = Math.random();
+		var flag = random < 0.5 ? true: false;
+		var plus = random * 20 + 10;
+		var minus = a.radius - random * 20 - 10 >= 0 ? - random * 20 - 10 : 0;
+		bounce(a, flag ? plus : minus);
+	});
+
+	function rotateRect() {
+		rectList.forEach(function(r) {
+			r.rotate++;
+		});
+	}
+
+	stage.animate(rotateRect);
 
 </script>
 </body>
