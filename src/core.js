@@ -41,6 +41,12 @@ export class OMG {
 
     this.animating = false;
 
+    this.fpsFunc = null;
+
+    this.fps = 0;
+
+    this.fpsCacheTime = 0;
+
     // support event types
     this.eventTypes = [
       'mousedown',
@@ -160,6 +166,16 @@ export class OMG {
 
   tick() {
     const func = () => {
+      if(this.fpsFunc) {
+        const now = Date.now();
+        if(now - this.fpsCacheTime >= 1000) {
+          this.fpsFunc(this.fps);
+          this.fps = 0;
+          this.fpsCacheTime = now;
+        } else {
+          this.fps++;
+        }
+      }
       this.animationList.forEach((t, i) => {
         // if finished, remove it
         if(t.finished) {
@@ -184,11 +200,27 @@ export class OMG {
     return this.animationId;
   }
 
-  clearAnimation() {
-    this.animationList = [];
-    this.tick();
+  /**
+   * @param {func | Function}
+   * The func you get the fps and do something.
+   *
+   * eg.
+   * stage.fpsOn(function(fps) {
+   *   console.log(fps);
+   * });
+   */
+  fpsOn(func) {
+    this.fpsFunc = func;
+    this.fpsCacheTime = Date.now();
   }
 
+  // fps off
+  fpsOff() {
+    this.fpsFunc = null;
+    this.fps = 0;
+  }
+
+  // add an animation to animationList.
   animate(func) {
     this._event.triggerEvents();
     const id = Date.now();
@@ -201,41 +233,23 @@ export class OMG {
     cancelAnimationFrame(this[id]);
   }
 
-  globalTranslate(bool) {
-    if(typeof bool !== 'boolean' || !bool) {
-      return;
-    }
-    this.enableGlobalTranslate = true;
+  // clear all animations, includes global animation and shape animations.
+  clearAnimation() {
+    this.animationList = [];
+    this.tick();
   }
 
+  // get current version
   getVersion() {
     return this.version;
   }
 
-  scaleCanvas(bool) {
-    if(typeof bool !== 'boolean' || !bool) {
-      return;
-    }
-    const that = this;
-    utils.bind(this.element, 'wheel', function(e) {
-      if(e.deltaY < 0) {
-        if(that.scale <= 3) {
-          that.scale += 0.02;
-          that.redraw();
-        }
-      } else {
-        if(that.scale > 0.5) {
-          that.scale -= 0.02;
-          that.redraw();
-        }
-      }
-    });
-  }
-
+  // global mousedown event.
   mousedown(func) {
     this.globalMousedown = func;
   }
 
+  // global mousemove event
   mousemove(func) {
     this.globalMousemove = func;
   }

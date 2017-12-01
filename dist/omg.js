@@ -1609,6 +1609,12 @@ var OMG = function OMG(config) {
 
   this.animating = false;
 
+  this.fpsFunc = null;
+
+  this.fps = 0;
+
+  this.fpsCacheTime = 0;
+
   // support event types
   this.eventTypes = [
     'mousedown',
@@ -1730,6 +1736,16 @@ OMG.prototype.tick = function tick () {
     var this$1 = this;
 
   var func = function () {
+    if(this$1.fpsFunc) {
+      var now = Date.now();
+      if(now - this$1.fpsCacheTime >= 1000) {
+        this$1.fpsFunc(this$1.fps);
+        this$1.fps = 0;
+        this$1.fpsCacheTime = now;
+      } else {
+        this$1.fps++;
+      }
+    }
     this$1.animationList.forEach(function (t, i) {
       // if finished, remove it
       if(t.finished) {
@@ -1754,11 +1770,27 @@ OMG.prototype.tick = function tick () {
   return this.animationId;
 };
 
-OMG.prototype.clearAnimation = function clearAnimation () {
-  this.animationList = [];
-  this.tick();
+/**
+ * @param {func | Function}
+ * The func you get the fps and do something.
+ *
+ * eg.
+ * stage.fpsOn(function(fps) {
+ * console.log(fps);
+ * });
+ */
+OMG.prototype.fpsOn = function fpsOn (func) {
+  this.fpsFunc = func;
+  this.fpsCacheTime = Date.now();
 };
 
+// fps off
+OMG.prototype.fpsOff = function fpsOff () {
+  this.fpsFunc = null;
+  this.fps = 0;
+};
+
+// add an animation to animationList.
 OMG.prototype.animate = function animate (func) {
   this._event.triggerEvents();
   var id = Date.now();
@@ -1771,41 +1803,23 @@ OMG.prototype.stop = function stop (id) {
   cancelAnimationFrame(this[id]);
 };
 
-OMG.prototype.globalTranslate = function globalTranslate (bool) {
-  if(typeof bool !== 'boolean' || !bool) {
-    return;
-  }
-  this.enableGlobalTranslate = true;
+// clear all animations, includes global animation and shape animations.
+OMG.prototype.clearAnimation = function clearAnimation () {
+  this.animationList = [];
+  this.tick();
 };
 
+// get current version
 OMG.prototype.getVersion = function getVersion () {
   return this.version;
 };
 
-OMG.prototype.scaleCanvas = function scaleCanvas (bool) {
-  if(typeof bool !== 'boolean' || !bool) {
-    return;
-  }
-  var that = this;
-  utils.bind(this.element, 'wheel', function(e) {
-    if(e.deltaY < 0) {
-      if(that.scale <= 3) {
-        that.scale += 0.02;
-        that.redraw();
-      }
-    } else {
-      if(that.scale > 0.5) {
-        that.scale -= 0.02;
-        that.redraw();
-      }
-    }
-  });
-};
-
+// global mousedown event.
 OMG.prototype.mousedown = function mousedown (func) {
   this.globalMousedown = func;
 };
 
+// global mousemove event
 OMG.prototype.mousemove = function mousemove (func) {
   this.globalMousemove = func;
 };
