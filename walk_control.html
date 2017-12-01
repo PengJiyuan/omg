@@ -6,7 +6,12 @@
 		#fps {
 			position: absolute;
 			top: 3px;
-			left: 394px;
+			left: 436px;
+			width: 80px;
+			height: 30px;
+			line-height: 30px;
+			color: #fff;
+			font-weight: 200;
 		}
 		#canvas {
 			background-color: #ccc;
@@ -24,16 +29,8 @@
 <div class="container">
 		<canvas id="canvas"></canvas>
 </div>
-<button id="start">start</button>
-<button id="stop">stop</button>
 <script src="./omg.min.js"></script>
-<script src="./fpsmeter.min.js"></script>
 <script>
-	var meter = new FPSMeter(document.getElementById('fps'), {
-		heat: 1,
-		graph: 1,
-		theme: 'light'
-	});
   var flag, direction;
 
 	var start = document.getElementById('start');
@@ -44,6 +41,12 @@
 		height: 500,
 		enableGlobalTranslate: true,
 		images: ['./img/timg.jpg']
+	});
+
+	var fpsEle = document.getElementById('fps');
+
+	world.fpsOn(function(fps) {
+		fpsEle.innerHTML = 'FPS: ' + fps;
 	});
 
 
@@ -245,17 +248,12 @@
 			image3.moveY = world.height - 200 - 110;
 		}
 
-		meter.tick();
 		world.redraw();
 
 		num ++;
 	}
-	start.onclick = function() {
-		flag = world.animate(go);
-	}
-	stop.onclick = function() {
-		world.stop(flag);
-	}
+
+	world.animate(go)
 
 </script>
 </body>
