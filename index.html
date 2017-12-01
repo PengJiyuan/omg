@@ -39,8 +39,10 @@
 			line-height: 40px;
 			color: #000;
 			text-decoration: none;
+			font-weight: 100;
 		}
 		.wrapper {
+			opacity: 0.7;
 			border-radius: 8px;
 			z-index: 3;
 			position: absolute;
@@ -74,7 +76,7 @@
 			text-decoration: none;
 			color: #000;
 			display: block;
-			width: 400px;
+			width: 270px;
 			height: 36px;
 			line-height: 36px;
 			padding-left: 20px;
@@ -87,7 +89,20 @@
 			-moz-transform: rotateY(-20deg);
 			-ms-transform: rotateY(-20deg);
 			transform: rotateY(-20deg);
-			box-shadow: black 0 0 10px;
+			box-shadow: #888888 -4px 0 6px;
+		}
+		#fps {
+			z-index: 100;
+			position: absolute;
+			width: 80px;
+			height: 30px;
+			right: 0;
+			top: 0;
+			line-height: 30px;
+			text-align: center;
+			font-size: 16px;
+			color: black;
+			font-weight: 300;
 		}
 	</style>
 </head>
@@ -106,6 +121,7 @@
 			<a href="./walk_control.html">Walk control</a>
 		</ul>
 	</div>
+	<div id="fps"></div>
 	<!-- <div id="holder" class="holder"></div> -->
 	<canvas id="canvas"></canvas>
 </div>
@@ -118,6 +134,12 @@
 		width: width,
 		height: height,
 		enableGlobalTranslate: false
+	});
+
+	var eleFps = document.getElementById('fps');
+
+	stage.fpsOn(function(fps) {
+		eleFps.innerHTML = 'FPS: ' + fps;
 	});
 
 	// document.getElementById('holder').style.backgroundColor = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.9)';
