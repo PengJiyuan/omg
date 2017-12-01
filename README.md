@@ -424,6 +424,23 @@ shape.animateTo({
 stage.clearAnimation();
 ```
 
+### FPS
+
+#### fpsOn
+
+If you use some animations and want to know the fps, just call function `fpsOn` to get fps.
+
+```javascript
+stage.fpsOn(function(fps) {
+  console.log(fps);
+});
+```
+
+#### Fps off
+```javascript
+stage.fpsOff();
+```
+
 ## [CHANGELOG](./.github/CHANGELOG.md)
 
 ## [MIT](./LICENSE)
