@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>test html</title>
+	<title>omg.js | Shapes</title>
 	<style>
 		#fps {
 			position: absolute;
@@ -68,8 +68,7 @@
 		startAngle: -45,
 		endAngle: 45,
 		color: '#e1a376',
-		style: 'fill',
-		easingType: 'easeInOutQuint'
+		style: 'fill'
 	}).config({
 		drag: false,
 		changeIndex: true
@@ -88,8 +87,7 @@
 		startAngle: 45,
 		endAngle: 165,
 		color: '#512854',
-		style: 'fill',
-		easingType: 'easeInOutQuint'
+		style: 'fill'
 	}).config({
 		drag: false,
 		changeIndex: true
@@ -108,8 +106,7 @@
 		startAngle: 165,
 		endAngle: -45,
 		color: '#fd8915',
-		style: 'fill',
-		easingType: 'easeInOutQuint'
+		style: 'fill'
 	}).config({
 		drag: false,
 		changeIndex: true
@@ -141,10 +138,10 @@
 		paddingTop: 8, //text padding top
 		center: true, 
 		backgroundColor: 'blue', // optional
-		font: 'italic bold 20px arial,sans-serif',
+		fontSize: 20,
 		text: 'Hello World',
 		color: '#fff',
-		type: 'fill'
+		style: 'fill'
 	}).config({
 		fixed: true,
 		bg: true
@@ -200,31 +197,31 @@
 
 	world.addChild([image, text, image3, arc2, arc, arca, arcb, arcc, polygon]);
 
-	world.addChild(
-		world.coord({
-			x: 10,
-			y: 0,
-			width: 300,
-			height: 250,
-			xAxis: {
-				data: ["C#", "PHP", "JS", "C", "C++"]
-			},
-			yAxis: {
+	// world.addChild(
+	// 	world.coord({
+	// 		x: 10,
+	// 		y: 0,
+	// 		width: 300,
+	// 		height: 250,
+	// 		xAxis: {
+	// 			data: ["C#", "PHP", "JS", "C", "C++"]
+	// 		},
+	// 		yAxis: {
 
-			},
-			series: [{
-				data: [-0.11358, -0.622, 0.33, 0.44, 0.5555]
-			}],
-			boundaryGap: true,
-			backgroundColor: '#F3F3F3',//'#'+(~~(Math.random()*(1<<24))).toString(16)
-			title: 'Test Title'
-		}).config({
-			fixed: true,
-			drag: false,
-			changeIndex: false,
-			zindex: 0
-		})
-	);
+	// 		},
+	// 		series: [{
+	// 			data: [-0.11358, -0.622, 0.33, 0.44, 0.5555]
+	// 		}],
+	// 		boundaryGap: true,
+	// 		backgroundColor: '#F3F3F3',//'#'+(~~(Math.random()*(1<<24))).toString(16)
+	// 		title: 'Test Title'
+	// 	}).config({
+	// 		fixed: true,
+	// 		drag: false,
+	// 		changeIndex: false,
+	// 		zindex: 0
+	// 	})
+	// );
 
 	var line = world.line({
 		matrix: [
@@ -237,7 +234,7 @@
 			[260, 180]
 		],
 		lineWidth: 2,
-		strokeColor: '#ef8376',
+		color: '#ef8376',
 		dash: [3, 3]
 	}).config({
 		zindex: 2,

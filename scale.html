@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>omg.js | Scale</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    #canvas {
+      margin: 0;
+      background-color: #fff;
+    }
+
+  </style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+    <canvas id="canvas"></canvas>
+</div>
+<script src="./omg.min.js"></script>
+<script>
+  var world = omg({
+    element: document.getElementById('canvas'),
+    width: document.body.clientWidth,
+    height: document.body.clientHeight,
+    enableGlobalTranslate: true,
+    enableGlobalScale: true
+  });
+
+  var rect1 = world.rectangle({
+    x: 200,
+    y: 500,
+    width: 100,
+    height: 100,
+    zindex: 2,
+    color: '#ef8376'
+  }).on('mouseenter mousemove', function() {
+    world.element.style.cursor = 'pointer';
+    rect1.color = '#000';
+    world.redraw();
+  }).on('mouseleave', function() {
+    world.element.style.cursor = 'default';
+    rect1.color = '#ef8376';
+    world.redraw();
+  }).config({
+    drag: true
+  });
+
+  var arc = world.arc({
+    x: 130,
+    y: 380,
+    radius: 100,
+    startAngle: -45,
+    endAngle: 45,
+    color: '#e1a376',
+    style: 'fill'
+  }).on('mouseenter', function(cur) {
+    cur.color = '#555';
+    world.redraw();
+  }).on('mouseleave', function(cur) {
+    cur.color = '#e1a376';
+    world.redraw();
+  }).config({
+    drag: true
+  });
+
+  var text = world.text({
+    x: 300,
+    y: 40,
+    width: 150,
+    height: 40,
+    paddingTop: 8, //text padding top
+    center: true, 
+    backgroundColor: 'blue', // optional
+    fontSize: 16,
+    text: 'Hello World',
+    color: '#fff',
+    style: 'fill'
+  }).on('mouseenter', function(cur) {
+    cur.backgroundColor = '#555';
+    world.redraw();
+  }).on('mouseleave', function(cur) {
+    cur.backgroundColor = 'blue';
+    world.redraw();
+  });
+
+  var image = world.image({
+    x: 300,
+    y: 200,
+    width: 97,
+    height: 110,
+    sliceX: 5,
+    sliceY: 0,
+    sliceWidth: 97,
+    sliceHeight: 110,
+    src: './img/timg.jpg'
+  }).config({
+    drag: true
+  });
+
+
+  var line = world.line({
+    matrix: [
+      [10, 180], 
+      [40, 50], 
+      [80, 180], 
+      [90, 80],
+      [110, 100], 
+      [140, 50],
+      [260, 180]
+    ]
+  });
+
+  var polygon = world.polygon({
+    matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]]
+  }).config({
+    zindex: 11,
+    drag: true
+  }).on('mouseenter', function(cur) {
+    cur.color = '#000';
+    world.redraw();
+  }).on('mouseleave', function(cur) {
+    cur.color = '#555';
+    world.redraw();
+  });
+
+  world.addChild([rect1, arc, text, image, line, polygon]);
+  world.show();
+
+</script>
+</body>
+</html>
