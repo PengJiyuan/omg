@@ -219,26 +219,6 @@ const arcb = stage.arc({
 });
 ```
 
-**Coordinate System**
-
-```javascript
-const coord = stage.coord({
-  x: 0, // 坐标系的左上起点的x坐标
-  y: 0, // 坐标系的左上起点的y坐标
-  width: 800, // 坐标系的宽度
-  height: 600, // 坐标系的高度
-  xAxis: {
-    data: ["C#", "PHP", "JS", "C", "C++"] // 坐标系的横坐标
-  },
-  yAxis: {}, // 暂不支持
-  series: [{
-    data: [-0.11358, -0.622, 0.33, 0.44, 0.5555] // 要展示的数据，不过这个仅仅用来构建y轴区间，不展示数据
-  }],
-  boundaryGap: true, // 横坐标展示在区间中心还是左侧
-  backgroundColor: '#F3F3F3' // 坐标系的背景颜色
-})
-```
-
 ### Add Event
 
 #### global events
