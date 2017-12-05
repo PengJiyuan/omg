@@ -38,7 +38,8 @@ const stage = omg({
   element: document.getElementById('canvas'),
   width: 500,
   height: 500,
-  enableGlobalTranslate: true
+  enableGlobalTranslate: true,
+  enableGlobalScale: true
 });
 
 const rect = stage.rectangle({
@@ -86,16 +87,11 @@ const stage = omg({
   element: document.getElementById('canvas'),
   width: 500,
   height: 500,
-  enableGlobalTranslate: true // 等同于 stage.globalTranslate(true)
+  enableGlobalTranslate: true, // enable global drag events.
+  enableGlobalScale: true, // enable global scale events.
 });
 
 stage.getVersion(); // v x.x.x
-```
-
-Enable global drag.
-
-```javascript
- stage.globalTranslate(true);
 ```
 
 ### Shapes
@@ -149,7 +145,7 @@ const polygon = stage.polygon({
     [146, 200]
   ],
   color: 'black',
-  type: 'stroke',
+  style: 'stroke',
   lineWidth: 4
 });
 ```
@@ -193,7 +189,7 @@ const text = stage.text({
   font: 'italic bold 20px arial,sans-serif', // 文字样式
   text: 'Hello stage', // 文字内容
   color: '#fff', // 文字颜色
-  type: 'fill' // fill -- 填充， stroke -- 描边
+  style: 'fill' // fill -- 填充， stroke -- 描边
 });
 ```
 
@@ -205,7 +201,7 @@ const arc = stage.arc({
   y: 400,
   radius: 30,
   color: 'rgba(255, 255, 255, 0.5)',
-  type: 'fill' // fill -- 填充， stroke -- 描边
+  style: 'fill' // fill -- 填充， stroke -- 描边
 });
 ```
 
