@@ -1,25 +1,29 @@
 import display from '../display';
 
 export default function(settings, _this) {
-  let canvas = _this.canvas,
-    matrix = settings.matrix,
-    lineWidth = settings.lineWidth,
-    lineCap = settings.lineCap,
-    lineJoin = settings.lineJoin,
-    strokeColor = settings.strokeColor,
-    smooth = settings.smooth;
-
   let totalLength;
 
-  let draw = function() {
+  const draw = function() {
+    const canvas = _this.canvas;
+    const lineCap = settings.lineCap;
+    const lineJoin = settings.lineJoin;
+    const smooth = settings.smooth;
+    const lineWidth = this.lineWidth;
+    const scale = _this.scale;
+
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
+    this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
+
+    const matrix = this.scaled_matrix;
 
     canvas.save();
-    canvas.translate(this.moveX, this.moveY);
+    canvas.translate(this.scaled_moveX, this.scaled_moveX);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     canvas.lineWidth = lineWidth;
-    canvas.strokeStyle = strokeColor;
+    canvas.strokeStyle = this.color;
     canvas.beginPath();
     canvas.lineDashOffset = this.offset;
     if(this.dash && Object.prototype.toString.call(this.dash) === '[object Array]') {
@@ -80,7 +84,11 @@ export default function(settings, _this) {
     type: 'line',
     draw: draw,
     totalLength: totalLength,
+    lineWidth: settings.lineWidth || 1,
     dash: settings.dash,
-    offset: settings.offset || 0
+    offset: settings.offset || 0,
+    color: settings.color || '#555',
+    matrix: settings.matrix,
+    scaled_matrix: settings.matrix
   });
 }

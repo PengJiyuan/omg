@@ -1,11 +1,15 @@
 import display from '../display';
 
 export default function(settings, _this) {
-  const canvas = _this.canvas,
-    lineWidth = settings.lineWidth || 1,
-    type = settings.type || 'fill';
-
   const draw = function() {
+    const canvas = _this.canvas;
+    const scale = _this.scale;
+
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
+    this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
+
+    const matrix = this.scaled_matrix;
 
     canvas.save();
     canvas.translate(this.moveX, this.moveY);
@@ -14,17 +18,17 @@ export default function(settings, _this) {
     }
     canvas.beginPath();
 
-    this.matrix.forEach((point, i) => {
+    matrix.forEach((point, i) => {
       i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
     });
-    canvas.lineTo(this.matrix[0][0], this.matrix[0][1]);
+    canvas.lineTo(matrix[0][0], matrix[0][1]);
     
-    if(type === 'fill') {
+    if(this.style === 'fill') {
       canvas.fillStyle = this.color;
       canvas.fill();
     } else {
       canvas.strokeStyle = this.color;
-      canvas.lineWidth = lineWidth;
+      canvas.lineWidth = this.lineWidth;
       canvas.stroke();
     }
     canvas.closePath();
@@ -34,6 +38,10 @@ export default function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'polygon',
     draw: draw,
-    matrix: settings.matrix
+    style: settings.style || 'fill',
+    color: settings.color || '#555',
+    lineWidth: settings.lineWidth || 1,
+    matrix: settings.matrix,
+    scaled_matrix: settings.matrix
   });
 }

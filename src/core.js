@@ -20,7 +20,13 @@ export class OMG {
 
     this.transY = 0;
 
-    this.scale = 1;
+    this.deviceScale = 1;
+
+    this.minDeviceScale = 0.5 * this.deviceScale;
+
+    this.maxDeviceScale = 4 * this.deviceScale;
+
+    this.scale = this.deviceScale;
 
     // the instance of image loader
     this.loader = null;
@@ -79,7 +85,11 @@ export class OMG {
       height: this.height
     });
 
+    // enable global drag event.
     this.enableGlobalTranslate = config.enableGlobalTranslate || false;
+
+    // enable global scale event.
+    this.enableGlobalScale = config.enableGlobalScale || false;
 
     // init images
     this.images = config.images || [];

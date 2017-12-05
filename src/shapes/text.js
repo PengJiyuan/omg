@@ -19,56 +19,59 @@ export default function(settings, _this) {
   }
 
   let draw = function() {
-    let canvas = _this.canvas,
-      x = this.x = settings.x,
-      y = this.y = settings.y,
-      width = settings.width,
-      height = settings.height,
-      pt = settings.paddingTop ? settings.paddingTop : 0,
-      center = settings.center,
-      font = settings.font,
-      type = settings.type,
-      color = settings.color,
-      t = this.text,
-      textWidth, ellipsisText;
+    const canvas = _this.canvas;
+    const scale = _this.scale;
+    const center = settings.center;
+    const fontFamily = settings.fontFamily || 'arial,sans-serif';
+    const fontSize = settings.fontSize || 14;
+    const size = fontSize * scale;
+    const font = `${size}px ${fontFamily}`;
 
-    if(!type) {
-      return;
-    }
+    this.scaled_x = this.x * scale;
+    this.scaled_y = this.y * scale;
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
+    this.scaled_width = this.width * scale;
+    this.scaled_height = this.height * scale;
+    this.scaled_radius = this.radius * scale;
+    this.scaled_paddingTop = this.paddingTop * scale;
+
+    let textWidth, ellipsisText;
+
     canvas.save();
-    canvas.translate(this.moveX, this.moveY);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     if(this.backgroundColor) {
       canvas.save();
       canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(x, y, width, height);
+      canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
       canvas.restore();
     }
     canvas.font = font;
     canvas.textBaseline = 'top';
 
-    textWidth = canvas.measureText(t).width;
-    ellipsisText = text_ellipsis(canvas, t, width - 8);
+    textWidth = canvas.measureText(this.text).width;
+    ellipsisText = text_ellipsis(canvas, this.text, this.scaled_width - 8);
 
-    if(type === 'stroke') {
-      canvas.strokeStyle = color;
+    if(this.style === 'stroke') {
+      canvas.strokeStyle = this.color;
       if(center) {
-        if(textWidth < width - 8) {
-          canvas.strokeText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
+        if(textWidth < this.scaled_width - 8) {
+          canvas.strokeText(ellipsisText, this.scaled_x + 4 + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.strokeText(ellipsisText, x + 4, y + pt);
+        canvas.strokeText(ellipsisText, this.scaled_x + 4, this.scaled_y + this.scaled_paddingTop);
       }
     } else {
-      canvas.fillStyle = color;
+      canvas.fillStyle = this.color;
       if(center) {
-        if(textWidth < width - 8) {
-          canvas.fillText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
+        if(textWidth < this.scaled_width - 8) {
+          canvas.fillText(ellipsisText, this.scaled_x + 4 + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.fillText(ellipsisText, x + 4, y + pt);
+        canvas.fillText(ellipsisText, this.scaled_x + 4, this.scaled_y + this.scaled_paddingTop);
       }
     }
     canvas.restore();
@@ -77,7 +80,11 @@ export default function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
     draw: draw,
+    color: settings.color || '#fff',
     backgroundColor: settings.backgroundColor,
-    text: settings.text
+    text: settings.text || 'no text',
+    style: settings.style || 'fill',
+    paddingTop: settings.paddingTop || 0,
+    scaled_paddingTop: settings.paddingTop ? settings.paddingTop * _this.scale : 0
   });
 }

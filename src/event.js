@@ -18,7 +18,7 @@ export class Event {
     const hasEvents = this._.objects.some(item => {
       return item.events && utils.isArr(item.events) || item.enableDrag;
     });
-    if(!hasEvents && !this._.enableGlobalTranslate) {
+    if(!hasEvents && !this._.enableGlobalTranslate && !this._.enableGlobalScale) {
       return;
     }
 
@@ -48,6 +48,30 @@ export class Event {
       utils.bind(this._.element, 'mousedown', this.mouseDown.bind(this));
       this.triggeredMouseDown = true;
     }
+
+    if(this._.enableGlobalScale) {
+      this.bindMouseWheel();
+    } else {
+      this.unBindMouseWheel();
+    }
+
+  }
+
+  bindMouseWheel() {
+    utils.bind(this._.element, 'wheel', this.mouseWheel.bind(this));
+  }
+
+  unBindMouseWheel() {
+    utils.unbind(this._.element, 'wheel', this.mouseWheel.bind(this));
+  }
+
+  mouseWheel(e) {
+    if(e.deltaY && e.deltaY > 0) {
+      this._.scale = this._.scale - 0.01 >= this._.minDeviceScale ? this._.scale - 0.01 : this._.minDeviceScale;
+    } else if(e.deltaY && e.deltaY < 0) {
+      this._.scale = this._.scale + 0.01 <= this._.maxDeviceScale ? this._.scale + 0.01 : this._.maxDeviceScale;
+    }
+    this._.redraw();
   }
 
   bindMouseMove() {
@@ -186,6 +210,8 @@ export class Event {
         const mx = that.getPos(e_move).x;
         const my = that.getPos(e_move).y;
 
+        whichIn[0].originMoveX = whichIn[0].originMoveX + mx - that.cacheX;
+        whichIn[0].originMoveY = whichIn[0].originMoveY + my - that.cacheY;
         whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
         whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
 
@@ -239,6 +265,8 @@ export class Event {
       const move_dragCanvas = e_move => {
         const mx = that.getPos(e_move).x;
         const my = that.getPos(e_move).y;
+        // that._.originTransX = that._.originTransX + mx - that.cacheX;
+        // that._.originTransY = that._.originTransY  + my - that.cacheY;
         that._.transX = that._.transX + mx - that.cacheX;
         that._.transY = that._.transY + my - that.cacheY;
         that._.redraw();

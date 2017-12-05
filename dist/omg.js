@@ -214,7 +214,7 @@ Event.prototype.triggerEvents = function triggerEvents () {
   var hasEvents = this._.objects.some(function (item) {
     return item.events && utils.isArr(item.events) || item.enableDrag;
   });
-  if(!hasEvents && !this._.enableGlobalTranslate) {
+  if(!hasEvents && !this._.enableGlobalTranslate && !this._.enableGlobalScale) {
     return;
   }
 
@@ -244,6 +244,30 @@ Event.prototype.triggerEvents = function triggerEvents () {
     utils.bind(this._.element, 'mousedown', this.mouseDown.bind(this));
     this.triggeredMouseDown = true;
   }
+
+  if(this._.enableGlobalScale) {
+    this.bindMouseWheel();
+  } else {
+    this.unBindMouseWheel();
+  }
+
+};
+
+Event.prototype.bindMouseWheel = function bindMouseWheel () {
+  utils.bind(this._.element, 'wheel', this.mouseWheel.bind(this));
+};
+
+Event.prototype.unBindMouseWheel = function unBindMouseWheel () {
+  utils.unbind(this._.element, 'wheel', this.mouseWheel.bind(this));
+};
+
+Event.prototype.mouseWheel = function mouseWheel (e) {
+  if(e.deltaY && e.deltaY > 0) {
+    this._.scale = this._.scale - 0.01 >= this._.minDeviceScale ? this._.scale - 0.01 : this._.minDeviceScale;
+  } else if(e.deltaY && e.deltaY < 0) {
+    this._.scale = this._.scale + 0.01 <= this._.maxDeviceScale ? this._.scale + 0.01 : this._.maxDeviceScale;
+  }
+  this._.redraw();
 };
 
 Event.prototype.bindMouseMove = function bindMouseMove () {
@@ -382,6 +406,8 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
       var mx = that.getPos(e_move).x;
       var my = that.getPos(e_move).y;
 
+      whichIn[0].originMoveX = whichIn[0].originMoveX + mx - that.cacheX;
+      whichIn[0].originMoveY = whichIn[0].originMoveY + my - that.cacheY;
       whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
       whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
 
@@ -435,6 +461,8 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
     var move_dragCanvas = function (e_move) {
       var mx = that.getPos(e_move).x;
       var my = that.getPos(e_move).y;
+      // that._.originTransX = that._.originTransX + mx - that.cacheX;
+      // that._.originTransY = that._.originTransY+ my - that.cacheY;
       that._.transX = that._.transX + mx - that.cacheX;
       that._.transY = that._.transY + my - that.cacheY;
       that._.redraw();
@@ -691,14 +719,14 @@ var autoscale = function (canvasList, opt) {
 };
 
 var isPointInner = function(x, y) {
-  var mx = this.moveX;
-  var my = this.moveY;
+  var mx = this.moveX * this._.scale;
+  var my = this.moveY * this._.scale;
   var ltx = this.fixed ? 0 : this._.transX;
   var lty = this.fixed ? 0 : this._.transY;
-  var xRight = x > this.x + mx + ltx;
-  var xLeft = x < this.x + this.width + mx + ltx;
-  var yTop = y > this.y + my + lty;
-  var yBottom = y < this.y + this.height + my + lty;
+  var xRight = x > this.scaled_x + mx + ltx;
+  var xLeft = x < this.scaled_x + this.scaled_width + mx + ltx;
+  var yTop = y > this.scaled_y + my + lty;
+  var yBottom = y < this.scaled_y + this.scaled_height + my + lty;
 
   switch(this.type) {
     /**
@@ -710,12 +738,12 @@ var isPointInner = function(x, y) {
      * @type: Arc
      */
     case 'arc':
-      var cx = this.x, // center x
-        cy = this.y, // center y
+      var cx = this.scaled_x, // center x
+        cy = this.scaled_y, // center y
         pi = Math.PI,
-        sa = this.startAngle < 0 ? 2*pi + pi/180*this.startAngle : pi/180*this.startAngle,
-        ea = this.endAngle < 0 ? 2*pi + pi/180*this.endAngle : pi/180*this.endAngle,
-        r = this.radius,
+        sa = this.startAngle < 0 ? 2 * pi + pi / 180 * this.startAngle : pi / 180 * this.startAngle,
+        ea = this.endAngle < 0 ? 2 * pi + pi / 180 * this.endAngle : pi / 180 * this.endAngle,
+        r = this.scaled_radius,
         dx = x - cx - mx -ltx,
         dy = y - cy - my - lty,
         isIn, dis;
@@ -774,7 +802,7 @@ var isPointInner = function(x, y) {
      * @return true if the point is inside the boundary, false otherwise
      */
     case 'polygon':
-      var points = this.matrix;
+      var points = this.scaled_matrix;
       var pgx = x - mx - ltx;
       var pgy = y - my - lty;
       var result = false;
@@ -924,21 +952,34 @@ var Display = function Display(settings, _this) {
 
   this._ = _this;
 
+  // scaled_xxx, the value xxx after scaled, finally display value.
   this.commonData = {
 
     color: settings.color,
 
     x: settings.x,
 
+    scaled_x: settings.x * _this.scale,
+
     y: settings.y,
+
+    scaled_y: settings.y * _this.scale,
 
     width: settings.width,
 
+    scaled_width: settings.width * _this.scale,
+
     height: settings.height,
+
+    scaled_height: settings.height * _this.scale,
 
     moveX: 0,
 
+    scaled_moveX: 0,
+
     moveY: 0,
+
+    scaled_moveY: 0,
 
     zindex: 0
 
@@ -1075,33 +1116,36 @@ var display = function (settings, _this) {
 
 var arc = function(settings, _this) {
   var draw = function() {
-    var canvas = _this.canvas,
-      x = this.x = settings.x,
-      y = this.y = settings.y,
-      style = this.style = settings.style,
-      startAngle = this.startAngle = settings.startAngle,
-      endAngle = this.endAngle = settings.endAngle;
+    var canvas = _this.canvas;
+    var scale = _this.scale;
+    this.scaled_x = this.x * scale;
+    this.scaled_y = this.y * scale;
+    this.scaled_width = this.width * scale;
+    this.scaled_height = this.height * scale;
+    this.scaled_radius = this.radius * scale;
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
 
     canvas.save();
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    canvas.translate(this.moveX, this.moveY);
-    canvas.translate(x, y);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
+    canvas.translate(this.scaled_x, this.scaled_y);
     canvas.beginPath();
-    if(!isNaN(startAngle) && !isNaN(endAngle)) {
-      canvas.arc(0, 0, this.radius, Math.PI/180*startAngle, Math.PI/180*endAngle, false);
+    if(!isNaN(this.startAngle) && !isNaN(this.endAngle)) {
+      canvas.arc(0, 0, this.scaled_radius, Math.PI / 180 * this.startAngle, Math.PI / 180 * this.endAngle, false);
       canvas.save();
-      canvas.rotate(Math.PI/180*endAngle);
-      canvas.moveTo(this.radius, 0);
+      canvas.rotate(Math.PI / 180 * this.endAngle);
+      canvas.moveTo(this.scaled_radius, 0);
       canvas.lineTo(0, 0);
       canvas.restore();
-      canvas.rotate(Math.PI/180*startAngle);
-      canvas.lineTo(this.radius, 0);
+      canvas.rotate(Math.PI / 180 * this.startAngle);
+      canvas.lineTo(this.scaled_radius, 0);
     } else {
-      canvas.arc(0, 0, this.radius, 0, Math.PI*2);
+      canvas.arc(0, 0, this.scaled_radius, 0, Math.PI*2);
     }
-    if(style === 'fill') {
+    if(this.style === 'fill') {
       canvas.fillStyle = this.color;
       canvas.fill();
     } else {
@@ -1115,190 +1159,11 @@ var arc = function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'arc',
     draw: draw,
-    radius: settings.radius
-  });
-};
-
-var coord = function(settings, _this) {
-  var canvas = _this.canvas,
-    x = this.x = settings.x,
-    y = this.y = settings.y,
-    width = settings.width,
-    height = settings.height,
-    xAxis = settings.xAxis,
-    //yAxis = settings.yAxis,
-    series = settings.series,
-    boundaryGap = settings.boundaryGap,
-    title = settings.title,
-    subTitle = settings.subTitle;
-
-  var TO_TOP = 20;
-
-  var margin = width <= 300 ? width / 5 : width / 10;
-  var xCount, yCount, xSpace, ySpace, xLength, yLength, xGapLength, yGapLength, upCount, downCount, ygl;
-
-  // yAxis
-  var maxY = utils.getMaxMin(false, series, xAxis).max,
-    minY = utils.getMaxMin(false, series, xAxis).min,
-    gm = utils.calculateCoord(maxY, minY),
-    gap = gm.gap;
-  //retMax = gm.max;
-
-  yLength = height - 2 * margin;
-  //count = Math.round(retMax / gap);
-
-  upCount = maxY > 0 ? Math.ceil(maxY / gap) : 0;
-  downCount = minY < 0 ? Math.ceil( Math.abs(minY) / gap) : 0;
-  yCount = upCount + downCount;
-  yGapLength = Math.round( yLength / yCount ),
-  ySpace = yCount,
-  ygl = yGapLength;
-
-  // xAxis
-  if(xAxis.data && xAxis.data.length > 0) {
-    xCount = xAxis.data.length;
-    xSpace = boundaryGap ? xCount : xCount -1;
-    xLength = width - margin * 2;
-    xGapLength = xLength / xSpace;
-  }
-
-  var draw = function() {
-
-    canvas.save();
-    canvas.translate(this.moveX, this.moveY);
-    if(this.fixed) {
-      canvas.translate(-_this.transX, -_this.transY);
-    }
-    if(this.backgroundColor) {
-      canvas.save();
-      canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(x, y, width, height);
-      canvas.restore();
-    }
-
-    // draw title
-    canvas.save();
-    canvas.font = width <= 300 ? '18px serif' : '24px serif';
-    canvas.textAlign = 'left';
-    canvas.textBaseline = 'top';
-    canvas.fillText(title, margin / 2, 10);
-    canvas.restore();
-    canvas.save();
-    canvas.fillStyle = '#666666';
-    canvas.font = width <= 300 ? '10px serif' : '14px serif';
-    canvas.textAlign = 'left';
-    canvas.textBaseline = 'top';
-    canvas.fillText(subTitle, margin / 2 + 4, 40);
-    canvas.restore();
-
-
-    // draw yAxis
-
-    // coordinate origin
-    canvas.translate(x + margin, y + margin + upCount * yGapLength + TO_TOP);
-
-    // yAxis
-    canvas.beginPath();
-    canvas.moveTo(0, 0 + downCount * yGapLength);
-    canvas.lineTo(0, -(height - margin*2) + downCount * yGapLength - 5);
-    canvas.stroke();
-    canvas.closePath();
-
-    for(var ii = 0; ii <= upCount; ii++) {
-      canvas.beginPath();
-      canvas.moveTo(0, -yGapLength * ii);
-      canvas.lineTo(-5, -yGapLength * ii);
-      canvas.stroke();
-      canvas.closePath();
-      // draw grid
-      canvas.save();
-      canvas.strokeStyle = '#ccc';
-      canvas.beginPath();
-      canvas.moveTo(0, -yGapLength * ii);
-      canvas.lineTo(width - margin*2, -yGapLength * ii);
-      canvas.stroke();
-      canvas.restore();
-      canvas.closePath();
-      // draw label
-      canvas.save();
-      canvas.font = '12px serif';
-      canvas.textAlign = 'right';
-      canvas.textBaseline = 'middle';
-      canvas.fillText( utils.formatFloat(gap*ii), -10, -yGapLength * ii);
-      canvas.restore();
-    }
-
-    for(var iii = 0; iii <= downCount; iii++) {
-      canvas.beginPath();
-      canvas.moveTo(0, yGapLength * iii);
-      canvas.lineTo(-5, yGapLength * iii);
-      canvas.stroke();
-      canvas.closePath();
-      // draw grid
-      canvas.save();
-      canvas.strokeStyle = '#ccc';
-      canvas.beginPath();
-      canvas.moveTo(0, yGapLength * iii);
-      canvas.lineTo(width - margin*2, yGapLength * iii);
-      canvas.stroke();
-      canvas.restore();
-      canvas.closePath();
-      // draw label
-      canvas.save();
-      canvas.font = '12px serif';
-      canvas.textAlign = 'right';
-      canvas.textBaseline = 'middle';
-      if(iii !== 0) {
-        canvas.fillText( utils.formatFloat(-gap*iii), -10, yGapLength * iii);
-      }
-      canvas.restore();
-    }
-
-    // xAxis
-    canvas.beginPath();
-    canvas.moveTo(0, 0);
-    canvas.lineTo(width - margin*2, 0);
-    canvas.stroke();
-    canvas.closePath();
-
-    // draw xAxis
-    if(xAxis.data && xAxis.data.length > 0) {
-
-      xAxis.data.forEach(function(item, index) {
-        canvas.beginPath();
-        canvas.moveTo(xGapLength * (index + 1), 0);
-        canvas.lineTo(xGapLength * (index + 1), 5);
-        canvas.save();
-        canvas.font = '15px serif';
-        canvas.textAlign = 'center';
-        canvas.textBaseline = 'top';
-        boundaryGap ? canvas.fillText(item, xGapLength * index + xGapLength / 2, 5 + downCount * ygl) : canvas.fillText(item, xGapLength * index, 5 + downCount * ygl);
-        canvas.restore();
-        canvas.stroke();
-        canvas.closePath();
-      });
-
-    }
-
-    canvas.restore();
-  };
-
-  return Object.assign({}, display(settings, _this), {
-    type: 'rectangle',
-    draw: draw,
-    xLength: xLength,
-    yLength: yLength,
-    xSpace: xSpace,
-    ySpace: ySpace,
-    xGapLength: xGapLength,
-    yGapLength: yGapLength,
-    upCount: upCount,
-    downCount: downCount,
-    gap: gap,
-    margin: margin,
-    TO_TOP: TO_TOP,
-    boundaryGap: boundaryGap,
-    backgroundColor: settings.backgroundColor || '#F3F3F3'
+    style: settings.style,
+    startAngle: settings.startAngle,
+    endAngle: settings.endAngle,
+    radius: settings.radius,
+    scaled_radius: settings.radius * _this.scale
   });
 };
 
@@ -1309,20 +1174,42 @@ var image = function(settings, _this) {
   }
 
   var draw = function() {
-    var canvas = _this.canvas,
-      x = this.x = settings.x,
-      y = this.y = settings.y,
-      src = settings.src;
+    var canvas = _this.canvas;
+    var src = settings.src;
+    var scale = _this.scale;
+
+    this.scaled_x = this.x * scale;
+    this.scaled_y = this.y * scale;
+    this.scaled_width = this.width * scale;
+    this.scaled_height = this.height * scale;
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
 
     canvas.save();
-    canvas.translate(this.moveX, this.moveY);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     if(this.sliceWidth && this.sliceHeight) {
-      canvas.drawImage(_this.loader.getImg(src), this.sliceX, this.sliceY, this.sliceWidth, this.sliceHeight, x, y, this.width, this.height);
+      canvas.drawImage(
+        _this.loader.getImg(src),
+        this.sliceX,
+        this.sliceY,
+        this.sliceWidth,
+        this.sliceHeight,
+        this.scaled_x,
+        this.scaled_y,
+        this.scaled_width,
+        this.scaled_height
+      );
     } else {
-      canvas.drawImage(_this.loader.getImg(src), x, y, this.width, this.height);
+      canvas.drawImage(
+        _this.loader.getImg(src),
+        this.scaled_x,
+        this.scaled_y,
+        this.scaled_width,
+        this.scaled_height
+      );
     }
     canvas.restore();
   };
@@ -1338,25 +1225,29 @@ var image = function(settings, _this) {
 };
 
 var line = function(settings, _this) {
-  var canvas = _this.canvas,
-    matrix = settings.matrix,
-    lineWidth = settings.lineWidth,
-    lineCap = settings.lineCap,
-    lineJoin = settings.lineJoin,
-    strokeColor = settings.strokeColor,
-    smooth = settings.smooth;
-
   var totalLength;
 
   var draw = function() {
+    var canvas = _this.canvas;
+    var lineCap = settings.lineCap;
+    var lineJoin = settings.lineJoin;
+    var smooth = settings.smooth;
+    var lineWidth = this.lineWidth;
+    var scale = _this.scale;
+
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
+    this.scaled_matrix = this.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
+
+    var matrix = this.scaled_matrix;
 
     canvas.save();
-    canvas.translate(this.moveX, this.moveY);
+    canvas.translate(this.scaled_moveX, this.scaled_moveX);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     canvas.lineWidth = lineWidth;
-    canvas.strokeStyle = strokeColor;
+    canvas.strokeStyle = this.color;
     canvas.beginPath();
     canvas.lineDashOffset = this.offset;
     if(this.dash && Object.prototype.toString.call(this.dash) === '[object Array]') {
@@ -1417,25 +1308,36 @@ var line = function(settings, _this) {
     type: 'line',
     draw: draw,
     totalLength: totalLength,
+    lineWidth: settings.lineWidth || 1,
     dash: settings.dash,
-    offset: settings.offset || 0
+    offset: settings.offset || 0,
+    color: settings.color || '#555',
+    matrix: settings.matrix,
+    scaled_matrix: settings.matrix
   });
 };
 
 var rectangle = function(settings, _this) {
   var draw = function() {
     var canvas = _this.canvas;
+    var scale = _this.scale;
+    this.scaled_x = this.x * scale;
+    this.scaled_y = this.y * scale;
+    this.scaled_width = this.width * scale;
+    this.scaled_height = this.height * scale;
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
 
     canvas.save();
-    canvas.translate( this.x + this.width/2 + this.moveX, this.y + this.height/2 + this.moveY);
+    canvas.translate( this.scaled_x + this.scaled_width / 2 + this.scaled_moveX, this.scaled_y + this.scaled_height / 2 + this.scaled_moveY);
     canvas.rotate((Math.PI/180)*this.rotate);
-    canvas.translate(-( this.x + this.width/2 + this.moveX), -( this.y + this.height/2 + this.moveY));
-    canvas.translate(this.moveX, this.moveY);
+    canvas.translate(-( this.scaled_x + this.scaled_width / 2 + this.scaled_moveX), -( this.scaled_y + this.scaled_height / 2 + this.scaled_moveY));
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     canvas.fillStyle = this.color ? this.color : '#000';
-    canvas.fillRect(this.x, this.y, this.width, this.height);
+    canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
     canvas.restore();
   };
 
@@ -1465,56 +1367,59 @@ var text = function(settings, _this) {
   }
 
   var draw = function() {
-    var canvas = _this.canvas,
-      x = this.x = settings.x,
-      y = this.y = settings.y,
-      width = settings.width,
-      height = settings.height,
-      pt = settings.paddingTop ? settings.paddingTop : 0,
-      center = settings.center,
-      font = settings.font,
-      type = settings.type,
-      color = settings.color,
-      t = this.text,
-      textWidth, ellipsisText;
+    var canvas = _this.canvas;
+    var scale = _this.scale;
+    var center = settings.center;
+    var fontFamily = settings.fontFamily || 'arial,sans-serif';
+    var fontSize = settings.fontSize || 14;
+    var size = fontSize * scale;
+    var font = size + "px " + fontFamily;
 
-    if(!type) {
-      return;
-    }
+    this.scaled_x = this.x * scale;
+    this.scaled_y = this.y * scale;
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
+    this.scaled_width = this.width * scale;
+    this.scaled_height = this.height * scale;
+    this.scaled_radius = this.radius * scale;
+    this.scaled_paddingTop = this.paddingTop * scale;
+
+    var textWidth, ellipsisText;
+
     canvas.save();
-    canvas.translate(this.moveX, this.moveY);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     if(this.backgroundColor) {
       canvas.save();
       canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(x, y, width, height);
+      canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
       canvas.restore();
     }
     canvas.font = font;
     canvas.textBaseline = 'top';
 
-    textWidth = canvas.measureText(t).width;
-    ellipsisText = text_ellipsis(canvas, t, width - 8);
+    textWidth = canvas.measureText(this.text).width;
+    ellipsisText = text_ellipsis(canvas, this.text, this.scaled_width - 8);
 
-    if(type === 'stroke') {
-      canvas.strokeStyle = color;
+    if(this.style === 'stroke') {
+      canvas.strokeStyle = this.color;
       if(center) {
-        if(textWidth < width - 8) {
-          canvas.strokeText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
+        if(textWidth < this.scaled_width - 8) {
+          canvas.strokeText(ellipsisText, this.scaled_x + 4 + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.strokeText(ellipsisText, x + 4, y + pt);
+        canvas.strokeText(ellipsisText, this.scaled_x + 4, this.scaled_y + this.scaled_paddingTop);
       }
     } else {
-      canvas.fillStyle = color;
+      canvas.fillStyle = this.color;
       if(center) {
-        if(textWidth < width - 8) {
-          canvas.fillText(ellipsisText, x + 4 + (width - textWidth - 8)/2, y + pt);
+        if(textWidth < this.scaled_width - 8) {
+          canvas.fillText(ellipsisText, this.scaled_x + 4 + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.fillText(ellipsisText, x + 4, y + pt);
+        canvas.fillText(ellipsisText, this.scaled_x + 4, this.scaled_y + this.scaled_paddingTop);
       }
     }
     canvas.restore();
@@ -1523,17 +1428,25 @@ var text = function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
     draw: draw,
+    color: settings.color || '#fff',
     backgroundColor: settings.backgroundColor,
-    text: settings.text
+    text: settings.text || 'no text',
+    style: settings.style || 'fill',
+    paddingTop: settings.paddingTop || 0,
+    scaled_paddingTop: settings.paddingTop ? settings.paddingTop * _this.scale : 0
   });
 };
 
 var polygon = function(settings, _this) {
-  var canvas = _this.canvas,
-    lineWidth = settings.lineWidth || 1,
-    type = settings.type || 'fill';
-
   var draw = function() {
+    var canvas = _this.canvas;
+    var scale = _this.scale;
+
+    this.scaled_moveX = this.moveX * scale;
+    this.scaled_moveY = this.moveY * scale;
+    this.scaled_matrix = this.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
+
+    var matrix = this.scaled_matrix;
 
     canvas.save();
     canvas.translate(this.moveX, this.moveY);
@@ -1542,17 +1455,17 @@ var polygon = function(settings, _this) {
     }
     canvas.beginPath();
 
-    this.matrix.forEach(function (point, i) {
+    matrix.forEach(function (point, i) {
       i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
     });
-    canvas.lineTo(this.matrix[0][0], this.matrix[0][1]);
+    canvas.lineTo(matrix[0][0], matrix[0][1]);
     
-    if(type === 'fill') {
+    if(this.style === 'fill') {
       canvas.fillStyle = this.color;
       canvas.fill();
     } else {
       canvas.strokeStyle = this.color;
-      canvas.lineWidth = lineWidth;
+      canvas.lineWidth = this.lineWidth;
       canvas.stroke();
     }
     canvas.closePath();
@@ -1562,13 +1475,16 @@ var polygon = function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'polygon',
     draw: draw,
-    matrix: settings.matrix
+    style: settings.style || 'fill',
+    color: settings.color || '#555',
+    lineWidth: settings.lineWidth || 1,
+    matrix: settings.matrix,
+    scaled_matrix: settings.matrix
   });
 };
 
 var shapes = {
   arc: arc,
-  coord: coord,
   image: image,
   line: line,
   rectangle: rectangle,
@@ -1588,7 +1504,13 @@ var OMG = function OMG(config) {
 
   this.transY = 0;
 
-  this.scale = 1;
+  this.deviceScale = 1;
+
+  this.minDeviceScale = 0.5 * this.deviceScale;
+
+  this.maxDeviceScale = 4 * this.deviceScale;
+
+  this.scale = this.deviceScale;
 
   // the instance of image loader
   this.loader = null;
@@ -1647,7 +1569,11 @@ var OMG = function OMG(config) {
     height: this.height
   });
 
+  // enable global drag event.
   this.enableGlobalTranslate = config.enableGlobalTranslate || false;
+
+  // enable global scale event.
+  this.enableGlobalScale = config.enableGlobalScale || false;
 
   // init images
   this.images = config.images || [];

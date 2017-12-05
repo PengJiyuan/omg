@@ -7,21 +7,34 @@ class Display {
 
     this._ = _this;
 
+    // scaled_xxx, the value xxx after scaled, finally display value.
     this.commonData = {
 
       color: settings.color,
 
       x: settings.x,
 
+      scaled_x: settings.x * _this.scale,
+
       y: settings.y,
+
+      scaled_y: settings.y * _this.scale,
 
       width: settings.width,
 
+      scaled_width: settings.width * _this.scale,
+
       height: settings.height,
+
+      scaled_height: settings.height * _this.scale,
 
       moveX: 0,
 
+      scaled_moveX: 0,
+
       moveY: 0,
+
+      scaled_moveY: 0,
 
       zindex: 0
 

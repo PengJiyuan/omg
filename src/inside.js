@@ -1,13 +1,13 @@
 export default function(x, y) {
   const that = this;
-  const mx = this.moveX;
-  const my = this.moveY;
+  const mx = this.moveX * this._.scale;
+  const my = this.moveY * this._.scale;
   const ltx = this.fixed ? 0 : this._.transX;
   const lty = this.fixed ? 0 : this._.transY;
-  const xRight = x > this.x + mx + ltx;
-  const xLeft = x < this.x + this.width + mx + ltx;
-  const yTop = y > this.y + my + lty;
-  const yBottom = y < this.y + this.height + my + lty;
+  const xRight = x > this.scaled_x + mx + ltx;
+  const xLeft = x < this.scaled_x + this.scaled_width + mx + ltx;
+  const yTop = y > this.scaled_y + my + lty;
+  const yBottom = y < this.scaled_y + this.scaled_height + my + lty;
 
   switch(this.type) {
     /**
@@ -19,12 +19,12 @@ export default function(x, y) {
      * @type: Arc
      */
     case 'arc':
-      var cx = this.x, // center x
-        cy = this.y, // center y
+      var cx = this.scaled_x, // center x
+        cy = this.scaled_y, // center y
         pi = Math.PI,
-        sa = this.startAngle < 0 ? 2*pi + pi/180*this.startAngle : pi/180*this.startAngle,
-        ea = this.endAngle < 0 ? 2*pi + pi/180*this.endAngle : pi/180*this.endAngle,
-        r = this.radius,
+        sa = this.startAngle < 0 ? 2 * pi + pi / 180 * this.startAngle : pi / 180 * this.startAngle,
+        ea = this.endAngle < 0 ? 2 * pi + pi / 180 * this.endAngle : pi / 180 * this.endAngle,
+        r = this.scaled_radius,
         dx = x - cx - mx -ltx,
         dy = y - cy - my - lty,
         isIn, dis;
@@ -83,7 +83,7 @@ export default function(x, y) {
      * @return true if the point is inside the boundary, false otherwise
      */
     case 'polygon':
-      const points = this.matrix;
+      const points = this.scaled_matrix;
       const pgx = x - mx - ltx;
       const pgy = y - my - lty;
       let result = false;
