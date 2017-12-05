@@ -12,7 +12,20 @@
     }
     #canvas {
       margin: 0;
-      background-color: #fff;
+    }
+
+    .text {
+      width: 500px;
+      height: 200px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+      line-height: 200px;
+      text-align: center;
+      font-size: 20px;
+      color: #555;
     }
 
   </style>
@@ -21,6 +34,9 @@
 <div id="fps"></div>
 <div class="container">
     <canvas id="canvas"></canvas>
+    <div class="text">
+      滚动鼠标滚轮来缩放绘图。
+    </div>
 </div>
 <script src="./omg.min.js"></script>
 <script>
@@ -74,7 +90,7 @@
     y: 40,
     width: 150,
     height: 40,
-    paddingTop: 8, //text padding top
+    paddingTop: 10, //text padding top
     center: true, 
     backgroundColor: 'blue', // optional
     fontSize: 16,
@@ -117,14 +133,17 @@
   });
 
   var polygon = world.polygon({
-    matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]]
+    matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
+    style: 'stroke'
   }).config({
     zindex: 11,
     drag: true
   }).on('mouseenter', function(cur) {
     cur.color = '#000';
+    cur.style = 'fill';
     world.redraw();
   }).on('mouseleave', function(cur) {
+    cur.style = 'stroke'
     cur.color = '#555';
     world.redraw();
   });
