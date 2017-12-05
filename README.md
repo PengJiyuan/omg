@@ -5,7 +5,7 @@
 [![][npm-image]][npm-url]
 [![][downloads-image]][downloads-url]
 
-Oh my goodness! Awesome Canvas Render Library. [Demo](https://pengjiyuan.github.io/omg.js)
+Oh my goodness! Awesome Canvas Render Library. [Demo](https://omg.js.org)
 
 ## Install
 
@@ -341,7 +341,7 @@ const a = stage.animate(go);
 
 #### Shap Animation
 
-[Demo](https://pengjiyuan.github.io/omg.js/animation.html)
+[Demo](https://omg.js.org/animation.html)
 
 ```javascript
 /**
