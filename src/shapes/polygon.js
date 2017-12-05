@@ -12,7 +12,7 @@ export default function(settings, _this) {
     const matrix = this.scaled_matrix;
 
     canvas.save();
-    canvas.translate(this.moveX, this.moveY);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
