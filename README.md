@@ -1,7 +1,7 @@
 <!-- <img src=".github/logo.png" /> -->
 
 # omg.js
-[![](https://travis-ci.org/PengJiyuan/omg.js.svg?branch=master)](https://travis-ci.org/PengJiyuan/omg.js)
+[![](https://travis-ci.org/PengJiyuan/omg.svg?branch=master)](https://travis-ci.org/PengJiyuan/omg)
 [![][npm-image]][npm-url]
 [![][downloads-image]][downloads-url]
 
