@@ -1,4 +1,7 @@
 import display from '../display';
+import utils from '../utils/helpers';
+import { COLOR } from '../data/default';
+import {DefineScale} from '../data/define';
 
 export default function(settings, _this) {
   let totalLength;
@@ -11,9 +14,8 @@ export default function(settings, _this) {
     const lineWidth = this.lineWidth;
     const scale = _this.scale;
 
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
     this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
+    DefineScale.call(this, scale, 'moveX', 'moveY');
 
     const matrix = this.scaled_matrix;
 
@@ -26,7 +28,7 @@ export default function(settings, _this) {
     canvas.strokeStyle = this.color;
     canvas.beginPath();
     canvas.lineDashOffset = this.offset;
-    if(this.dash && Object.prototype.toString.call(this.dash) === '[object Array]') {
+    if(this.dash && utils.isArr(this.dash)) {
       canvas.setLineDash(this.dash);
     }
     if(lineCap) {
@@ -87,7 +89,7 @@ export default function(settings, _this) {
     lineWidth: settings.lineWidth || 1,
     dash: settings.dash,
     offset: settings.offset || 0,
-    color: settings.color || '#555',
+    color: settings.color || COLOR,
     matrix: settings.matrix,
     scaled_matrix: settings.matrix
   });

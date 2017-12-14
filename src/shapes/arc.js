@@ -1,16 +1,12 @@
 import display from '../display';
+import { DefineScale } from '../data/define';
 
 export default function(settings, _this) {
   const draw = function() {
     const canvas = _this.canvas;
     const scale = _this.scale;
-    this.scaled_x = this.x * scale;
-    this.scaled_y = this.y * scale;
-    this.scaled_width = this.width * scale;
-    this.scaled_height = this.height * scale;
-    this.scaled_radius = this.radius * scale;
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
+
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
 
     canvas.save();
     if(this.fixed) {

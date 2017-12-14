@@ -1,4 +1,6 @@
 import display from '../display';
+import { COLOR, FONT_SIZE } from '../data/default';
+import { DefineScale } from '../data/define';
 
 export default function(settings, _this) {
   function text_ellipsis(ctx, str, maxWidth) {
@@ -23,18 +25,11 @@ export default function(settings, _this) {
     const scale = _this.scale;
     const center = settings.center;
     const fontFamily = settings.fontFamily || 'arial,sans-serif';
-    const fontSize = settings.fontSize || 14;
+    const fontSize = settings.fontSize || FONT_SIZE;
     const size = fontSize * scale;
     const font = `${size}px ${fontFamily}`;
 
-    this.scaled_x = this.x * scale;
-    this.scaled_y = this.y * scale;
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
-    this.scaled_width = this.width * scale;
-    this.scaled_height = this.height * scale;
-    this.scaled_radius = this.radius * scale;
-    this.scaled_paddingTop = this.paddingTop * scale;
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop');
 
     let textWidth, ellipsisText;
 
@@ -80,7 +75,7 @@ export default function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
     draw: draw,
-    color: settings.color || '#fff',
+    color: settings.color || COLOR,
     backgroundColor: settings.backgroundColor,
     text: settings.text || 'no text',
     style: settings.style || 'fill',

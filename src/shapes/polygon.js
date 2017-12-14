@@ -1,13 +1,14 @@
 import display from '../display';
+import { COLOR } from '../data/default';
+import { DefineScale } from '../data/define';
 
 export default function(settings, _this) {
   const draw = function() {
     const canvas = _this.canvas;
     const scale = _this.scale;
 
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
     this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
+    DefineScale.call(this, scale, 'moveX', 'moveY');
 
     const matrix = this.scaled_matrix;
 
@@ -39,7 +40,7 @@ export default function(settings, _this) {
     type: 'polygon',
     draw: draw,
     style: settings.style || 'fill',
-    color: settings.color || '#555',
+    color: settings.color || COLOR,
     lineWidth: settings.lineWidth || 1,
     matrix: settings.matrix,
     scaled_matrix: settings.matrix

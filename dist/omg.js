@@ -730,7 +730,7 @@ var isPointInner = function(x, y) {
 
   switch(this.type) {
     /**
-     * @type: Rectangle, image, text, coord
+     * @type: image, text, coord
      */
     case 'rectangle':
       return !!(xRight && xLeft && yTop && yBottom);
@@ -1114,17 +1114,95 @@ var display = function (settings, _this) {
   });
 };
 
+/*!
+ * @PengJiyuan
+ *
+ * Two-dimensional coordinate system
+ * Matrix transformation
+ */
+
+/**
+ * return 3x3 Matrix
+ */
+var PI = Math.PI;
+var COS = Math.cos;
+var SIN = Math.sin;
+var ABS = Math.abs;
+
+var createTransformMatrix = function (originMatrix, angle) {
+  if ( originMatrix === void 0 ) originMatrix = [0, 0];
+
+  var tx = originMatrix[0];
+  var ty = originMatrix[1];
+  var radian = - (PI / 180 * angle);
+
+  return [
+    [COS(radian), -SIN(radian), (1 - COS(radian)) * tx + ty * SIN(radian)],
+    [SIN(radian), COS(radian), (1 - COS(radian)) * ty - tx * SIN(radian)],
+    [0, 0, 1]
+  ];
+};
+
+/**
+ * a, b, c     x     a*x + b*y + c*1
+ * d, e, f  *  y  =  d*x + e*y + f*1
+ * g, h, i     1     g*x + h*y + i*1
+ */
+var getTransformMatrix = function (originMatrix, matrix, angle) {
+  if ( angle === void 0 ) angle = 0;
+
+  var t = createTransformMatrix(originMatrix, angle);
+  var ret = [];
+  matrix.forEach(function (m) {
+    var pm = [m[0], m[1], 1];
+    var tx = t[0][0] * pm[0] + t[0][1] * pm[1] + t[0][2] * pm[2];
+    var ty = t[1][0] * pm[0] + t[1][1] * pm[1] + t[1][2] * pm[2];
+    // t[3] = [0, 0, 1]; ignore.
+    ret.push([ABS(tx) < 0.0000001 ? 0 : tx, ABS(ty) < 0.0000001 ? 0 : ty]);
+  });
+  return ret;
+};
+
+/**
+ * Define some vars.
+ * @includes: set {x, y, width, height, moveX, moveY...} to scaled_xxx.
+ *            set {x, y, width, height} to matrix array.
+ *            set origin point.
+ */
+var DefineScale = function(scale) {
+  var this$1 = this;
+  var args = [], len = arguments.length - 1;
+  while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+  args.forEach(function (a) {
+    this$1[("scaled_" + a)] = this$1[a] * scale;
+  });
+};
+
+/**
+ * @params: {x, y, width, height}
+ * define matrix and origin point.
+ */
+var DefineMatrix = function(x, y, width, height, rotate) {
+  this.matrix = [
+    [x, y],
+    [x + width, y],
+    [x + width, y + height],
+    [x, y + height]
+  ];
+  this.origin = [
+    x + 0.5 * width,
+    y + 0.5 * height
+  ];
+  this.scaled_matrix = getTransformMatrix(this.origin, this.matrix, rotate);
+};
+
 var arc = function(settings, _this) {
   var draw = function() {
     var canvas = _this.canvas;
     var scale = _this.scale;
-    this.scaled_x = this.x * scale;
-    this.scaled_y = this.y * scale;
-    this.scaled_width = this.width * scale;
-    this.scaled_height = this.height * scale;
-    this.scaled_radius = this.radius * scale;
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
+
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
 
     canvas.save();
     if(this.fixed) {
@@ -1178,12 +1256,7 @@ var image = function(settings, _this) {
     var src = settings.src;
     var scale = _this.scale;
 
-    this.scaled_x = this.x * scale;
-    this.scaled_y = this.y * scale;
-    this.scaled_width = this.width * scale;
-    this.scaled_height = this.height * scale;
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
 
     canvas.save();
     canvas.translate(this.scaled_moveX, this.scaled_moveY);
@@ -1224,6 +1297,9 @@ var image = function(settings, _this) {
   });
 };
 
+var COLOR = '#555';
+var FONT_SIZE = 14;
+
 var line = function(settings, _this) {
   var totalLength;
 
@@ -1235,9 +1311,8 @@ var line = function(settings, _this) {
     var lineWidth = this.lineWidth;
     var scale = _this.scale;
 
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
     this.scaled_matrix = this.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
+    DefineScale.call(this, scale, 'moveX', 'moveY');
 
     var matrix = this.scaled_matrix;
 
@@ -1250,7 +1325,7 @@ var line = function(settings, _this) {
     canvas.strokeStyle = this.color;
     canvas.beginPath();
     canvas.lineDashOffset = this.offset;
-    if(this.dash && Object.prototype.toString.call(this.dash) === '[object Array]') {
+    if(this.dash && utils.isArr(this.dash)) {
       canvas.setLineDash(this.dash);
     }
     if(lineCap) {
@@ -1311,7 +1386,7 @@ var line = function(settings, _this) {
     lineWidth: settings.lineWidth || 1,
     dash: settings.dash,
     offset: settings.offset || 0,
-    color: settings.color || '#555',
+    color: settings.color || COLOR,
     matrix: settings.matrix,
     scaled_matrix: settings.matrix
   });
@@ -1321,28 +1396,37 @@ var rectangle = function(settings, _this) {
   var draw = function() {
     var canvas = _this.canvas;
     var scale = _this.scale;
-    this.scaled_x = this.x * scale;
-    this.scaled_y = this.y * scale;
-    this.scaled_width = this.width * scale;
-    this.scaled_height = this.height * scale;
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
+
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    DefineMatrix.call(this, this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height, this.rotate);
 
     canvas.save();
-    canvas.translate( this.scaled_x + this.scaled_width / 2 + this.scaled_moveX, this.scaled_y + this.scaled_height / 2 + this.scaled_moveY);
-    canvas.rotate((Math.PI/180)*this.rotate);
-    canvas.translate(-( this.scaled_x + this.scaled_width / 2 + this.scaled_moveX), -( this.scaled_y + this.scaled_height / 2 + this.scaled_moveY));
     canvas.translate(this.scaled_moveX, this.scaled_moveY);
+
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    canvas.fillStyle = this.color ? this.color : '#000';
-    canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
+    canvas.beginPath();
+
+    this.scaled_matrix.forEach(function (point, i) {
+      i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
+    });
+    canvas.lineTo(this.scaled_matrix[0][0], this.scaled_matrix[0][1]);
+    
+    if(this.style !== 'stroke') {
+      canvas.fillStyle = this.color || COLOR;
+      canvas.fill();
+    } else {
+      canvas.strokeStyle = this.color || COLOR;
+      canvas.lineWidth = this.lineWidth;
+      canvas.stroke();
+    }
+    canvas.closePath();
     canvas.restore();
   };
 
   return Object.assign({}, display(settings, _this), {
-    type: 'rectangle',
+    type: 'polygon',
     draw: draw,
     rotate: settings.rotate || 0
   });
@@ -1371,18 +1455,11 @@ var text = function(settings, _this) {
     var scale = _this.scale;
     var center = settings.center;
     var fontFamily = settings.fontFamily || 'arial,sans-serif';
-    var fontSize = settings.fontSize || 14;
+    var fontSize = settings.fontSize || FONT_SIZE;
     var size = fontSize * scale;
     var font = size + "px " + fontFamily;
 
-    this.scaled_x = this.x * scale;
-    this.scaled_y = this.y * scale;
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
-    this.scaled_width = this.width * scale;
-    this.scaled_height = this.height * scale;
-    this.scaled_radius = this.radius * scale;
-    this.scaled_paddingTop = this.paddingTop * scale;
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop');
 
     var textWidth, ellipsisText;
 
@@ -1428,7 +1505,7 @@ var text = function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'rectangle',
     draw: draw,
-    color: settings.color || '#fff',
+    color: settings.color || COLOR,
     backgroundColor: settings.backgroundColor,
     text: settings.text || 'no text',
     style: settings.style || 'fill',
@@ -1442,9 +1519,8 @@ var polygon = function(settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    this.scaled_moveX = this.moveX * scale;
-    this.scaled_moveY = this.moveY * scale;
     this.scaled_matrix = this.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
+    DefineScale.call(this, scale, 'moveX', 'moveY');
 
     var matrix = this.scaled_matrix;
 
@@ -1476,7 +1552,7 @@ var polygon = function(settings, _this) {
     type: 'polygon',
     draw: draw,
     style: settings.style || 'fill',
-    color: settings.color || '#555',
+    color: settings.color || COLOR,
     lineWidth: settings.lineWidth || 1,
     matrix: settings.matrix,
     scaled_matrix: settings.matrix

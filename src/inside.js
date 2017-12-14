@@ -11,7 +11,7 @@ export default function(x, y) {
 
   switch(this.type) {
     /**
-     * @type: Rectangle, image, text, coord
+     * @type: image, text, coord
      */
     case 'rectangle':
       return !!(xRight && xLeft && yTop && yBottom);
