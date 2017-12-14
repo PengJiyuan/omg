@@ -42,6 +42,8 @@ const stage = omg({
   enableGlobalScale: true
 });
 
+stage.init();
+
 const rect = stage.rectangle({
   x: 120,
   y: 120,
@@ -90,6 +92,8 @@ const stage = omg({
   enableGlobalTranslate: true, // enable global drag events.
   enableGlobalScale: true, // enable global scale events.
 });
+
+stage.init();
 
 stage.getVersion(); // v x.x.x
 ```
@@ -217,6 +221,65 @@ const arcb = stage.arc({
   color: '#512854',
   style: 'fill'
 });
+```
+
+### Expand Shapes
+
+If the default shapes not enough, you can expand shapes simply.
+Before stage init, just expand your shapes by function `extend`.
+
+
+```javascript
+const stage = omg({
+  ...
+});
+
+// demo shape
+const yourShape = function(settings, _this) {
+  const draw = function() {
+    const canvas = _this.canvas;
+    const scale = _this.scale;
+
+    // if you want trigger events(includes drag, scale, mousedown, mouseenter...), you must add this line.
+    stage.ext.DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
+
+    const matrix = this.scaled_matrix;
+
+    canvas.save();
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
+    canvas.beginPath();
+
+    matrix.forEach((point, i) => {
+      i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
+    });
+    canvas.lineTo(matrix[0][0], matrix[0][1]);
+    
+    canvas.fillStyle = this.color;
+    canvas.fill();
+    canvas.closePath();
+    canvas.restore();
+  };
+
+  return Object.assign({}, stage.ext.display(settings, _this), {
+    type: 'polygon',
+    draw: draw,
+    lineWidth: settings.lineWidth || 1,
+    matrix: settings.matrix
+  });
+};
+
+// Before init, extend your shapes.
+stage.init();
+
+// use your extend shape
+const shape = stage.yourShape({
+  ...settings
+});
+
+stage.addChild(shape);
+
+stage.show();
+
 ```
 
 ### Add Event
