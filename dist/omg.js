@@ -1157,7 +1157,7 @@ var getTransformMatrix = function (originMatrix, matrix, angle) {
     var pm = [m[0], m[1], 1];
     var tx = t[0][0] * pm[0] + t[0][1] * pm[1] + t[0][2] * pm[2];
     var ty = t[1][0] * pm[0] + t[1][1] * pm[1] + t[1][2] * pm[2];
-    // t[3] = [0, 0, 1]; ignore.
+    // t[2] = [0, 0, 1]; ignore.
     ret.push([ABS(tx) < 0.0000001 ? 0 : tx, ABS(ty) < 0.0000001 ? 0 : ty]);
   });
   return ret;
