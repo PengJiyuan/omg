@@ -84,7 +84,6 @@ stage.show();
 ```javascript
 import omg from 'omg.js';
 
-// Init
 const stage = omg({
   element: document.getElementById('canvas'),
   width: 500,
@@ -93,6 +92,7 @@ const stage = omg({
   enableGlobalScale: true, // enable global scale events.
 });
 
+// Init
 stage.init();
 
 stage.getVersion(); // v x.x.x
