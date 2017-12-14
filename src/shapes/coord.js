@@ -1,4 +1,4 @@
-import display from '../display';
+import { display } from '../display';
 import utils from '../utils/helpers';
 
 export default function(settings, _this) {

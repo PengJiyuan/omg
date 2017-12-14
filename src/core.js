@@ -7,6 +7,7 @@ import autoscale from './utils/autoscale';
 import utils from './utils/helpers';
 import shapes from './shapes/index';
 import { Tween } from './tween/index';
+import * as ext from './extend/export';
 
 export class OMG {
 
@@ -85,6 +86,12 @@ export class OMG {
       height: this.height
     });
 
+    /**
+     * @description: For extend shapes.
+     *               Export functions to define scale and drag events...
+     */
+    this.ext = ext;
+
     // enable global drag event.
     this.enableGlobalTranslate = config.enableGlobalTranslate || false;
 
@@ -96,12 +103,22 @@ export class OMG {
 
     this.utils = utils;
 
-    Object.keys(shapes).forEach(shape => {
+    this.shapes = shapes;
+
+  }
+
+  init() {
+    Object.keys(this.shapes).forEach(shape => {
       this[shape] = function(settings) {
-        return shapes[shape](settings, this);
+        return this.shapes[shape](settings, this);
       }
     });
+  }
 
+  extend(ext) {
+    for (let key in ext) {
+      this.shapes[key] = ext[key];
+    }
   }
 
   imgReady() {

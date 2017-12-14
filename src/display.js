@@ -138,7 +138,7 @@ class Display {
 
 }
 
-export default (settings, _this) => {
+export function display(settings, _this) {
   const display = new Display(settings, _this);
 
   return Object.assign({}, display.commonData, {

@@ -1,4 +1,4 @@
-import display from '../display';
+import { display } from '../display';
 import { COLOR, FONT_SIZE } from '../data/default';
 import { DefineScale } from '../data/define';
 

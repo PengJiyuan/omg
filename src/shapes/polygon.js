@@ -1,4 +1,4 @@
-import display from '../display';
+import { display } from '../display';
 import { COLOR } from '../data/default';
 import { DefineScale } from '../data/define';
 
@@ -7,8 +7,7 @@ export default function(settings, _this) {
     const canvas = _this.canvas;
     const scale = _this.scale;
 
-    this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
-    DefineScale.call(this, scale, 'moveX', 'moveY');
+    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
 
     const matrix = this.scaled_matrix;
 

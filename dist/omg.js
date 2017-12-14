@@ -1086,7 +1086,7 @@ Display.prototype.changeIndex = function changeIndex (bool) {
   this.enableChangeIndex = bool;
 };
 
-var display = function (settings, _this) {
+function display(settings, _this) {
   var display = new Display(settings, _this);
 
   return Object.assign({}, display.commonData, {
@@ -1112,7 +1112,7 @@ var display = function (settings, _this) {
     _: display._
 
   });
-};
+}
 
 /*!
  * @PengJiyuan
@@ -1175,7 +1175,11 @@ var DefineScale = function(scale) {
   while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
 
   args.forEach(function (a) {
-    this$1[("scaled_" + a)] = this$1[a] * scale;
+    if(a === 'matrix') {
+      this$1.scaled_matrix = this$1.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
+    } else {
+      this$1[("scaled_" + a)] = this$1[a] * scale;
+    }
   });
 };
 
@@ -1519,8 +1523,7 @@ var polygon = function(settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    this.scaled_matrix = this.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
-    DefineScale.call(this, scale, 'moveX', 'moveY');
+    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
 
     var matrix = this.scaled_matrix;
 
@@ -1568,9 +1571,20 @@ var shapes = {
   polygon: polygon
 };
 
-var OMG = function OMG(config) {
-  var this$1 = this;
+/**
+ * Export for extend shapes.
+ */
 
+
+
+
+var ext = Object.freeze({
+	display: display,
+	DefineScale: DefineScale,
+	DefineMatrix: DefineMatrix
+});
+
+var OMG = function OMG(config) {
 
   this.version = version;
 
@@ -1645,6 +1659,12 @@ var OMG = function OMG(config) {
     height: this.height
   });
 
+  /**
+   * @description: For extend shapes.
+   *             Export functions to define scale and drag events...
+   */
+  this.ext = ext;
+
   // enable global drag event.
   this.enableGlobalTranslate = config.enableGlobalTranslate || false;
 
@@ -1656,12 +1676,26 @@ var OMG = function OMG(config) {
 
   this.utils = utils;
 
-  Object.keys(shapes).forEach(function (shape) {
+  this.shapes = shapes;
+
+};
+
+OMG.prototype.init = function init () {
+    var this$1 = this;
+
+  Object.keys(this.shapes).forEach(function (shape) {
     this$1[shape] = function(settings) {
-      return shapes[shape](settings, this);
+      return this.shapes[shape](settings, this);
     };
   });
+};
 
+OMG.prototype.extend = function extend (ext) {
+    var this$1 = this;
+
+  for (var key in ext) {
+    this$1.shapes[key] = ext[key];
+  }
 };
 
 OMG.prototype.imgReady = function imgReady () {

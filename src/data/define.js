@@ -8,7 +8,11 @@ import { getTransformMatrix } from './matrix';
 
 export const DefineScale = function(scale, ...args) {
   args.forEach(a => {
-    this[`scaled_${a}`] = this[a] * scale;
+    if(a === 'matrix') {
+      this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
+    } else {
+      this[`scaled_${a}`] = this[a] * scale;
+    }
   });
 };
 

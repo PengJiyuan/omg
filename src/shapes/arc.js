@@ -1,4 +1,4 @@
-import display from '../display';
+import { display } from '../display';
 import { DefineScale } from '../data/define';
 
 export default function(settings, _this) {
