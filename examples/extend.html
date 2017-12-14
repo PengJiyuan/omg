@@ -32,7 +32,7 @@
 		enableGlobalScale: true
 	});
 
-	var text = function(settings, _this) {
+	var test = function(settings, _this) {
 
 	  const draw = function() {
 	    const canvas = _this.canvas;
@@ -67,7 +67,7 @@
 	};
 
 	world.extend({
-		text: text
+		test: test
 	});
 
 	world.init();
@@ -78,7 +78,7 @@
 	// 	width: 100,
 	// 	height: 100
 	// }));
-	world.addChild(world.text({
+	world.addChild(world.test({
 		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
 		color: '#555'
 	}).on('mouseenter', function(cur) {
