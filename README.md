@@ -269,6 +269,10 @@ const yourShape = function(settings, _this) {
 };
 
 // Before init, extend your shapes.
+stage.extend({
+  yourShape: yourShape
+});
+
 stage.init();
 
 // use your extend shape
