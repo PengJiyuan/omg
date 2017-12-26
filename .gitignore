@@ -50,3 +50,6 @@ examples/.gitignore
 
 # npm file
 package-lock.json
+
+# idea file
+/.idea/

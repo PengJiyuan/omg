@@ -153,8 +153,7 @@ var utils = {
     granularity.forEach(function (item, index) {
       var pre = index === 0 ? 0 : granularity[index - 1][0];
       if(pre < calcMax && calcMax <= item[0]) {
-        gap = item[1],
-        retMax = item[0];
+        gap = item[1], retMax = item[0];
       }
     });
 
@@ -1267,26 +1266,30 @@ var image = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    if(this.sliceWidth && this.sliceHeight) {
-      canvas.drawImage(
-        _this.loader.getImg(src),
-        this.sliceX,
-        this.sliceY,
-        this.sliceWidth,
-        this.sliceHeight,
-        this.scaled_x,
-        this.scaled_y,
-        this.scaled_width,
-        this.scaled_height
-      );
-    } else {
-      canvas.drawImage(
-        _this.loader.getImg(src),
-        this.scaled_x,
-        this.scaled_y,
-        this.scaled_width,
-        this.scaled_height
-      );
+    try {
+      if(this.sliceWidth && this.sliceHeight) {
+        canvas.drawImage(
+          _this.loader.getImg(src),
+          this.sliceX,
+          this.sliceY,
+          this.sliceWidth,
+          this.sliceHeight,
+          this.scaled_x,
+          this.scaled_y,
+          this.scaled_width,
+          this.scaled_height
+        );
+      } else {
+        canvas.drawImage(
+          _this.loader.getImg(src),
+          this.scaled_x,
+          this.scaled_y,
+          this.scaled_width,
+          this.scaled_height
+        );
+      }
+    } catch (error) {
+      throw new Error('The picture is not loaded successfully, please check the picture url : ' + src);
     }
     canvas.restore();
   };
