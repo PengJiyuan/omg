@@ -227,7 +227,8 @@
 
 	var line = world.line({
 		matrix: [
-			[10, 180], 
+			[10, 60], 
+			[100, 180],
 			[40, 50], 
 			[80, 180], 
 			[90, 80],
@@ -235,12 +236,18 @@
 			[140, 50],
 			[260, 180]
 		],
-		lineWidth: 2,
-		color: '#ef8376',
-		dash: [3, 3]
-	}).config({
-		zindex: 2,
-		fixed: true
+		lineWidth: 3,
+		color: '#ef8376'
+	}).on('mouseenter mousemove', function(cur) {
+		cur.lineWidth = 8;
+		cur.color = '#ccc';
+		world.redraw();
+		world.element.style.cursor = 'pointer';
+	}).on('mouseleave', function(cur) {
+		cur.color = '#ef8376';
+		cur.lineWidth = 4;
+		world.redraw();
+		world.element.style.cursor = 'default';
 	});
 
 	world.addChild(line);

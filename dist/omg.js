@@ -153,7 +153,8 @@ var utils = {
     granularity.forEach(function (item, index) {
       var pre = index === 0 ? 0 : granularity[index - 1][0];
       if(pre < calcMax && calcMax <= item[0]) {
-        gap = item[1], retMax = item[0];
+        gap = item[1],
+        retMax = item[0];
       }
     });
 
@@ -604,37 +605,38 @@ Color.prototype.isRgba = function isRgba (color) {
 };
 
 Color.prototype.getRgb = function getRgb (color) {
+    var assign, assign$1;
+
   var rgb, r, g, b;
   if(this.isHex(color)) {
     rgb = this.hexToRGB(color);
-    var assign;
-      (assign = [ rgb.r, rgb.g, rgb.b ], r = assign[0], g = assign[1], b = assign[2]);
+    (assign = [ rgb.r, rgb.g, rgb.b ], r = assign[0], g = assign[1], b = assign[2]);
   } else if(this.isRgb(color)) {
     rgb = color.slice(4, -1).split(',');
-    var assign$1;
-      (assign$1 = [ rgb[0], rgb[1], rgb[2] ], r = assign$1[0], g = assign$1[1], b = assign$1[2]);
+    (assign$1 = [ rgb[0], rgb[1], rgb[2] ], r = assign$1[0], g = assign$1[1], b = assign$1[2]);
   }
   return { r: r, g: g, b: b };
 };
 
 Color.prototype.getRgba = function getRgba (color) {
+    var assign;
+
   var rgba, r, g, b, a;
   rgba = color.slice(5, -1).split(',');
-  var assign;
-    (assign = [ rgba[0], rgba[1], rgba[2], rgba[3] ], r = assign[0], g = assign[1], b = assign[2], a = assign[3]);
+  (assign = [ rgba[0], rgba[1], rgba[2], rgba[3] ], r = assign[0], g = assign[1], b = assign[2], a = assign[3]);
 
   return { r: r, g: g, b: b, a: a };
 };
 
 Color.prototype.getHsl = function getHsl (color) {
+    var assign, assign$1;
+
   var hsl, rgb, r, g, b, h, s, l;
   rgb = this.getRgb(color);
-  var assign;
-    (assign = [ rgb.r, rgb.g, rgb.b ], r = assign[0], g = assign[1], b = assign[2]);
+  (assign = [ rgb.r, rgb.g, rgb.b ], r = assign[0], g = assign[1], b = assign[2]);
 
   hsl = this.rgbToHSL(r, g, b);
-  var assign$1;
-    (assign$1 = [ hsl.h, hsl.s, hsl.l ], h = assign$1[0], s = assign$1[1], l = assign$1[2]);
+  (assign$1 = [ hsl.h, hsl.s, hsl.l ], h = assign$1[0], s = assign$1[1], l = assign$1[2]);
 
   return { h: h, s: s, l: l };
 };
@@ -717,7 +719,39 @@ var autoscale = function (canvasList, opt) {
   return canvasList;
 };
 
+// from https://github.com/ecomfe/zrender/blob/master/src/contain/line.js
+var insideLine = function (x0, y0, x1, y1, lineWidth, x, y) {
+  if (lineWidth === 0) {
+    return false;
+  }
+  var _l = lineWidth;
+  var _a = 0;
+  var _b = x0;
+  // Quick reject
+  if (
+    (y > y0 + _l && y > y1 + _l)
+    || (y < y0 - _l && y < y1 - _l)
+    || (x > x0 + _l && x > x1 + _l)
+    || (x < x0 - _l && x < x1 - _l)
+  ) {
+    return false;
+  }
+
+  if (x0 !== x1) {
+    _a = (y0 - y1) / (x0 - x1);
+    _b = (x0 * y1 - x1 * y0) / (x0 - x1) ;
+  }
+  else {
+    return Math.abs(x - x0) <= _l / 2;
+  }
+  var tmp = _a * x - y + _b;
+  var _s = tmp * tmp / (_a * _a + 1);
+  return _s <= _l / 2 * _l / 2;
+};
+
 var isPointInner = function(x, y) {
+  var this$1 = this;
+
   var mx = this.moveX * this._.scale;
   var my = this.moveY * this._.scale;
   var ltx = this.fixed ? 0 : this._.transX;
@@ -726,6 +760,8 @@ var isPointInner = function(x, y) {
   var xLeft = x < this.scaled_x + this.scaled_width + mx + ltx;
   var yTop = y > this.scaled_y + my + lty;
   var yBottom = y < this.scaled_y + this.scaled_height + my + lty;
+  var pgx = x - mx - ltx;
+  var pgy = y - my - lty;
 
   switch(this.type) {
     /**
@@ -802,8 +838,6 @@ var isPointInner = function(x, y) {
      */
     case 'polygon':
       var points = this.scaled_matrix;
-      var pgx = x - mx - ltx;
-      var pgy = y - my - lty;
       var result = false;
       for (var i = 0, j = points.length - 1; i < points.length; j = i++) {
         if ((points[i][1] > pgy) != (points[j][1] > pgy) &&
@@ -812,6 +846,25 @@ var isPointInner = function(x, y) {
         }
       }
       return result;
+    case 'line':
+      var linePoints = this.scaled_matrix;
+      var length = linePoints.length;
+      for (var i$1 = 0;i$1 < length; i$1 ++) {
+        if(i$1 > 0) {
+          if(insideLine(
+            linePoints[i$1 - 1][0],
+            linePoints[i$1 - 1][1],
+            linePoints[i$1][0],
+            linePoints[i$1][1],
+            this$1.lineWidth,
+            pgx,
+            pgy
+          )) {
+            return true;
+          }
+        }
+      }
+      return false;
     default:
       break;
   }
@@ -1317,6 +1370,10 @@ var line = function(settings, _this) {
     var smooth = settings.smooth;
     var lineWidth = this.lineWidth;
     var scale = _this.scale;
+
+    if(this.matrix && this.matrix.length < 2) {
+      throw 'The line needs at least two points';
+    }
 
     this.scaled_matrix = this.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
     DefineScale.call(this, scale, 'moveX', 'moveY');

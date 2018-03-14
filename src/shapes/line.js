@@ -14,6 +14,10 @@ export default function(settings, _this) {
     const lineWidth = this.lineWidth;
     const scale = _this.scale;
 
+    if(this.matrix && this.matrix.length < 2) {
+      throw 'The line needs at least two points';
+    }
+
     this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
     DefineScale.call(this, scale, 'moveX', 'moveY');
 

@@ -1,3 +1,4 @@
+import insideLine from './contain/line';
 export default function(x, y) {
   const that = this;
   const mx = this.moveX * this._.scale;
@@ -8,6 +9,8 @@ export default function(x, y) {
   const xLeft = x < this.scaled_x + this.scaled_width + mx + ltx;
   const yTop = y > this.scaled_y + my + lty;
   const yBottom = y < this.scaled_y + this.scaled_height + my + lty;
+  const pgx = x - mx - ltx;
+  const pgy = y - my - lty;
 
   switch(this.type) {
     /**
@@ -84,8 +87,6 @@ export default function(x, y) {
      */
     case 'polygon':
       const points = this.scaled_matrix;
-      const pgx = x - mx - ltx;
-      const pgy = y - my - lty;
       let result = false;
       for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
         if ((points[i][1] > pgy) != (points[j][1] > pgy) &&
@@ -94,6 +95,25 @@ export default function(x, y) {
         }
       }
       return result;
+    case 'line':
+      const linePoints = this.scaled_matrix;
+      const length = linePoints.length;
+      for (let i = 0;i < length; i ++) {
+        if(i > 0) {
+          if(insideLine(
+            linePoints[i - 1][0],
+            linePoints[i - 1][1],
+            linePoints[i][0],
+            linePoints[i][1],
+            this.lineWidth,
+            pgx,
+            pgy
+          )) {
+            return true;
+          }
+        }
+      }
+      return false;
     default:
       break;
   }
