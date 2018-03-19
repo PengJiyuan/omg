@@ -719,6 +719,15 @@ var autoscale = function (canvasList, opt) {
   return canvasList;
 };
 
+var insideRectangle = function (x, y, recX, recY, recW, recH) {
+  var xRight = x > recX;
+  var xLeft = x < recX + recW;
+  var yTop = y > recY;
+  var yBottom = y < recY + recH;
+
+  return xRight && xLeft && yTop && yBottom;
+};
+
 // from https://github.com/ecomfe/zrender/blob/master/src/contain/line.js
 var insideLine = function (x0, y0, x1, y1, lineWidth, x, y) {
   if (lineWidth === 0) {
@@ -749,17 +758,86 @@ var insideLine = function (x0, y0, x1, y1, lineWidth, x, y) {
   return _s <= _l / 2 * _l / 2;
 };
 
+var insideArc = function (x, y, r, sa, ea) {
+  var pi = Math.PI;
+  var dis, isIn;
+  // Sector
+  if(!isNaN(sa) && !isNaN(ea)) {
+    var angle;
+    // 4th quadrant
+    if(x >= 0 && y >= 0) {
+      if(x === 0) {
+        angle = pi/2;
+      } else {
+        angle = Math.atan( (y / x) );
+      }
+    }
+    // 3th quadrant
+    else if(x <= 0 && y >= 0) {
+      if(x === 0) {
+        angle = pi;
+      } else {
+        angle = pi - Math.atan(y / Math.abs(x));
+      }
+    }
+    // secend quadrant
+    else if(x <= 0 && y <= 0) {
+      if(x === 0) {
+        angle = pi;
+      } else {
+        angle = Math.atan(Math.abs(y) / Math.abs(x)) + pi;
+      }
+    }
+    // first quadrant
+    else if(x >= 0 && y<= 0) {
+      if(x === 0) {
+        angle = pi*3/2;
+      } else {
+        angle = 2*pi - Math.atan(Math.abs(y) / x);
+      }
+    }
+    dis = Math.sqrt( x * x + y * y );
+    if(sa < ea) {
+      isIn = !!(angle >= sa && angle <= ea && dis <= r);
+    } else {
+      isIn = !!( ( (angle >= 0 && angle <= ea) || (angle >= sa && angle <= 2*pi) ) && dis <= r);
+    }
+  }
+  // normal arc
+  else {
+    isIn = !!( Math.sqrt( x * x + y * y ) <= r );
+  }
+  return isIn;
+};
+
+/**
+ * @type: polygon
+ *
+ * Return true if the given point is contained inside the boundary.
+ * See: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+ * @return true if the point is inside the boundary, false otherwise
+ */
+var insidePolygon = function (x, y, points) {
+  var result = false;
+  for (var i = 0, j = points.length - 1; i < points.length; j = i++) {
+    if ((points[i][1] > y) != (points[j][1] > y) &&
+        (x < (points[j][0] - points[i][0]) * (y - points[i][1]) / (points[j][1] - points[i][1]) + points[i][0])) {
+      result = !result;
+    }
+  }
+  return result;
+};
+
 var isPointInner = function(x, y) {
   var this$1 = this;
 
+  // 图形内部偏移的像素
   var mx = this.moveX * this._.scale;
   var my = this.moveY * this._.scale;
+  // 全局偏移的像素
   var ltx = this.fixed ? 0 : this._.transX;
   var lty = this.fixed ? 0 : this._.transY;
-  var xRight = x > this.scaled_x + mx + ltx;
-  var xLeft = x < this.scaled_x + this.scaled_width + mx + ltx;
-  var yTop = y > this.scaled_y + my + lty;
-  var yBottom = y < this.scaled_y + this.scaled_height + my + lty;
+  // 鼠标获取到的坐标减去全局偏移像素和图形内部偏移的像素
   var pgx = x - mx - ltx;
   var pgy = y - my - lty;
 
@@ -768,94 +846,39 @@ var isPointInner = function(x, y) {
      * @type: image, text, coord
      */
     case 'rectangle':
-      return !!(xRight && xLeft && yTop && yBottom);
+      return insideRectangle(pgx, pgy, this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
     /**
      * @type: Arc
      */
     case 'arc':
-      var cx = this.scaled_x, // center x
-        cy = this.scaled_y, // center y
+      var cx = this.scaled_x, // 圆心x
+        cy = this.scaled_y, // 圆心y
         pi = Math.PI,
+        // 将度数转化为PI角度
         sa = this.startAngle < 0 ? 2 * pi + pi / 180 * this.startAngle : pi / 180 * this.startAngle,
         ea = this.endAngle < 0 ? 2 * pi + pi / 180 * this.endAngle : pi / 180 * this.endAngle,
         r = this.scaled_radius,
-        dx = x - cx - mx -ltx,
-        dy = y - cy - my - lty,
-        isIn, dis;
-      // Sector
-      if(!isNaN(sa) && !isNaN(ea)) {
-        var angle;
-        // 4th quadrant
-        if(dx >= 0 && dy >= 0) {
-          if(dx === 0) {
-            angle = pi/2;
-          } else {
-            angle = Math.atan( (dy / dx) );
-          }
-        }
-        // 3th quadrant
-        else if(dx <= 0 && dy >= 0) {
-          if(dx === 0) {
-            angle = pi;
-          } else {
-            angle = pi - Math.atan(dy / Math.abs(dx));
-          }
-        }
-        // secend quadrant
-        else if(dx <= 0 && dy <= 0) {
-          if(dx === 0) {
-            angle = pi;
-          } else {
-            angle = Math.atan(Math.abs(dy) / Math.abs(dx)) + pi;
-          }
-        }
-        // first quadrant
-        else if(dx >= 0 && dy<= 0) {
-          if(dx === 0) {
-            angle = pi*3/2;
-          } else {
-            angle = 2*pi - Math.atan(Math.abs(dy) / dx);
-          }
-        }
-        dis = Math.sqrt( dx * dx + dy * dy );
-        if(sa < ea) {
-          isIn = !!(angle >= sa && angle <= ea && dis <= r);
-        } else {
-          isIn = !!( ( (angle >= 0 && angle <= ea) || (angle >= sa && angle <= 2*pi) ) && dis <= r);
-        }
-      }
-      // normal arc
-      else {
-        isIn = !!( Math.sqrt( dx * dx + dy * dy ) <= r );
-      }
-      return isIn;
+        dx = pgx - cx,
+        dy = pgy - cy;
+      return insideArc(dx, dy, r, sa, ea);
     /**
      * @type: polygon
-     *
-     * Return true if the given point is contained inside the boundary.
-     * See: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-     * @return true if the point is inside the boundary, false otherwise
      */
     case 'polygon':
-      var points = this.scaled_matrix;
-      var result = false;
-      for (var i = 0, j = points.length - 1; i < points.length; j = i++) {
-        if ((points[i][1] > pgy) != (points[j][1] > pgy) &&
-            (pgx < (points[j][0] - points[i][0]) * (pgy - points[i][1]) / (points[j][1] - points[i][1]) + points[i][0])) {
-          result = !result;
-        }
-      }
-      return result;
+      return insidePolygon(pgx, pgy, this.scaled_matrix);
+    /**
+     * @type: line
+     */
     case 'line':
       var linePoints = this.scaled_matrix;
       var length = linePoints.length;
-      for (var i$1 = 0;i$1 < length; i$1 ++) {
-        if(i$1 > 0) {
+      for (var i = 0;i < length; i ++) {
+        if(i > 0) {
           if(insideLine(
-            linePoints[i$1 - 1][0],
-            linePoints[i$1 - 1][1],
-            linePoints[i$1][0],
-            linePoints[i$1][1],
+            linePoints[i - 1][0],
+            linePoints[i - 1][1],
+            linePoints[i][0],
+            linePoints[i][1],
             this$1.lineWidth,
             pgx,
             pgy
