@@ -9,10 +9,9 @@
         "sourceType": "module"
     },
     "rules": {
-        "indent": [
-            "error",
-            2
-        ],
+        "indent": [2, 2, {"SwitchCase": 1, "ignoredNodes": ["ConditionalExpression"]}],
+        "no-useless-escape": 0,
+        "no-trailing-spaces": 2,
         "linebreak-style": 0,
         "quotes": [
             "error",
@@ -21,6 +20,8 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "no-console": 0,
+        "no-case-declarations": 0
     }
 }

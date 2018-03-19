@@ -13,8 +13,9 @@
   "scripts": {
     "build": "rm -rf dist/ && node rollup.config.js --beauty && node rollup.config.js --minify",
     "dev": "rm -rf dist/ && node rollup.config.js --example",
-    "eslint": "eslint src/**/ --ext .js --cache",
-    "release": "cd scripts && node release.js"
+    "eslint": "eslint src --ext .js --cache",
+    "release": "cd scripts && node release.js",
+    "extra": "cp dist/omg.min.js examples/omg.min.js && git add ."
   },
   "author": "PengJiyuan <pjy@isweety.me>",
   "license": "MIT",
@@ -29,13 +30,19 @@
   "dependencies": {},
   "devDependencies": {
     "colors": "^1.1.2",
-    "eslint": "^4.10.0",
+    "eslint": "^4.8.0",
     "fs-extra": "^4.0.2",
+    "pre-commit": "^1.2.2",
     "rollup": "^0.50.0",
     "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-uglify": "^2.0.1"
   },
+  "pre-commit": [
+    "eslint",
+    "build",
+    "extra"
+  ],
   "files": [
     "dist/*"
   ]

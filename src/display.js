@@ -129,12 +129,12 @@ class Display {
   // whether this shape can be dragged
   drag(bool) {
     this.enableDrag = bool;
-  };
+  }
 
   // when select this shape, whether it should be changed the index
   changeIndex(bool) {
     this.enableChangeIndex = bool;
-  };
+  }
 
 }
 

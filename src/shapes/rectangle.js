@@ -22,7 +22,7 @@ export default function(settings, _this) {
       i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
     });
     canvas.lineTo(this.scaled_matrix[0][0], this.scaled_matrix[0][1]);
-    
+
     if(this.style !== 'stroke') {
       canvas.fillStyle = this.color || COLOR;
       canvas.fill();

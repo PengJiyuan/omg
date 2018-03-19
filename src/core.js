@@ -1,4 +1,4 @@
-import polyfill from './utils/polyfill';
+import './utils/polyfill';
 import { version } from '../package.json';
 import { Event } from './event';
 import { Color } from './utils/color';
@@ -111,7 +111,7 @@ export class OMG {
     Object.keys(this.shapes).forEach(shape => {
       this[shape] = function(settings) {
         return this.shapes[shape](settings, this);
-      }
+      };
     });
   }
 

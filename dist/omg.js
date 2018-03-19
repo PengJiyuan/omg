@@ -527,15 +527,15 @@ Color.prototype.rgbToHSL = function rgbToHSL (r, g, b) {
     var d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch(max) {
-    case r:
-      h = (g - b) / d + (g < b ? 6 : 0);
-      break;
-    case g:
-      h = (b - r) / d + 2;
-      break;
-    case b:
-      h = (r - g) / d + 4;
-      break;
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
     }
     h /= 6;
   }
@@ -1499,7 +1499,7 @@ var rectangle = function(settings, _this) {
       i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
     });
     canvas.lineTo(this.scaled_matrix[0][0], this.scaled_matrix[0][1]);
-    
+
     if(this.style !== 'stroke') {
       canvas.fillStyle = this.color || COLOR;
       canvas.fill();
@@ -1621,7 +1621,7 @@ var polygon = function(settings, _this) {
       i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
     });
     canvas.lineTo(matrix[0][0], matrix[0][1]);
-    
+
     if(this.style === 'fill') {
       canvas.fillStyle = this.color;
       canvas.fill();
