@@ -467,6 +467,23 @@ shape.animateTo({
 stage.clearAnimation();
 ```
 
+### Resize
+
+#### resize(opt)
+* opt.width {Function} -- width after resize
+* opt.height {Function} -- height after resize
+* opt.resize {Function} -- callback triggered after resize
+
+```javascript
+world.resize({
+  width: () => document.body.clientWidth,
+  height: () => document.body.clientHeight,
+  resize: (update) => {
+    update();
+  }
+});
+```
+
 ### FPS
 
 #### fpsOn
