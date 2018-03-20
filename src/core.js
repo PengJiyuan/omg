@@ -298,9 +298,11 @@ export class OMG {
         height: this.height
       });
     };
-    window.onresize = () => {
-      opt.resize && opt.resize(update);
-    };
+    if(!window.onresize) {
+      window.onresize = () => {
+        opt.resize && opt.resize(update);
+      };
+    }
   }
 
 }

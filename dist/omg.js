@@ -1962,9 +1962,11 @@ OMG.prototype.resize = function resize (opt) {
       height: this$1.height
     });
   };
-  window.onresize = function () {
-    opt.resize && opt.resize(update);
-  };
+  if(!window.onresize) {
+    window.onresize = function () {
+      opt.resize && opt.resize(update);
+    };
+  }
 };
 
 var index = function (config) {
