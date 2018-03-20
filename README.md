@@ -112,18 +112,7 @@ const rect = stage.rectangle({
 });
 ```
 
-**Line**
-
-```javascript
-const line = stage.line({
-  x: 200,
-  y: 100,
-  endX: 400,
-  endY: 420
-});
-```
-
-**Polyline**
+**Line & Polyline**
 ```javascript
 const polyline = stage.line({
   matrix: [
