@@ -76,7 +76,7 @@ export class OMG {
 
     this.canvas =  this.element.getContext('2d');
 
-    // // init the width and height
+    // init the width and height
     this.width = config.width;
 
     this.height = config.height;
@@ -279,6 +279,28 @@ export class OMG {
   // global mousemove event
   mousemove(func) {
     this.globalMousemove = func;
+  }
+
+  /**
+   *
+   * @param {Object} opt
+   *
+   * @param {Function} opt.width  - width after resize
+   * @param {Function} opt.height - height after resize
+   * @param {Function} opt.resize - callback triggered after resize
+   */
+  resize(opt) {
+    const update = () => {
+      this.width = opt.width();
+      this.height = opt.height();
+      autoscale([this.element], {
+        width: this.width,
+        height: this.height
+      });
+    };
+    window.onresize = () => {
+      opt.resize && opt.resize(update);
+    };
   }
 
 }

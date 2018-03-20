@@ -1732,7 +1732,7 @@ var OMG = function OMG(config) {
 
   this.canvas =this.element.getContext('2d');
 
-  // // init the width and height
+  // init the width and height
   this.width = config.width;
 
   this.height = config.height;
@@ -1941,6 +1941,30 @@ OMG.prototype.mousedown = function mousedown (func) {
 // global mousemove event
 OMG.prototype.mousemove = function mousemove (func) {
   this.globalMousemove = func;
+};
+
+/**
+ *
+ * @param {Object} opt
+ *
+ * @param {Function} opt.width- width after resize
+ * @param {Function} opt.height - height after resize
+ * @param {Function} opt.resize - callback triggered after resize
+ */
+OMG.prototype.resize = function resize (opt) {
+    var this$1 = this;
+
+  var update = function () {
+    this$1.width = opt.width();
+    this$1.height = opt.height();
+    autoscale([this$1.element], {
+      width: this$1.width,
+      height: this$1.height
+    });
+  };
+  window.onresize = function () {
+    opt.resize && opt.resize(update);
+  };
 };
 
 var index = function (config) {
