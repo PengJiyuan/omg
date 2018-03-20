@@ -478,6 +478,7 @@ stage.clearAnimation();
 world.resize({
   width: () => document.body.clientWidth,
   height: () => document.body.clientHeight,
+  // function update - update the canvas size
   resize: (update) => {
     update();
   }
