@@ -66,7 +66,7 @@ class Display {
           callback: callback
         });
       } else {
-        console.error(event + ' is not in eventTypes!');
+        throw `${event} is not in eventTypes!\n Please use event in ${this._.eventTypes}`;
       }
     });
 
@@ -161,7 +161,11 @@ export function display(settings, _this) {
 
     changeIndex: display.changeIndex,
 
-    _: display._
+    _: display._,
+
+    isShape: true,
+
+    parent: null
 
   });
 }

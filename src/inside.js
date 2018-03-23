@@ -19,6 +19,7 @@ export default function(x, y) {
      * @type: image, text, coord
      */
     case 'rectangle':
+    case 'group':
       return insideRectangle(pgx, pgy, this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
     /**
      * @type: Arc

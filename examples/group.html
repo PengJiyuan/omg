@@ -14,28 +14,11 @@
       margin: 0;
     }
 
-    .text {
-      width: 500px;
-      height: 200px;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-      line-height: 200px;
-      text-align: center;
-      font-size: 20px;
-      color: #555;
-    }
-
   </style>
 </head>
 <body>
 <div class="container">
     <canvas id="canvas"></canvas>
-    <div class="text">
-      滚动鼠标滚轮来缩放绘图。
-    </div>
 </div>
 <script src="./omg.min.js"></script>
 <script>
@@ -44,122 +27,107 @@
     width: document.body.clientWidth,
     height: document.body.clientHeight,
     enableGlobalTranslate: true,
-    enableGlobalScale: true
+    enableGlobalScale: false
   });
 
   world.init();
 
-  var rect1 = world.rectangle({
-    x: 200,
-    y: 500,
-    width: 100,
-    height: 100,
-    zindex: 2,
-    color: '#ef8376'
-  }).on('mouseenter mousemove', function() {
-    world.element.style.cursor = 'pointer';
-    rect1.color = '#000';
-    world.redraw();
-  }).on('mouseleave', function() {
-    world.element.style.cursor = 'default';
-    rect1.color = '#ef8376';
-    world.redraw();
-  }).config({
-    drag: true
+  var group = world.group({
+    x: 100,
+    y: 100,
+    width: 200,
+    height: 210,
+    background: {
+      color: '#000'
+    },
+    autoSize: {
+      padding: 10
+    },
+    zindex: 10
   });
 
-  var arc = world.arc({
-    x: 130,
+  for(var i = 0;i < 5; i++) {
+    var child = world.rectangle({
+      x: 10,
+      y: 40 * i + 10,
+      width: 180,
+      height: 30,
+      color: '#bbb'
+    }).on('mouseenter', function(cur) {
+      cur.color = '#ccc';
+      world.redraw();
+    }).on('mouseleave', function(cur) {
+      cur.color = '#bbb';
+      world.redraw();
+    });
+    group.add(child);
+  }
+
+  var button = world.arc({
+    x: 198,
     y: 380,
-    radius: 100,
-    startAngle: -45,
-    endAngle: 45,
-    color: '#e1a376',
-    style: 'fill'
+    radius: 20,
+    style: 'fill',
+    color: '#000'
   }).on('mouseenter', function(cur) {
-    cur.color = '#555';
+    cur.color = '#222';
+    world.element.style.cursor = 'pointer';
     world.redraw();
   }).on('mouseleave', function(cur) {
-    cur.color = '#e1a376';
+    cur.color = '#000';
+    world.element.style.cursor = 'default';
     world.redraw();
-  }).config({
-    drag: true
+  }).on('mousedown', function(cur) {
+    if(group.width === 200) {
+      group.animateTo({
+        width: 400
+      }, {
+        easing: 'quintInOut',
+        duration: 300
+      });
+      group.children.forEach(function(child, i) {
+        child.animateTo({
+          width: 380
+        }, {
+          easing: 'quintInOut',
+          duration: 300,
+          delay: 50 * (i + 1)
+        });
+      });
+    } else if(group.width === 400) {
+      group.children.forEach(function(child, i) {
+        child.animateTo({
+          width: 180
+        }, {
+          easing: 'quintInOut',
+          duration: 300,
+          delay: 50 * (5 - i)
+        });
+      });
+      group.animateTo({
+        width: 200
+      }, {
+        easing: 'quintInOut',
+        duration: 300,
+        delay: 50 * 5
+      });
+    }
   });
 
   var text = world.text({
-    x: 300,
-    y: 40,
-    width: 150,
-    height: 40,
-    paddingTop: 10, //text padding top
-    center: true, 
-    backgroundColor: 'blue', // optional
-    fontSize: 16,
-    text: 'Hello World',
-    color: '#fff',
-    style: 'fill'
-  }).on('mouseenter', function(cur) {
-    cur.backgroundColor = '#555';
-    world.redraw();
-  }).on('mouseleave', function(cur) {
-    cur.backgroundColor = 'blue';
-    world.redraw();
-  });
+		x: 135,
+		y: 40,
+		width: 150,
+		height: 40,
+		fontSize: 20,
+		text: 'Click the circle',
+		color: '#000'
+	}).config({
+		fixed: true,
+		bg: true
+	});
 
-  var image = world.image({
-    x: 300,
-    y: 200,
-    width: 97,
-    height: 110,
-    sliceX: 5,
-    sliceY: 0,
-    sliceWidth: 97,
-    sliceHeight: 110,
-    src: './img/action.png'
-  }).config({
-    drag: true
-  });
-
-
-  var line = world.line({
-    matrix: [
-      [10, 180], 
-      [40, 50], 
-      [80, 180], 
-      [90, 80],
-      [110, 100], 
-      [140, 50],
-      [260, 180]
-    ],
-    lineWidth: 3
-  }).on('mouseenter', function(cur) {
-    cur.color = '#000';
-    cur.lineWidth = 6;
-    world.redraw();
-  }).on('mouseleave', function(cur) {
-    cur.color = '#555';
-    cur.lineWidth = 3;
-    world.redraw();
-  });
-
-  var polygon = world.polygon({
-    matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
-    style: 'stroke',
-    lineWidth: 2
-  }).config({
-    zindex: 11,
-    drag: true
-  }).on('mouseenter', function(cur) {
-    cur.color = '#000';
-    cur.lineWidth = 7;
-    world.redraw();
-  }).on('mouseleave', function(cur) {
-    cur.color = '#555';
-    cur.lineWidth = 2;
-    world.redraw();
-  });
-
-  world.addChild([rect1, arc, text, image, line, polygon]);
+  world.addChild([group, button, text]);
   world.show();
 
 </script>

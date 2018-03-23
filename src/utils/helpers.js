@@ -115,6 +115,10 @@ export default {
 
   isArr(obj) {
     return Object.prototype.toString.call(obj) === '[object Array]';
+  },
+
+  isObj(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
   }
 
 };

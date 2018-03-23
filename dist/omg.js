@@ -191,6 +191,10 @@ var utils = {
 
   isArr: function isArr(obj) {
     return Object.prototype.toString.call(obj) === '[object Array]';
+  },
+
+  isObj: function isObj(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
   }
 
 };
@@ -846,6 +850,7 @@ var isPointInner = function(x, y) {
      * @type: image, text, coord
      */
     case 'rectangle':
+    case 'group':
       return insideRectangle(pgx, pgy, this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
     /**
      * @type: Arc
@@ -1088,7 +1093,7 @@ Display.prototype.on = function on (eventTypes, callback) {
         callback: callback
       });
     } else {
-      console.error(event + ' is not in eventTypes!');
+      throw (event + " is not in eventTypes!\n Please use event in " + (this$1._.eventTypes));
     }
   });
 
@@ -1184,7 +1189,11 @@ function display(settings, _this) {
 
     changeIndex: display.changeIndex,
 
-    _: display._
+    _: display._,
+
+    isShape: true,
+
+    parent: null
 
   });
 }
@@ -1381,6 +1390,7 @@ var image = function(settings, _this) {
 };
 
 var COLOR = '#555';
+var LINE_WIDTH = 1;
 var FONT_SIZE = 14;
 
 var line = function(settings, _this) {
@@ -1654,6 +1664,91 @@ var shapes = {
 };
 
 /**
+ * A group is a container that can be inserted into child nodes
+ */
+
+var group = function(settings, _this) {
+  var draw = function() {
+    var canvas = _this.canvas;
+    var scale = _this.scale;
+
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    DefineMatrix.call(this, this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
+
+    canvas.save();
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
+
+    if(this.fixed) {
+      canvas.translate(-_this.transX, -_this.transY);
+    }
+    canvas.beginPath();
+
+    this.scaled_matrix.forEach(function (point, i) {
+      i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
+    });
+    canvas.lineTo(this.scaled_matrix[0][0], this.scaled_matrix[0][1]);
+
+    if(utils.isObj(this.background)) {
+      var bg = this.background;
+      if(bg.color) {
+        canvas.fillStyle = bg.color || COLOR;
+        canvas.fill();
+      }
+    } else if(utils.isObj(this.border)) {
+      var border = this.border;
+      canvas.strokeStyle = border.color || COLOR;
+      canvas.lineWidth = border.lineWidth || LINE_WIDTH;
+      canvas.stroke();
+    }
+    canvas.closePath();
+    canvas.restore();
+
+    if(this.children.length > 0) {
+      this.children.forEach(function (c) {
+        c.draw();
+      });
+    }
+  };
+
+  var updateChild = function(child) {
+    child.moveX += child.parent.x;
+    child.moveY += child.parent.y;
+    child.enableChangeIndex = false;
+    child.fixed = false;
+    child.drag = false;
+  };
+
+  var add = function(child) {
+    // update child's moveX and moveY
+    if(child.isShape) {
+      child.parent = this;
+      child.zindex = this.zindex + 0.1;
+      updateChild(child);
+      // group暂时不添加拖拽
+      this.enableDrag = false;
+      this.children.push(child);
+    }
+  };
+
+  // const remove = function(child) {
+  //   if(this.children.indexOf(child)) {
+  //     child.parent = null;
+  //     this.children.splice()
+  //   }
+  // }
+
+  return Object.assign({}, display(settings, _this), {
+    type: 'group',
+    draw: draw,
+    background: settings.background,
+    border: settings.border,
+    children: [],
+    add: add,
+    // remove,
+  });
+};
+
+/**
  * Export for extend shapes.
  */
 
@@ -1770,6 +1865,9 @@ OMG.prototype.init = function init () {
       return this.shapes[shape](settings, this);
     };
   });
+  this.group = function(settings) {
+    return group(settings, this);
+  };
 };
 
 OMG.prototype.extend = function extend (ext) {
@@ -1786,11 +1884,22 @@ OMG.prototype.imgReady = function imgReady () {
 };
 
 OMG.prototype.addChild = function addChild (child) {
+    var this$1 = this;
+
   // multi or single
   if(utils.isArr(child)) {
     this.objects = this.objects.concat(child);
+    child.forEach(function (c) {
+      // if type is group, push it's children to objects
+      if(c.children && c.children.length > 0) {
+        this$1.objects = this$1.objects.concat(c.children);
+      }
+    });
   } else {
     this.objects.push(child);
+    if(child.children && child.children.length > 0) {
+      this.objects = this.objects.concat(child.children);
+    }
   }
   this.objects.sort(function (a, b) {
     return a.zindex - b.zindex;
