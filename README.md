@@ -358,7 +358,7 @@ const group = stage.group({
     lineWidth: 2 // TODO
   },
   /**
-   * @param {Object} autoSize - 该项制定后，不需要再制定group的宽高，会自动识别，包裹所有子图形。
+   * @param {Object} autoSize - 该项指定后，不需要再指定group的宽高，会自动识别，包裹所有子图形。
    * @TODO autoSize待添加
    * /
   autoSize: {
@@ -371,10 +371,12 @@ const group = stage.group({
 ```
 
 * **Function** `group.add()`
+
 Add child element to group.
 The child element's coordinates will be referenced to the group's starting point.
 
 * **Function** `group.remove()`
+
 *TODO:* Remove an child element from group.
 
 ### Add shapes to stage.
