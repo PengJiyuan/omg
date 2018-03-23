@@ -37,115 +37,130 @@
 
 	world.init();
 
-	var title = world.text({
-		x: (width - 800)/2,
-		y: (height - 300)/2,
-		width: 800,
-		height: 300,
-		paddingTop: 0, //text padding top
-		center: true, 
-		backgroundColor: 'blue', // optional
-		fontFamily: 'italic bold arial,sans-serif',
-		fontSize: 180,
-		text: 'omg',
-		color: '#fff',
-		style: 'fill'
-	}).config({
-		fixed: true,
-		bg: true
-	});
+	function draw() {
+		var title = world.text({
+			x: (width - 800)/2,
+			y: (height - 300)/2,
+			width: 800,
+			height: 300,
+			paddingTop: 0, //text padding top
+			center: true, 
+			backgroundColor: 'blue', // optional
+			fontFamily: 'italic bold arial,sans-serif',
+			fontSize: 180,
+			text: 'omg',
+			color: '#fff',
+			style: 'fill'
+		}).config({
+			fixed: true,
+			bg: true
+		});
 
-	var trash = world.text({
-		x: width - 300,
-		y: 40,
-		width: 280,
-		height: 120,
-		paddingTop: 30, //text padding top
-		center: true, 
-		backgroundColor: '#ef4476', // optional
-		fontFamily: 'italic bold arial,sans-serif',
-		fontSize: 48,
-		text: '笼子(' + bear + ')',
-		color: '#fff',
-		type: 'fill'
-	}).config({
-		fixed: true,
-		drag: true
-	}).on('dragin', function() {
-		trash.backgroundColor = 'red';
-	}).on('dragout', function() {
-		trash.backgroundColor = '#ef4476';
-	}).on('drop', function( item, cur ) {
-		bear++;
-		trash.backgroundColor = '#ef4476';
-		trash.text = '笼子(' + bear + ')';
-		world.removeChild(cur);
-		world.redraw();
-	});
+		var trash = world.text({
+			x: width - 300,
+			y: 40,
+			width: 280,
+			height: 120,
+			paddingTop: 30, //text padding top
+			center: true, 
+			backgroundColor: '#ef4476', // optional
+			fontFamily: 'italic bold arial,sans-serif',
+			fontSize: 48,
+			text: '笼子(' + bear + ')',
+			color: '#fff',
+			type: 'fill'
+		}).config({
+			fixed: true,
+			drag: true
+		}).on('dragin', function() {
+			trash.backgroundColor = 'red';
+		}).on('dragout', function() {
+			trash.backgroundColor = '#ef4476';
+		}).on('drop', function( item, cur ) {
+			bear++;
+			trash.backgroundColor = '#ef4476';
+			trash.text = '笼子(' + bear + ')';
+			world.removeChild(cur);
+			world.redraw();
+		});
 
-	var tip = world.text({
-		x: width - 300,
-		y: -20,
-		width: 280,
-		height: 40,
-		paddingTop: 30, //text padding top
-		center: true, 
-		fontFamily: 'italic bold arial,sans-serif',
-		fontSize: 16,
-		text: '把草尼马拖进笼子',
-		color: 'blue',
-		type: 'fill'
-	}).config({
-		fixed: true
-	});
+		var tip = world.text({
+			x: width - 300,
+			y: -20,
+			width: 280,
+			height: 40,
+			paddingTop: 30, //text padding top
+			center: true, 
+			fontFamily: 'italic bold arial,sans-serif',
+			fontSize: 16,
+			text: '把草尼马拖进笼子',
+			color: 'blue',
+			type: 'fill'
+		}).config({
+			fixed: true
+		});
 
-	world.addChild([title, trash, tip]);
+		world.addChild([title, trash, tip]);
 
-	function createBear() {
-		var arr = [{
-			w: 97,
-			sx: 5,
-			sy: 0
-		}, {
-			w: 97,
-			sx: 5,
-			sy: 470
-		}, {
-			w: 64,
-			sx: 3,
-			sy: 238
-		}, {
-			w: 82,
-			sx: 7,
-			sy: 718
-		}];
+		function createBear() {
+			var arr = [{
+				w: 97,
+				sx: 5,
+				sy: 0
+			}, {
+				w: 97,
+				sx: 5,
+				sy: 470
+			}, {
+				w: 64,
+				sx: 3,
+				sy: 238
+			}, {
+				w: 82,
+				sx: 7,
+				sy: 718
+			}];
 
-		var randomNum = Math.round(Math.random()*3);
-		world.addChild(
-			world.image({
-				x: Math.random() * width - 50,
-				y: Math.random() * height - 60,
-				width: arr[randomNum].w,
-				height: 110,
-				sliceX: arr[randomNum].sx,
-				sliceY: arr[randomNum].sy,
-				sliceWidth: arr[randomNum].w,
-				sliceHeight: 110,
-				src: './img/action.png'
-			}).config({
-				drag: true,
-				changeIndex: true,
-				zindex: 2
-			})
-		);
+			var randomNum = Math.round(Math.random()*3);
+			world.addChild(
+				world.image({
+					x: Math.random() * width - 50,
+					y: Math.random() * height - 60,
+					width: arr[randomNum].w,
+					height: 110,
+					sliceX: arr[randomNum].sx,
+					sliceY: arr[randomNum].sy,
+					sliceWidth: arr[randomNum].w,
+					sliceHeight: 110,
+					src: './img/action.png'
+				}).config({
+					drag: true,
+					changeIndex: true,
+					zindex: 2
+				})
+			);
+		}
+		
+		for(var i = 0;i < 20; i++) {
+			createBear();
+		}
 	}
-	
-	for(var i = 0;i < 20; i++) {
-		createBear();
-	}
 
+	draw();
 	world.show();
 	world.animate(go);
+	world.resize({
+		width: () => document.body.clientWidth,
+		height: () => document.body.clientHeight,
+		resize: function(update) {
+			update();
+			world.objects = [];
+			world._objects = [];
+			draw();
+			world.animationList = [];
+			world.animate(go);
+		}
+	});
 
 	var num = 0;
 	function go() {

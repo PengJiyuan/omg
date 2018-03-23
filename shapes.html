@@ -250,7 +250,24 @@
 		world.element.style.cursor = 'default';
 	});
 
-	world.addChild(line);
+	var a = world.rectangle({
+		x: 120,
+		y: 120,
+		width: 100,
+		height: 100,
+		color: 'red'
+	}).config({
+		drag: true,
+		changeIndex: true
+	}).on('mouseenter', function(cur) {
+		cur.color = 'blue';
+		world.redraw();
+	}).on('mouseleave', function(cur) {
+		cur.color = 'red';
+		world.redraw();
+	});
+
+	world.addChild([line, a]);
 
 	world.show();
 
