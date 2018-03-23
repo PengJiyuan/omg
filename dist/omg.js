@@ -1702,12 +1702,6 @@ var group = function(settings, _this) {
     }
     canvas.closePath();
     canvas.restore();
-
-    if(this.children.length > 0) {
-      this.children.forEach(function (c) {
-        c.draw();
-      });
-    }
   };
 
   var updateChild = function(child) {

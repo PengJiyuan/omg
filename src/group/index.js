@@ -42,12 +42,6 @@ export default function(settings, _this) {
     }
     canvas.closePath();
     canvas.restore();
-
-    if(this.children.length > 0) {
-      this.children.forEach(c => {
-        c.draw();
-      });
-    }
   };
 
   const updateChild = function(child) {
