@@ -52,7 +52,7 @@ export default function(x, y) {
             linePoints[i - 1][1],
             linePoints[i][0],
             linePoints[i][1],
-            this.lineWidth,
+            this.scaled_lineWidth,
             pgx,
             pgy
           )) {

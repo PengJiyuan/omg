@@ -7,7 +7,7 @@ export default function(settings, _this) {
     const canvas = _this.canvas;
     const scale = _this.scale;
 
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
+    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
 
     const matrix = this.scaled_matrix;
 
@@ -28,7 +28,7 @@ export default function(settings, _this) {
       canvas.fill();
     } else {
       canvas.strokeStyle = this.color;
-      canvas.lineWidth = this.lineWidth;
+      canvas.lineWidth = this.scaled_lineWidth;
       canvas.stroke();
     }
     canvas.closePath();

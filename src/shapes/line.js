@@ -11,7 +11,6 @@ export default function(settings, _this) {
     const lineCap = settings.lineCap;
     const lineJoin = settings.lineJoin;
     const smooth = settings.smooth;
-    const lineWidth = this.lineWidth;
     const scale = _this.scale;
 
     if(this.matrix && this.matrix.length < 2) {
@@ -19,7 +18,7 @@ export default function(settings, _this) {
     }
 
     this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
-    DefineScale.call(this, scale, 'moveX', 'moveY');
+    DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
 
     const matrix = this.scaled_matrix;
 
@@ -28,7 +27,7 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    canvas.lineWidth = lineWidth;
+    canvas.lineWidth = this.scaled_lineWidth;
     canvas.strokeStyle = this.color;
     canvas.beginPath();
     canvas.lineDashOffset = this.offset;

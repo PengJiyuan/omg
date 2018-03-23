@@ -879,7 +879,7 @@ var isPointInner = function(x, y) {
             linePoints[i - 1][1],
             linePoints[i][0],
             linePoints[i][1],
-            this$1.lineWidth,
+            this$1.scaled_lineWidth,
             pgx,
             pgy
           )) {
@@ -1391,7 +1391,6 @@ var line = function(settings, _this) {
     var lineCap = settings.lineCap;
     var lineJoin = settings.lineJoin;
     var smooth = settings.smooth;
-    var lineWidth = this.lineWidth;
     var scale = _this.scale;
 
     if(this.matrix && this.matrix.length < 2) {
@@ -1399,7 +1398,7 @@ var line = function(settings, _this) {
     }
 
     this.scaled_matrix = this.matrix.map(function (m) { return m.map(function (n) { return n * scale; }); });
-    DefineScale.call(this, scale, 'moveX', 'moveY');
+    DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
 
     var matrix = this.scaled_matrix;
 
@@ -1408,7 +1407,7 @@ var line = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    canvas.lineWidth = lineWidth;
+    canvas.lineWidth = this.scaled_lineWidth;
     canvas.strokeStyle = this.color;
     canvas.beginPath();
     canvas.lineDashOffset = this.offset;
@@ -1606,7 +1605,7 @@ var polygon = function(settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
+    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
 
     var matrix = this.scaled_matrix;
 
@@ -1627,7 +1626,7 @@ var polygon = function(settings, _this) {
       canvas.fill();
     } else {
       canvas.strokeStyle = this.color;
-      canvas.lineWidth = this.lineWidth;
+      canvas.lineWidth = this.scaled_lineWidth;
       canvas.stroke();
     }
     canvas.closePath();
