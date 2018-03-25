@@ -2016,14 +2016,12 @@ OMG.prototype.fpsOff = function fpsOff () {
 // add an animation to animationList.
 OMG.prototype.animate = function animate (func) {
   this._event.triggerEvents();
-  var id = Date.now();
   this.animationList.push(func);
   this.tick();
-  return id;
 };
 
-OMG.prototype.stop = function stop (id) {
-  cancelAnimationFrame(this[id]);
+OMG.prototype.stop = function stop () {
+  cancelAnimationFrame(this[this.animationId]);
 };
 
 // clear all animations, includes global animation and shape animations.

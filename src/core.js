@@ -265,14 +265,12 @@ export class OMG {
   // add an animation to animationList.
   animate(func) {
     this._event.triggerEvents();
-    const id = Date.now();
     this.animationList.push(func);
     this.tick();
-    return id;
   }
 
-  stop(id) {
-    cancelAnimationFrame(this[id]);
+  stop() {
+    cancelAnimationFrame(this[this.animationId]);
   }
 
   // clear all animations, includes global animation and shape animations.
