@@ -2020,7 +2020,7 @@ OMG.prototype.animate = function animate (func) {
   this.tick();
 };
 
-OMG.prototype.stop = function stop () {
+OMG.prototype.stopAnimation = function stopAnimation () {
   cancelAnimationFrame(this[this.animationId]);
 };
 

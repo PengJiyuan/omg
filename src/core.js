@@ -269,7 +269,7 @@ export class OMG {
     this.tick();
   }
 
-  stop() {
+  stopAnimation() {
     cancelAnimationFrame(this[this.animationId]);
   }
 

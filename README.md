@@ -440,7 +440,7 @@ function go() {
   arc.radius++;
 }
 
-const a = stage.animate(go);
+stage.animate(go);
 ```
 
 #### Shap Animation
@@ -476,6 +476,11 @@ shape.animateTo({
     console.log(keys.x, keys.y, keys.width, keys.height);
   }, // defalut = undefined
 });
+```
+
+#### Stop Animation
+```javascript
+stage.stopAnimation();
 ```
 
 #### Easing Types
