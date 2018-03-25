@@ -478,11 +478,6 @@ shape.animateTo({
 });
 ```
 
-#### Stop Animation
-```javascript
-stage.stopAnimation();
-```
-
 #### Easing Types
 * linear
 * quadIn
