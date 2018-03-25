@@ -2020,14 +2020,11 @@ OMG.prototype.animate = function animate (func) {
   this.tick();
 };
 
-OMG.prototype.stopAnimation = function stopAnimation () {
-  cancelAnimationFrame(this[this.animationId]);
-};
-
 // clear all animations, includes global animation and shape animations.
 OMG.prototype.clearAnimation = function clearAnimation () {
   this.animationList = [];
-  this.tick();
+  this.animating = false;
+  cancelAnimationFrame(this[this.animationId]);
 };
 
 // get current version

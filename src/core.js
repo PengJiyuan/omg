@@ -269,14 +269,11 @@ export class OMG {
     this.tick();
   }
 
-  stopAnimation() {
-    cancelAnimationFrame(this[this.animationId]);
-  }
-
   // clear all animations, includes global animation and shape animations.
   clearAnimation() {
     this.animationList = [];
-    this.tick();
+    this.animating = false;
+    cancelAnimationFrame(this[this.animationId]);
   }
 
   // get current version
