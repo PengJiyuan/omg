@@ -1978,15 +1978,17 @@ OMG.prototype.tick = function tick () {
       }
     });
     this$1.redraw();
-    this$1[this$1.animationId] = requestAnimationFrame(func);
+    if(this$1.animationList.length === 0 && this$1.animating) {
+      this$1.animating = false;
+      cancelAnimationFrame(this$1[this$1.animationId]);
+    } else {
+      this$1[this$1.animationId] = requestAnimationFrame(func);
+    }
   };
   if(this.animationList.length > 0 && !this.animating) {
     this.animating = true;
     this.animationId = Date.now();
     func();
-  } else if(this.animationList.length === 0 && this.animating) {
-    this.animating = false;
-    cancelAnimationFrame(this.animationId);
   }
   return this.animationId;
 };

@@ -78,7 +78,7 @@
     world.element.style.cursor = 'default';
     world.redraw();
   }).on('mousedown', function(cur) {
-    if(group.width === 200) {
+    if(group.width === 200 && !world.animating) {
       group.animateTo({
         width: 400
       }, {
@@ -94,7 +94,7 @@
           delay: 50 * (i + 1)
         });
       });
-    } else if(group.width === 400) {
+    } else if(group.width === 400 && !world.animating) {
       group.children.forEach(function(child, i) {
         child.animateTo({
           width: 180

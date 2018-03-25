@@ -227,15 +227,17 @@ export class OMG {
         }
       });
       this.redraw();
-      this[this.animationId] = requestAnimationFrame(func);
+      if(this.animationList.length === 0 && this.animating) {
+        this.animating = false;
+        cancelAnimationFrame(this[this.animationId]);
+      } else {
+        this[this.animationId] = requestAnimationFrame(func);
+      }
     };
     if(this.animationList.length > 0 && !this.animating) {
       this.animating = true;
       this.animationId = Date.now();
       func();
-    } else if(this.animationList.length === 0 && this.animating) {
-      this.animating = false;
-      cancelAnimationFrame(this.animationId);
     }
     return this.animationId;
   }
