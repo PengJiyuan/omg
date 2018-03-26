@@ -377,7 +377,7 @@ The child element's coordinates will be referenced to the group's starting point
 
 * **Function** `group.remove()`
 
-*TODO:* Remove an child element from group.
+Remove an child element from group.
 
 ### Add shapes to stage.
 
