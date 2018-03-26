@@ -81,9 +81,10 @@ async function dev() {
         break;
       case 'ERROR':
       case 'FATAL':
-        Object.keys(event.error).forEach(i => {
-          console.log(event.error[i]);
-        });
+        console.error(event);
+        // Object.keys(event.error).forEach(i => {
+        //   console.log(event.error[i]);
+        // });
         break;
       default:
         break;

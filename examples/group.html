@@ -89,25 +89,25 @@
         easing: 'quintInOut',
         duration: 300
       });
-      group.children.forEach(function(child, i) {
-        child.animateTo({
-          width: 380
-        }, {
-          easing: 'quintInOut',
-          duration: 300,
-          delay: 50 * (i + 1)
-        });
-      });
+      // group.children.forEach(function(child, i) {
+      //   child.animateTo({
+      //     width: 380
+      //   }, {
+      //     easing: 'quintInOut',
+      //     duration: 300,
+      //     delay: 50 * (i + 1)
+      //   });
+      // });
     } else if(group.width === 400 && !world.animating) {
-      group.children.forEach(function(child, i) {
-        child.animateTo({
-          width: 180
-        }, {
-          easing: 'quintInOut',
-          duration: 300,
-          delay: 50 * (5 - i)
-        });
-      });
+      // group.children.forEach(function(child, i) {
+      //   child.animateTo({
+      //     width: 180
+      //   }, {
+      //     easing: 'quintInOut',
+      //     duration: 300,
+      //     delay: 50 * (5 - i)
+      //   });
+      // });
       group.animateTo({
         width: 200
       }, {

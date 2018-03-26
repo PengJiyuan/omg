@@ -1,6 +1,7 @@
 import { display } from '../display';
 import { COLOR } from '../data/default';
 import { DefineScale } from '../data/define';
+import clip from '../clip/index';
 
 export default function(settings, _this) {
   const draw = function() {
@@ -16,6 +17,10 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
+    // clip path
+    canvas.beginPath();
+    clip(this, canvas, scale);
+    canvas.closePath();
     canvas.beginPath();
 
     matrix.forEach((point, i) => {

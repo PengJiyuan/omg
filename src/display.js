@@ -1,4 +1,5 @@
 import isPointInner from './inside';
+import getBounding from './clip/bounding';
 import { Tween } from './tween/index';
 
 class Display {
@@ -35,6 +36,10 @@ class Display {
       moveY: 0,
 
       scaled_moveY: 0,
+
+      boundingWidth: 0,
+
+      boundingHeight: 0,
 
       zindex: 0
 
@@ -93,6 +98,10 @@ class Display {
     }
     if(obj.bg) {
       this.isBg = obj.bg;
+    }
+    // Whether the graphic is animating drawn
+    if(obj.cliping) {
+      this.cliping = obj.cliping;
     }
     this.zindex = obj.zindex || 0;
 
@@ -157,15 +166,15 @@ export function display(settings, _this) {
 
     config: display.config,
 
-    drag: display.drag,
-
-    changeIndex: display.changeIndex,
-
     _: display._,
 
     isShape: true,
 
-    parent: null
+    parent: null,
+
+    getBounding() {
+      return getBounding(this.scaled_matrix, this.scaled_lineWidth);
+    }
 
   });
 }

@@ -111,82 +111,22 @@ var utils = {
     return ret;
   },
 
-  calculateCoord: function calculateCoord(max, min) {
-    var gap, // return value -> gap
-      retMax, // return value -> max
-      absMax, // absolute value -> max
-      calcMax, // converted max
-      numLength; // max value length
-    var ref = [ Math.abs(max), Math.abs(min) ];
-    var ma = ref[0];
-    var mi = ref[1];
-    absMax = ma >= mi ? ma : mi;
-    numLength = absMax < 1 ? absMax.toString().length : absMax.toString().length;
-    calcMax = absMax < 1 ? this.formatFloat( absMax * Math.pow(10, numLength - 2), 1 ) : ( absMax / Math.pow(10, numLength - 1) );
-    if(calcMax === 1 && numLength > 1) {
-      calcMax = 10;
-      numLength --;
-    } else if(calcMax > 10) {
-      var l = calcMax.toString().length;
-      calcMax = calcMax / Math.pow(10, l - 1);
-      numLength = numLength - l + 1;
-    }
-
-    var granularity = [
-      [1, 0.2],
-      [1.2, 0.2],
-      [1.4, 0.2],
-      [1.5, 0.3],
-      [1.8, 0.3],
-      [2, 0.4],
-      [2.5, 0.5],
-      [3, 0.5],
-      [3.5, 0.5],
-      [4, 0.5],
-      [5, 1],
-      [6, 1],
-      [7, 1],
-      [8, 1],
-      [10, 2]
-    ];
-
-    granularity.forEach(function (item, index) {
-      var pre = index === 0 ? 0 : granularity[index - 1][0];
-      if(pre < calcMax && calcMax <= item[0]) {
-        gap = item[1],
-        retMax = item[0];
-      }
-    });
-
-    return {
-      gap: absMax < 1 ? ( gap / Math.pow(10, numLength - 2) ) :  ( gap * Math.pow(10, numLength - 1) ),
-      max: absMax < 1 ? ( retMax / Math.pow(10, numLength - 2) ) : ( retMax * Math.pow(10, numLength - 1) )
-    };
-  },
-
   formatFloat: function formatFloat(f) {
     var m = Math.pow(10, 10);
     return parseInt(f * m, 10) / m;
   },
 
-  getMaxMin: function getMaxMin(isX, series, xAxis) {
-    var max, min, maxArray = [], minArray = [];
-    series.forEach(function (item) {
-      var ma = [];
-      item.data.forEach(function (i) {
-        if(isX) {
-          ma.push(i[0]);
-        } else {
-          xAxis.data && xAxis.data.length > 0 ? ma.push(i) : ma.push(i[1]);
-        }
-      });
-      maxArray.push(Math.max.apply(null, ma));
-      minArray.push(Math.min.apply(null, ma));
-    });
-    max = Math.max.apply(null, maxArray);
-    min = Math.min.apply(null, minArray);
-
-    return { max: max, min: min };
+  /**
+   * @param {Array} arr
+   */
+  getMax: function getMax(arr) {
+    return Math.max.apply(null, arr);
+  },
+  /**
+   * @param {Array} arr
+   */
+  getMin: function getMin(arr) {
+    return Math.min.apply(null, arr);
   },
 
   insertArray: function insertArray(originArray, start, number, insertArray$1) {
@@ -903,6 +843,35 @@ var isPointInner = function(x, y) {
   }
 };
 
+/**
+ * 
+ * @param {Array}  points - point list
+ * @return {Array} bounding points. left top, right top, right bottom, left bottom. 
+ */
+function getBounding(points, lineWidth) {
+  var lw = lineWidth ? lineWidth : 0;
+  var xList = points.map(function (point) { return point[0]; });
+  var yList = points.map(function (point) { return point[1]; });
+  var minX = utils.getMin(xList) - lw;
+  var maxX = utils.getMax(xList) + lw;
+  var minY = utils.getMin(yList) - lw;
+  var maxY = utils.getMax(yList) + lw;
+  var lt = [minX, minY];
+  var lb = [minX, maxY];
+  var rt = [maxX, minY];
+  var rb = [maxX, maxY];
+  var w = maxX - minX;
+  var h = maxY - minY;
+  return {
+    lt: lt,
+    rt: rt,
+    rb: rb,
+    lb: lb,
+    w: w,
+    h: h
+  };
+}
+
 /**!
  * code from https://github.com/LiikeJS/Liike/blob/master/src/ease.js
  */
@@ -1066,6 +1035,10 @@ var Display = function Display(settings, _this) {
 
     scaled_moveY: 0,
 
+    boundingWidth: 0,
+
+    boundingHeight: 0,
+
     zindex: 0
 
   };
@@ -1125,6 +1098,10 @@ Display.prototype.config = function config (obj) {
   }
   if(obj.bg) {
     this.isBg = obj.bg;
+  }
+  // Whether the graphic is animating drawn
+  if(obj.cliping) {
+    this.cliping = obj.cliping;
   }
   this.zindex = obj.zindex || 0;
 
@@ -1190,15 +1167,15 @@ function display(settings, _this) {
 
     config: display.config,
 
-    drag: display.drag,
-
-    changeIndex: display.changeIndex,
-
     _: display._,
 
     isShape: true,
 
-    parent: null
+    parent: null,
+
+    getBounding: function getBounding$1$$1() {
+      return getBounding(this.scaled_matrix, this.scaled_lineWidth);
+    }
 
   });
 }
@@ -1398,6 +1375,18 @@ var COLOR = '#555';
 var LINE_WIDTH = 1;
 var FONT_SIZE = 14;
 
+function clip(_this, canvas, scale) {
+  if(_this.cliping) {
+    var bounding = _this.getBounding();
+    if(_this.cliping.column) {
+      canvas.rect(bounding.lt[0], bounding.lt[1], bounding.rt[0] - bounding.lt[0], _this.boundingHeight * scale);
+    } else {
+      canvas.rect(bounding.lt[0], bounding.lt[1], _this.boundingWidth * scale, bounding.rb[1] - bounding.rt[1]);
+    }
+    canvas.clip();
+  }
+}
+
 var line = function(settings, _this) {
   var totalLength;
 
@@ -1422,9 +1411,13 @@ var line = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
+
+    // clip path
+    clip(this, canvas, scale);
+
+    canvas.beginPath();
     canvas.lineWidth = this.scaled_lineWidth;
     canvas.strokeStyle = this.color;
-    canvas.beginPath();
     canvas.lineDashOffset = this.offset;
     if(this.dash && utils.isArr(this.dash)) {
       canvas.setLineDash(this.dash);
@@ -1507,6 +1500,9 @@ var rectangle = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
+    // clip path
+    clip(this, canvas, scale);
+
     canvas.beginPath();
 
     this.scaled_matrix.forEach(function (point, i) {
@@ -1629,6 +1625,10 @@ var polygon = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
+    // clip path
+    canvas.beginPath();
+    clip(this, canvas, scale);
+    canvas.closePath();
     canvas.beginPath();
 
     matrix.forEach(function (point, i) {

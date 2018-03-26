@@ -1,7 +1,8 @@
 import { display } from '../display';
-import utils from '../utils/helpers';
 import { COLOR } from '../data/default';
 import {DefineScale} from '../data/define';
+import utils from '../utils/helpers';
+import clip from '../clip/index';
 
 export default function(settings, _this) {
   let totalLength;
@@ -27,9 +28,13 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
+
+    // clip path
+    clip(this, canvas, scale);
+
+    canvas.beginPath();
     canvas.lineWidth = this.scaled_lineWidth;
     canvas.strokeStyle = this.color;
-    canvas.beginPath();
     canvas.lineDashOffset = this.offset;
     if(this.dash && utils.isArr(this.dash)) {
       canvas.setLineDash(this.dash);
