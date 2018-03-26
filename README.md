@@ -178,7 +178,10 @@ const text = stage.text({
   height: 40, // x, y, width, height指定了一个矩形， 文字就在其中
   paddingTop: 8, // 用于调整文字在矩形中的位置
   center: true,  // 文字居中
-  backgroundColor: 'blue', // 给文字添加背景颜色(矩形)
+  background: {
+    color: 'blue', // 背景颜色
+    img: './img/text_bg.png' // 背景图片
+  }, // 给文字添加背景颜色(矩形)
   font: 'italic bold 20px arial,sans-serif', // 文字样式
   text: 'Hello stage', // 文字内容
   color: '#fff', // 文字颜色
