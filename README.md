@@ -39,7 +39,9 @@ const stage = omg({
   width: 500,
   height: 500,
   enableGlobalTranslate: true,
-  enableGlobalScale: true
+  enableGlobalScale: true,
+  images: [], // 提前加载的图片列表
+  prepareImage: true // 提前加载图片
 });
 
 stage.init();
