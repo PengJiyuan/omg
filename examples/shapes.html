@@ -34,7 +34,8 @@
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
-		enableGlobalTranslate: true
+		enableGlobalTranslate: true,
+		prepareImage: true
 	});
 
 	world.init();
@@ -139,7 +140,9 @@
 		height: 40,
 		paddingTop: 8, //text padding top
 		center: true, 
-		backgroundColor: 'blue', // optional
+		background: {
+			color: 'blue'
+		}, // optional
 		fontSize: 20,
 		text: 'Hello World',
 		color: '#fff',

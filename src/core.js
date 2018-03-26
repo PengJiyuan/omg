@@ -33,6 +33,8 @@ export class OMG {
     // the instance of image loader
     this.loader = null;
 
+    this.prepareImage = config.prepareImage;
+
     this.pointerInnerArray = [];
 
     this.globalMousedown = void(0);
@@ -125,11 +127,6 @@ export class OMG {
     }
   }
 
-  imgReady() {
-    this.loader = new ImageLoader();
-    this.loader.addImg(this.images);
-  }
-
   addChild(child) {
     // multi or single
     if(utils.isArr(child)) {
@@ -168,13 +165,24 @@ export class OMG {
     this._objects = [];
   }
 
+  imgReady() {
+    this.loader = new ImageLoader();
+    this.loader.addImg(this.images);
+  }
+
   show() {
     const _this = this;
-    this.imgReady();
-    this.loader.ready(() => {
-      _this.draw();
-      _this._event.triggerEvents();
-    });
+    // dirty, ready to remove
+    if(this.prepareImage) {
+      this.imgReady();
+      this.loader.ready(() => {
+        _this.draw();
+        _this._event.triggerEvents();
+      });
+    } else {
+      this.draw();
+      this._event.triggerEvents();
+    }
   }
 
   draw() {

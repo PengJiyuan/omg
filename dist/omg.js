@@ -1529,6 +1529,11 @@ var rectangle = function(settings, _this) {
 };
 
 var text = function(settings, _this) {
+  // insert into images
+  if(settings.background && settings.background.img) {
+    !~_this.images.indexOf(settings.background.img) && _this.images.push(settings.background.img);
+  }
+
   function text_ellipsis(ctx, str, maxWidth) {
     var width = ctx.measureText(str).width,
       ellipsis = '...',
@@ -1564,11 +1569,15 @@ var text = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    if(this.backgroundColor) {
-      canvas.save();
-      canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
-      canvas.restore();
+    if(this.background) {
+      if(this.background.color) {
+        canvas.save();
+        canvas.fillStyle = this.background.color;
+        canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
+        canvas.restore();
+      } else if(this.background.img) {
+        return;
+      }
     }
     canvas.font = font;
     canvas.textBaseline = 'top';
@@ -1602,7 +1611,7 @@ var text = function(settings, _this) {
     type: 'rectangle',
     draw: draw,
     color: settings.color || COLOR,
-    backgroundColor: settings.backgroundColor,
+    background: settings.background,
     text: settings.text || 'no text',
     style: settings.style || 'fill',
     paddingTop: settings.paddingTop || 0,
@@ -1799,6 +1808,8 @@ var OMG = function OMG(config) {
   // the instance of image loader
   this.loader = null;
 
+  this.prepareImage = config.prepareImage;
+
   this.pointerInnerArray = [];
 
   this.globalMousedown = void(0);
@@ -1895,11 +1906,6 @@ OMG.prototype.extend = function extend (ext) {
   }
 };
 
-OMG.prototype.imgReady = function imgReady () {
-  this.loader = new ImageLoader();
-  this.loader.addImg(this.images);
-};
-
 OMG.prototype.addChild = function addChild (child) {
   // multi or single
   if(utils.isArr(child)) {
@@ -1938,13 +1944,24 @@ OMG.prototype.removeAllChilds = function removeAllChilds () {
   this._objects = [];
 };
 
+OMG.prototype.imgReady = function imgReady () {
+  this.loader = new ImageLoader();
+  this.loader.addImg(this.images);
+};
+
 OMG.prototype.show = function show () {
   var _this = this;
-  this.imgReady();
-  this.loader.ready(function () {
-    _this.draw();
-    _this._event.triggerEvents();
-  });
+  // dirty, ready to remove
+  if(this.prepareImage) {
+    this.imgReady();
+    this.loader.ready(function () {
+      _this.draw();
+      _this._event.triggerEvents();
+    });
+  } else {
+    this.draw();
+    this._event.triggerEvents();
+  }
 };
 
 OMG.prototype.draw = function draw () {

@@ -3,6 +3,11 @@ import { COLOR, FONT_SIZE } from '../data/default';
 import { DefineScale } from '../data/define';
 
 export default function(settings, _this) {
+  // insert into images
+  if(settings.background && settings.background.img) {
+    !~_this.images.indexOf(settings.background.img) && _this.images.push(settings.background.img);
+  }
+
   function text_ellipsis(ctx, str, maxWidth) {
     let width = ctx.measureText(str).width,
       ellipsis = '...',
@@ -38,11 +43,15 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    if(this.backgroundColor) {
-      canvas.save();
-      canvas.fillStyle = this.backgroundColor;
-      canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
-      canvas.restore();
+    if(this.background) {
+      if(this.background.color) {
+        canvas.save();
+        canvas.fillStyle = this.background.color;
+        canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
+        canvas.restore();
+      } else if(this.background.img) {
+        return;
+      }
     }
     canvas.font = font;
     canvas.textBaseline = 'top';
@@ -76,7 +85,7 @@ export default function(settings, _this) {
     type: 'rectangle',
     draw: draw,
     color: settings.color || COLOR,
-    backgroundColor: settings.backgroundColor,
+    background: settings.background,
     text: settings.text || 'no text',
     style: settings.style || 'fill',
     paddingTop: settings.paddingTop || 0,

@@ -32,7 +32,8 @@
 		element: document.getElementById('canvas'),
 		width: width,
 		height: height,
-		enableGlobalTranslate: true
+		enableGlobalTranslate: true,
+		prepareImage: true
 	});
 
 	world.init();
@@ -45,7 +46,9 @@
 			height: 300,
 			paddingTop: 0, //text padding top
 			center: true, 
-			backgroundColor: 'blue', // optional
+			background: {
+				color: 'blue'
+			}, // optional
 			fontFamily: 'italic bold arial,sans-serif',
 			fontSize: 180,
 			text: 'omg',
@@ -63,7 +66,9 @@
 			height: 120,
 			paddingTop: 30, //text padding top
 			center: true, 
-			backgroundColor: '#ef4476', // optional
+			background: {
+				color: '#ef4476'
+			}, // optional
 			fontFamily: 'italic bold arial,sans-serif',
 			fontSize: 48,
 			text: '笼子(' + bear + ')',
@@ -73,12 +78,12 @@
 			fixed: true,
 			drag: true
 		}).on('dragin', function() {
-			trash.backgroundColor = 'red';
+			trash.background.color = 'red';
 		}).on('dragout', function() {
-			trash.backgroundColor = '#ef4476';
+			trash.background.color = '#ef4476';
 		}).on('drop', function( item, cur ) {
 			bear++;
-			trash.backgroundColor = '#ef4476';
+			trash.background.color = '#ef4476';
 			trash.text = '笼子(' + bear + ')';
 			world.removeChild(cur);
 			world.redraw();
