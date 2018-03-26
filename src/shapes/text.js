@@ -34,7 +34,7 @@ export default function(settings, _this) {
     const size = fontSize * scale;
     const font = `${size}px ${fontFamily}`;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop');
+    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
 
     let textWidth, ellipsisText;
 
@@ -50,7 +50,13 @@ export default function(settings, _this) {
         canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
         canvas.restore();
       } else if(this.background.img) {
-        return;
+        canvas.drawImage(
+          _this.loader.getImg(this.background.img),
+          this.scaled_x,
+          this.scaled_y,
+          this.scaled_width,
+          this.scaled_height
+        );
       }
     }
     canvas.font = font;
@@ -63,19 +69,19 @@ export default function(settings, _this) {
       canvas.strokeStyle = this.color;
       if(center) {
         if(textWidth < this.scaled_width - 8) {
-          canvas.strokeText(ellipsisText, this.scaled_x + 4 + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+          canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.strokeText(ellipsisText, this.scaled_x + 4, this.scaled_y + this.scaled_paddingTop);
+        canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
       }
     } else {
       canvas.fillStyle = this.color;
       if(center) {
         if(textWidth < this.scaled_width - 8) {
-          canvas.fillText(ellipsisText, this.scaled_x + 4 + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+          canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.fillText(ellipsisText, this.scaled_x + 4, this.scaled_y + this.scaled_paddingTop);
+        canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
       }
     }
     canvas.restore();
@@ -89,6 +95,6 @@ export default function(settings, _this) {
     text: settings.text || 'no text',
     style: settings.style || 'fill',
     paddingTop: settings.paddingTop || 0,
-    scaled_paddingTop: settings.paddingTop ? settings.paddingTop * _this.scale : 0
+    paddingLeft: settings.paddingLeft || 0
   });
 }
