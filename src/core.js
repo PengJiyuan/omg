@@ -134,17 +134,8 @@ export class OMG {
     // multi or single
     if(utils.isArr(child)) {
       this.objects = this.objects.concat(child);
-      child.forEach(c => {
-        // if type is group, push it's children to objects
-        if(c.children && c.children.length > 0) {
-          this.objects = this.objects.concat(c.children);
-        }
-      });
     } else {
       this.objects.push(child);
-      if(child.children && child.children.length > 0) {
-        this.objects = this.objects.concat(child.children);
-      }
     }
     this.objects.sort((a, b) => {
       return a.zindex - b.zindex;

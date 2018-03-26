@@ -113,6 +113,11 @@ export default {
     return { max, min };
   },
 
+  insertArray(originArray, start, number, insertArray) {
+    var args = [start, number].concat(insertArray);
+    Array.prototype.splice.apply(originArray, args);
+  },
+
   isArr(obj) {
     return Object.prototype.toString.call(obj) === '[object Array]';
   },

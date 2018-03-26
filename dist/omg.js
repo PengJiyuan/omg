@@ -189,6 +189,11 @@ var utils = {
     return { max: max, min: min };
   },
 
+  insertArray: function insertArray(originArray, start, number, insertArray$1) {
+    var args = [start, number].concat(insertArray$1);
+    Array.prototype.splice.apply(originArray, args);
+  },
+
   isArr: function isArr(obj) {
     return Object.prototype.toString.call(obj) === '[object Array]';
   },
@@ -1667,6 +1672,7 @@ var shapes = {
  * A group is a container that can be inserted into child nodes
  */
 
+// import getBounding from './bounding';
 var group = function(settings, _this) {
   var draw = function() {
     var canvas = _this.canvas;
@@ -1704,6 +1710,7 @@ var group = function(settings, _this) {
     canvas.restore();
   };
 
+  // update child's moveX and moveY
   var updateChild = function(child) {
     child.moveX += child.parent.x;
     child.moveY += child.parent.y;
@@ -1712,24 +1719,41 @@ var group = function(settings, _this) {
     child.drag = false;
   };
 
-  var add = function(child) {
-    // update child's moveX and moveY
-    if(child.isShape) {
-      child.parent = this;
-      child.zindex = this.zindex + 0.1;
-      updateChild(child);
-      // group暂时不添加拖拽
-      this.enableDrag = false;
-      this.children.push(child);
+  /**
+   * @param {Array} childs 
+   */
+  var add = function(childs) {
+    var this$1 = this;
+
+    if(!utils.isArr(childs)) {
+      throw 'The parameter must be an array';
     }
+    if(!~this._.objects.indexOf(this)) {
+      throw 'before add, please addChild the parent!';
+    }
+    childs.sort(function (a, b) { return a.zindex - b.zindex; });
+    childs.forEach(function (child) {
+      if(child.isShape) {
+        child.parent = this$1;
+        child.zindex = this$1.zindex + 0.1;
+        updateChild(child);
+        // group暂时不添加拖拽
+        this$1.enableDrag = false;
+        this$1.children.push(child);
+      }
+    });
+    utils.insertArray(this._.objects, this._.objects.indexOf(this) + 1, 0, childs);
   };
 
-  // const remove = function(child) {
-  //   if(this.children.indexOf(child)) {
-  //     child.parent = null;
-  //     this.children.splice()
-  //   }
-  // }
+  var remove = function(child) {
+    var index = this.children.indexOf(child);
+    if(~index) {
+      child.parent = null;
+      this.children.splice(index, 1);
+      this._.objects = this._.objects.filter(function (o) { return o !== child; });
+      this._._objects = utils.reverse(this._.objects);
+    }
+  };
 
   return Object.assign({}, display(settings, _this), {
     type: 'group',
@@ -1738,7 +1762,7 @@ var group = function(settings, _this) {
     border: settings.border,
     children: [],
     add: add,
-    // remove,
+    remove: remove
   });
 };
 
@@ -1878,22 +1902,11 @@ OMG.prototype.imgReady = function imgReady () {
 };
 
 OMG.prototype.addChild = function addChild (child) {
-    var this$1 = this;
-
   // multi or single
   if(utils.isArr(child)) {
     this.objects = this.objects.concat(child);
-    child.forEach(function (c) {
-      // if type is group, push it's children to objects
-      if(c.children && c.children.length > 0) {
-        this$1.objects = this$1.objects.concat(c.children);
-      }
-    });
   } else {
     this.objects.push(child);
-    if(child.children && child.children.length > 0) {
-      this.objects = this.objects.concat(child.children);
-    }
   }
   this.objects.sort(function (a, b) {
     return a.zindex - b.zindex;

@@ -5,6 +5,7 @@
 import { display } from '../display';
 import { COLOR, LINE_WIDTH} from '../data/default';
 import { DefineScale, DefineMatrix } from '../data/define';
+// import getBounding from './bounding';
 import utils from '../utils/helpers';
 
 export default function(settings, _this) {
@@ -44,6 +45,7 @@ export default function(settings, _this) {
     canvas.restore();
   };
 
+  // update child's moveX and moveY
   const updateChild = function(child) {
     child.moveX += child.parent.x;
     child.moveY += child.parent.y;
@@ -52,24 +54,39 @@ export default function(settings, _this) {
     child.drag = false;
   };
 
-  const add = function(child) {
-    // update child's moveX and moveY
-    if(child.isShape) {
-      child.parent = this;
-      child.zindex = this.zindex + 0.1;
-      updateChild(child);
-      // group暂时不添加拖拽
-      this.enableDrag = false;
-      this.children.push(child);
+  /**
+   * @param {Array} childs 
+   */
+  const add = function(childs) {
+    if(!utils.isArr(childs)) {
+      throw 'The parameter must be an array';
     }
+    if(!~this._.objects.indexOf(this)) {
+      throw 'before add, please addChild the parent!';
+    }
+    childs.sort((a, b) => a.zindex - b.zindex);
+    childs.forEach(child => {
+      if(child.isShape) {
+        child.parent = this;
+        child.zindex = this.zindex + 0.1;
+        updateChild(child);
+        // group暂时不添加拖拽
+        this.enableDrag = false;
+        this.children.push(child);
+      }
+    });
+    utils.insertArray(this._.objects, this._.objects.indexOf(this) + 1, 0, childs);
   };
 
-  // const remove = function(child) {
-  //   if(this.children.indexOf(child)) {
-  //     child.parent = null;
-  //     this.children.splice()
-  //   }
-  // }
+  const remove = function(child) {
+    const index = this.children.indexOf(child);
+    if(~index) {
+      child.parent = null;
+      this.children.splice(index, 1);
+      this._.objects = this._.objects.filter(o => o !== child);
+      this._._objects = utils.reverse(this._.objects);
+    }
+  };
 
   return Object.assign({}, display(settings, _this), {
     type: 'group',
@@ -78,6 +95,6 @@ export default function(settings, _this) {
     border: settings.border,
     children: [],
     add,
-    // remove,
+    remove
   });
 }
