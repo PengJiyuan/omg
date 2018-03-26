@@ -1,9 +1,8 @@
 import utils from '../utils/helpers';
 
 /**
- * 
  * @param {Array}  points - point list
- * @return {Array} bounding points. left top, right top, right bottom, left bottom. 
+ * @return {Array} bounding points. left top, right top, right bottom, left bottom.
  */
 function getBounding(points, lineWidth) {
   const lw = lineWidth ? lineWidth : 0;

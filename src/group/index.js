@@ -55,7 +55,7 @@ export default function(settings, _this) {
   };
 
   /**
-   * @param {Array} childs 
+   * @param {Array} childs
    */
   const add = function(childs) {
     if(!utils.isArr(childs)) {

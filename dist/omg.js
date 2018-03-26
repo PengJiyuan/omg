@@ -844,9 +844,8 @@ var isPointInner = function(x, y) {
 };
 
 /**
- * 
  * @param {Array}  points - point list
- * @return {Array} bounding points. left top, right top, right bottom, left bottom. 
+ * @return {Array} bounding points. left top, right top, right bottom, left bottom.
  */
 function getBounding(points, lineWidth) {
   var lw = lineWidth ? lineWidth : 0;
@@ -1720,7 +1719,7 @@ var group = function(settings, _this) {
   };
 
   /**
-   * @param {Array} childs 
+   * @param {Array} childs
    */
   var add = function(childs) {
     var this$1 = this;
