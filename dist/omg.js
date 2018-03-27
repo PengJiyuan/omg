@@ -1170,6 +1170,11 @@ function display(settings, _this) {
 
     parent: null,
 
+    // Need to be updated points when added to the group for the second time?
+    forceUpdate: false,
+
+    updated: false,
+
     getBounding: function getBounding$1$$1() {
       return getBounding(this.scaled_matrix, this.scaled_lineWidth);
     }
@@ -1569,8 +1574,9 @@ var text = function(settings, _this) {
     var center = settings.center;
     var fontFamily = settings.fontFamily || 'arial,sans-serif';
     var fontSize = settings.fontSize || FONT_SIZE;
+    var fontWeight = settings.fontWeight || 400;
     var size = fontSize * scale;
-    var font = size + "px " + fontFamily;
+    var font = "normal " + fontWeight + " " + size + "px " + fontFamily;
 
     DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
 
@@ -1713,6 +1719,7 @@ var group = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
+
     canvas.beginPath();
     var matrix = this.scaled_matrix;
     var radius = this.radius;
@@ -1740,16 +1747,29 @@ var group = function(settings, _this) {
       canvas.stroke();
     }
     canvas.closePath();
+    var title = this.title;
+    var size = title.fontSize || 14;
+    var paddingTop = title.paddingTop || 4;
+    var paddingLeft = title.paddingLeft || 2;
+    if(title && typeof title === 'object') {
+      canvas.fillStyle = '#000';
+      canvas.textBaseline = 'top';
+      canvas.font = "normal 400 " + (size * scale) + "px " + (title.fontFamily || 'arial,sans-serif');
+      canvas.fillText(title.text, this.scaled_x + paddingLeft * scale, this.scaled_y + paddingTop * scale);
+    }
     canvas.restore();
   };
 
   // update child's moveX and moveY
   var updateChild = function(child) {
-    child.moveX += child.parent.x;
-    child.moveY += child.parent.y;
-    child.enableChangeIndex = false;
-    child.fixed = false;
-    child.drag = false;
+    if(!child.updated || child.forceUpdate) {
+      child.updated = true;
+      child.moveX += child.parent.x;
+      child.moveY += child.parent.y;
+      child.enableChangeIndex = false;
+      child.fixed = false;
+      child.drag = false;
+    }
   };
 
   /**
@@ -1795,6 +1815,7 @@ var group = function(settings, _this) {
     background: settings.background,
     border: settings.border,
     radius: settings.radius || RADIUS,
+    title: settings.title,
     children: [],
     add: add,
     remove: remove

@@ -172,6 +172,11 @@ export function display(settings, _this) {
 
     parent: null,
 
+    // Need to be updated points when added to the group for the second time?
+    forceUpdate: false,
+
+    updated: false,
+
     getBounding() {
       return getBounding(this.scaled_matrix, this.scaled_lineWidth);
     }

@@ -38,8 +38,9 @@ const stage = omg({
   element: document.getElementById('canvas'),
   width: 500,
   height: 500,
-  enableGlobalTranslate: true,
-  enableGlobalScale: true,
+  enableGlobalTranslate: true, // 开启全局拖拽
+  enableGlobalScale: true, // 开启全局缩放
+  position: 'absolute', // canvas.style.position
   images: [], // 提前加载的图片列表
   prepareImage: true // 提前加载图片
 });

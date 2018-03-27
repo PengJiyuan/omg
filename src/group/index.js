@@ -22,6 +22,7 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
+
     canvas.beginPath();
     const matrix = this.scaled_matrix;
     const radius = this.radius;
@@ -49,16 +50,29 @@ export default function(settings, _this) {
       canvas.stroke();
     }
     canvas.closePath();
+    const title = this.title;
+    const size = title.fontSize || 14;
+    const paddingTop = title.paddingTop || 4;
+    const paddingLeft = title.paddingLeft || 2;
+    if(title && typeof title === 'object') {
+      canvas.fillStyle = '#000';
+      canvas.textBaseline = 'top';
+      canvas.font = `normal 400 ${size * scale}px ${title.fontFamily || 'arial,sans-serif'}`;
+      canvas.fillText(title.text, this.scaled_x + paddingLeft * scale, this.scaled_y + paddingTop * scale);
+    }
     canvas.restore();
   };
 
   // update child's moveX and moveY
   const updateChild = function(child) {
-    child.moveX += child.parent.x;
-    child.moveY += child.parent.y;
-    child.enableChangeIndex = false;
-    child.fixed = false;
-    child.drag = false;
+    if(!child.updated || child.forceUpdate) {
+      child.updated = true;
+      child.moveX += child.parent.x;
+      child.moveY += child.parent.y;
+      child.enableChangeIndex = false;
+      child.fixed = false;
+      child.drag = false;
+    }
   };
 
   /**
@@ -102,6 +116,7 @@ export default function(settings, _this) {
     background: settings.background,
     border: settings.border,
     radius: settings.radius || RADIUS,
+    title: settings.title,
     children: [],
     add,
     remove

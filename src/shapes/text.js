@@ -31,8 +31,9 @@ export default function(settings, _this) {
     const center = settings.center;
     const fontFamily = settings.fontFamily || 'arial,sans-serif';
     const fontSize = settings.fontSize || FONT_SIZE;
+    const fontWeight = settings.fontWeight || 400;
     const size = fontSize * scale;
-    const font = `${size}px ${fontFamily}`;
+    const font = `normal ${fontWeight} ${size}px ${fontFamily}`;
 
     DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
 
