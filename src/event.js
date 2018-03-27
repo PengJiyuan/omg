@@ -10,7 +10,7 @@ export class Event {
 
   getPos(e) {
     const ev = e || event;
-    const [ x, y ] = [ ev.pageX - this._.element.offsetLeft, ev.pageY - this._.element.offsetTop ];
+    const [ x, y ] = [ ev.offsetX, ev.offsetY ];
     return { x, y };
   }
 
@@ -210,8 +210,6 @@ export class Event {
         const mx = that.getPos(e_move).x;
         const my = that.getPos(e_move).y;
 
-        whichIn[0].originMoveX = whichIn[0].originMoveX + mx - that.cacheX;
-        whichIn[0].originMoveY = whichIn[0].originMoveY + my - that.cacheY;
         whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
         whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
 

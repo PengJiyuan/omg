@@ -73,7 +73,7 @@ var utils = {
 
   getPos: function getPos(e) {
     var ev = e || event;
-    var ref = [ ev.pageX, ev.pageY ];
+    var ref = [ ev.offsetX, ev.offsetY ];
     var x = ref[0];
     var y = ref[1];
     return {x: x, y: y};
@@ -153,7 +153,7 @@ var Event = function Event(_this) {
 
 Event.prototype.getPos = function getPos (e) {
   var ev = e || event;
-  var ref = [ ev.pageX - this._.element.offsetLeft, ev.pageY - this._.element.offsetTop ];
+  var ref = [ ev.offsetX, ev.offsetY ];
     var x = ref[0];
     var y = ref[1];
   return { x: x, y: y };
@@ -355,8 +355,6 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
       var mx = that.getPos(e_move).x;
       var my = that.getPos(e_move).y;
 
-      whichIn[0].originMoveX = whichIn[0].originMoveX + mx - that.cacheX;
-      whichIn[0].originMoveY = whichIn[0].originMoveY + my - that.cacheY;
       whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
       whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
 

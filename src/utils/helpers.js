@@ -3,7 +3,7 @@ export default {
 
   getPos(e) {
     const ev = e || event;
-    const [ x, y ] = [ ev.pageX, ev.pageY ];
+    const [ x, y ] = [ ev.offsetX, ev.offsetY ];
     return {x, y};
   },
 
