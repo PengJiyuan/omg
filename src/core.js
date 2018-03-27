@@ -8,6 +8,7 @@ import utils from './utils/helpers';
 import shapes from './shapes/index';
 import group from './group/index';
 import { Tween } from './tween/index';
+import clip from './clip/index';
 import * as ext from './extend/export';
 
 export class OMG {
@@ -94,6 +95,8 @@ export class OMG {
      *               Export functions to define scale and drag events...
      */
     this.ext = ext;
+
+    this.clip = clip;
 
     // enable global drag event.
     this.enableGlobalTranslate = config.enableGlobalTranslate || false;

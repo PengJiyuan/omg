@@ -1371,6 +1371,12 @@ var image = function(settings, _this) {
 var COLOR = '#555';
 var LINE_WIDTH = 1;
 var FONT_SIZE = 14;
+var RADIUS = {
+  tl: 0,
+  tr: 0,
+  bl: 0,
+  br: 0
+};
 
 function clip(_this, canvas, scale) {
   if(_this.cliping) {
@@ -1501,11 +1507,18 @@ var rectangle = function(settings, _this) {
     clip(this, canvas, scale);
 
     canvas.beginPath();
+    var matrix = this.scaled_matrix;
+    var radius = this.radius;
 
-    this.scaled_matrix.forEach(function (point, i) {
-      i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
-    });
-    canvas.lineTo(this.scaled_matrix[0][0], this.scaled_matrix[0][1]);
+    canvas.moveTo(matrix[0][0] + radius.tl * scale, matrix[0][1]);
+    canvas.lineTo(matrix[1][0] - radius.tr * scale, matrix[0][1]);
+    canvas.quadraticCurveTo(matrix[1][0], matrix[0][1], matrix[1][0], matrix[0][1] + radius.tr * scale);
+    canvas.lineTo(matrix[1][0], matrix[2][1] - radius.br * scale);
+    canvas.quadraticCurveTo(matrix[1][0], matrix[2][1], matrix[1][0] - radius.br * scale, matrix[2][1]);
+    canvas.lineTo(matrix[0][0] + radius.bl * scale, matrix[2][1]);
+    canvas.quadraticCurveTo(matrix[0][0], matrix[2][1], matrix[0][0], matrix[2][1] - radius.bl * scale);
+    canvas.lineTo(matrix[0][0], matrix[0][1] + radius.tl * scale);
+    canvas.quadraticCurveTo(matrix[0][0], matrix[0][1], matrix[0][0] + radius.tl * scale, matrix[0][1]);
 
     if(this.style !== 'stroke') {
       canvas.fillStyle = this.color || COLOR;
@@ -1522,7 +1535,8 @@ var rectangle = function(settings, _this) {
   return Object.assign({}, display(settings, _this), {
     type: 'polygon',
     draw: draw,
-    rotate: settings.rotate || 0
+    rotate: !settings.radius ? settings.rotate : 0,
+    radius: settings.radius || RADIUS
   });
 };
 
@@ -1873,6 +1887,8 @@ var OMG = function OMG(config) {
    *             Export functions to define scale and drag events...
    */
   this.ext = ext;
+
+  this.clip = clip;
 
   // enable global drag event.
   this.enableGlobalTranslate = config.enableGlobalTranslate || false;

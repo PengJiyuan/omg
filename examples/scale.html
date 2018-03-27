@@ -56,7 +56,13 @@
     width: 100,
     height: 100,
     zindex: 2,
-    rotate: 45,
+    rotate: 20, // not work when define radius
+    radius: {
+      tl: 6,
+      tr: 6,
+      bl: 6,
+      br: 6
+    },
     color: '#ef8376'
   }).on('mouseenter mousemove', function() {
     world.element.style.cursor = 'pointer';
@@ -68,7 +74,7 @@
     world.redraw();
   }).config({
     drag: true,
-    cliping: true
+    // cliping: true
   });
 
   var arc = world.arc({
@@ -191,15 +197,15 @@
     }
   });
 
-  rect1.animateTo({
-    boundingWidth: rect1.getBounding().w
-  }, {
-    duration: 1500,
-    easing: 'cubicInOut',
-    onFinish: function() {
-     polygon.cliping = false; 
-    }
-  }); 
+  // rect1.animateTo({
+  //   boundingWidth: rect1.getBounding().w
+  // }, {
+  //   duration: 1500,
+  //   easing: 'cubicInOut',
+  //   onFinish: function() {
+  //    polygon.cliping = false; 
+  //   }
+  // }); 
 
 </script>
 </body>
