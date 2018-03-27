@@ -87,7 +87,8 @@ export class OMG {
 
     autoscale([this.element], {
       width: this.width,
-      height: this.height
+      height: this.height,
+      position: config.position || 'relative'
     });
 
     /**
@@ -307,13 +308,19 @@ export class OMG {
       this.height = opt.height();
       autoscale([this.element], {
         width: this.width,
-        height: this.height
+        height: this.height,
+        position: 'absolute'
       });
+      this.redraw();
     };
     if(!window.onresize) {
-      window.onresize = () => {
-        opt.resize && opt.resize(update);
-      };
+      utils.bind(window, 'resize', () => {
+        if(opt.resize) {
+          opt.resize(update);
+        } else {
+          update();
+        }
+      });
     }
   }
 

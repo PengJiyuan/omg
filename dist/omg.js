@@ -656,6 +656,7 @@ var autoscale = function (canvasList, opt) {
 
   canvasList.forEach(function (canvas) {
     ctx = canvas.getContext('2d');
+    canvas.style.position = opt.position;
     canvas.style.width = opt.width + 'px';
     canvas.style.height = opt.height + 'px';
     canvas.width = opt.width * ratio;
@@ -1879,7 +1880,8 @@ var OMG = function OMG(config) {
 
   autoscale([this.element], {
     width: this.width,
-    height: this.height
+    height: this.height,
+    position: config.position || 'relative'
   });
 
   /**
@@ -2107,13 +2109,19 @@ OMG.prototype.resize = function resize (opt) {
     this$1.height = opt.height();
     autoscale([this$1.element], {
       width: this$1.width,
-      height: this$1.height
+      height: this$1.height,
+      position: 'absolute'
     });
+    this$1.redraw();
   };
   if(!window.onresize) {
-    window.onresize = function () {
-      opt.resize && opt.resize(update);
-    };
+    utils.bind(window, 'resize', function () {
+      if(opt.resize) {
+        opt.resize(update);
+      } else {
+        update();
+      }
+    });
   }
 };
 
