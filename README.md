@@ -110,6 +110,13 @@ const rect = stage.rectangle({
   y: 0,
   width: 110,
   height: 110,
+  rotate: 45, // not work when define radius
+  radius: {
+    tl: 6, // top left
+    tr: 6, // top right
+    bl: 6, // bottom left
+    br: 6 // bottom right
+  },
   color: '#514022'
 });
 ```
