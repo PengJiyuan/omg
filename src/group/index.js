@@ -3,7 +3,7 @@
  */
 
 import { display } from '../display';
-import { COLOR, LINE_WIDTH} from '../data/default';
+import { COLOR, LINE_WIDTH, RADIUS} from '../data/default';
 import { DefineScale, DefineMatrix } from '../data/define';
 // import getBounding from './bounding';
 import utils from '../utils/helpers';
@@ -23,11 +23,18 @@ export default function(settings, _this) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     canvas.beginPath();
+    const matrix = this.scaled_matrix;
+    const radius = this.radius;
 
-    this.scaled_matrix.forEach((point, i) => {
-      i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
-    });
-    canvas.lineTo(this.scaled_matrix[0][0], this.scaled_matrix[0][1]);
+    canvas.moveTo(matrix[0][0] + radius.tl * scale, matrix[0][1]);
+    canvas.lineTo(matrix[1][0] - radius.tr * scale, matrix[0][1]);
+    canvas.quadraticCurveTo(matrix[1][0], matrix[0][1], matrix[1][0], matrix[0][1] + radius.tr * scale);
+    canvas.lineTo(matrix[1][0], matrix[2][1] - radius.br * scale);
+    canvas.quadraticCurveTo(matrix[1][0], matrix[2][1], matrix[1][0] - radius.br * scale, matrix[2][1]);
+    canvas.lineTo(matrix[0][0] + radius.bl * scale, matrix[2][1]);
+    canvas.quadraticCurveTo(matrix[0][0], matrix[2][1], matrix[0][0], matrix[2][1] - radius.bl * scale);
+    canvas.lineTo(matrix[0][0], matrix[0][1] + radius.tl * scale);
+    canvas.quadraticCurveTo(matrix[0][0], matrix[0][1], matrix[0][0] + radius.tl * scale, matrix[0][1]);
 
     if(utils.isObj(this.background)) {
       const bg = this.background;
@@ -76,6 +83,7 @@ export default function(settings, _this) {
       }
     });
     utils.insertArray(this._.objects, this._.objects.indexOf(this) + 1, 0, childs);
+    this._._objects = utils.reverse(this._.objects);
   };
 
   const remove = function(child) {
@@ -93,6 +101,7 @@ export default function(settings, _this) {
     draw,
     background: settings.background,
     border: settings.border,
+    radius: settings.radius || RADIUS,
     children: [],
     add,
     remove

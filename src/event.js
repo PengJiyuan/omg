@@ -127,7 +127,20 @@ export class Event {
       });
 
     } else {
+      // mouseleave handler
+      const handleMoveOut = item => {
+        item.hasEnter && item.events.forEach(i => {
+          if(i.eventType === 'mouseleave') {
+            i.callback && i.callback(item);
+          }
+        });
+        item.hasEnter = false;
+      };
       // normal mousemove
+      // Determine whether the mouse is removed from the shape and trigger mouseleave handler
+      that._._objects.some(item => {
+        return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
+      });
       if(movedOn && movedOn.length > 0) {
         movedOn[0].events && movedOn[0].events.forEach(i => {
           if(i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
@@ -138,20 +151,6 @@ export class Event {
           }
         });
       }
-      // mouseleave handler
-      const handleMoveOut = item => {
-        item.hasEnter && item.events.forEach(i => {
-          if(i.eventType === 'mouseleave') {
-            i.callback && i.callback(item);
-          }
-        });
-        item.hasEnter = false;
-      };
-
-      // Determine whether the mouse is removed from the shape and trigger mouseleave handler
-      that._._objects.some(item => {
-        return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
-      });
     }
 
   }

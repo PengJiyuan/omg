@@ -44,6 +44,12 @@
       padding: 10
     },
     zindex: 10
+  }).on('mouseenter', function(cur) {
+    cur.background.color = '#444';
+    world.redraw();
+  }).on('mouseleave', function(cur) {
+    cur.background.color = '#000';
+    world.redraw();
   });
 
   world.addChild(group);
@@ -57,7 +63,7 @@
       height: 30,
       color: '#bbb'
     }).on('mouseenter', function(cur) {
-      cur.color = '#ccc';
+      cur.color = '#ef4';
       world.redraw();
     }).on('mouseleave', function(cur) {
       cur.color = '#bbb';
