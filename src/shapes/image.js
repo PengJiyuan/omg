@@ -20,26 +20,28 @@ export default function(settings, _this) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     try {
-      if(this.sliceWidth && this.sliceHeight) {
-        canvas.drawImage(
-          _this.loader.getImg(src),
-          this.sliceX,
-          this.sliceY,
-          this.sliceWidth,
-          this.sliceHeight,
-          this.scaled_x,
-          this.scaled_y,
-          this.scaled_width,
-          this.scaled_height
-        );
-      } else {
-        canvas.drawImage(
-          _this.loader.getImg(src),
-          this.scaled_x,
-          this.scaled_y,
-          this.scaled_width,
-          this.scaled_height
-        );
+      if(!this.hide) {
+        if (this.sliceWidth && this.sliceHeight) {
+          canvas.drawImage(
+            _this.loader.getImg(src),
+            this.sliceX,
+            this.sliceY,
+            this.sliceWidth,
+            this.sliceHeight,
+            this.scaled_x,
+            this.scaled_y,
+            this.scaled_width,
+            this.scaled_height
+          );
+        } else {
+          canvas.drawImage(
+            _this.loader.getImg(src),
+            this.scaled_x,
+            this.scaled_y,
+            this.scaled_width,
+            this.scaled_height
+          );
+        }
       }
     } catch (error) {
       throw new Error('The picture is not loaded successfully, please check the picture url : ' + src);

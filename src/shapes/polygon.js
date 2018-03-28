@@ -17,26 +17,28 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    // clip path
-    canvas.beginPath();
-    clip(this, canvas, scale);
-    canvas.closePath();
-    canvas.beginPath();
+    if(!this.hide) {
+      // clip path
+      canvas.beginPath();
+      clip(this, canvas, scale);
+      canvas.closePath();
+      canvas.beginPath();
 
-    matrix.forEach((point, i) => {
-      i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
-    });
-    canvas.lineTo(matrix[0][0], matrix[0][1]);
+      matrix.forEach((point, i) => {
+        i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
+      });
+      canvas.lineTo(matrix[0][0], matrix[0][1]);
 
-    if(this.style === 'fill') {
-      canvas.fillStyle = this.color;
-      canvas.fill();
-    } else {
-      canvas.strokeStyle = this.color;
-      canvas.lineWidth = this.scaled_lineWidth;
-      canvas.stroke();
+      if(this.style === 'fill') {
+        canvas.fillStyle = this.color;
+        canvas.fill();
+      } else {
+        canvas.strokeStyle = this.color;
+        canvas.lineWidth = this.scaled_lineWidth;
+        canvas.stroke();
+      }
+      canvas.closePath();
     }
-    canvas.closePath();
     canvas.restore();
   };
 

@@ -100,14 +100,20 @@ export default function(settings, _this) {
     this._._objects = utils.reverse(this._.objects);
   };
 
-  const remove = function(child) {
-    const index = this.children.indexOf(child);
-    if(~index) {
-      child.parent = null;
-      this.children.splice(index, 1);
-      this._.objects = this._.objects.filter(o => o !== child);
-      this._._objects = utils.reverse(this._.objects);
+  const remove = function(childs) {
+    let list = childs;
+    if(!utils.isArr(childs)) {
+      list = [childs];
     }
+    list.forEach(child => {
+      const index = this.children.indexOf(child);
+      if(~index) {
+        child.parent = null;
+        this.children.splice(index, 1);
+        this._.objects = this._.objects.filter(o => o !== child);
+        this._._objects = utils.reverse(this._.objects);
+      }
+    });
   };
 
   return Object.assign({}, display(settings, _this), {

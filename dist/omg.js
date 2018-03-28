@@ -1109,6 +1109,7 @@ Display.prototype.animateTo = function animateTo (keys, configs) {
     var this$1 = this;
     if ( configs === void 0 ) configs = {};
 
+  this.animating = true;
   var data = {};
   var to = keys;
   var from = {};
@@ -1128,6 +1129,10 @@ Display.prototype.animateTo = function animateTo (keys, configs) {
       data[key$1] = configs[key$1];
     }
   }
+  data.onFinish = function () {
+    this$1.animating = false;
+    configs.onFinish && configs.onFinish(keys);
+  };
   var tween = new Tween(data);
   this._.animationList.push(tween);
   this._.tick();
@@ -1169,6 +1174,10 @@ function display(settings, _this) {
     isShape: true,
 
     parent: null,
+
+    hide: settings.hide,
+
+    animating: false,
 
     // Need to be updated points when added to the group for the second time?
     forceUpdate: false,
@@ -1282,27 +1291,29 @@ var arc = function(settings, _this) {
     }
     canvas.translate(this.scaled_moveX, this.scaled_moveY);
     canvas.translate(this.scaled_x, this.scaled_y);
-    canvas.beginPath();
-    if(!isNaN(this.startAngle) && !isNaN(this.endAngle)) {
-      canvas.arc(0, 0, this.scaled_radius, Math.PI / 180 * this.startAngle, Math.PI / 180 * this.endAngle, false);
-      canvas.save();
-      canvas.rotate(Math.PI / 180 * this.endAngle);
-      canvas.moveTo(this.scaled_radius, 0);
-      canvas.lineTo(0, 0);
-      canvas.restore();
-      canvas.rotate(Math.PI / 180 * this.startAngle);
-      canvas.lineTo(this.scaled_radius, 0);
-    } else {
-      canvas.arc(0, 0, this.scaled_radius, 0, Math.PI*2);
+    if(!this.hide) {
+      canvas.beginPath();
+      if(!isNaN(this.startAngle) && !isNaN(this.endAngle)) {
+        canvas.arc(0, 0, this.scaled_radius, Math.PI / 180 * this.startAngle, Math.PI / 180 * this.endAngle, false);
+        canvas.save();
+        canvas.rotate(Math.PI / 180 * this.endAngle);
+        canvas.moveTo(this.scaled_radius, 0);
+        canvas.lineTo(0, 0);
+        canvas.restore();
+        canvas.rotate(Math.PI / 180 * this.startAngle);
+        canvas.lineTo(this.scaled_radius, 0);
+      } else {
+        canvas.arc(0, 0, this.scaled_radius, 0, Math.PI*2);
+      }
+      if(this.style === 'fill') {
+        canvas.fillStyle = this.color;
+        canvas.fill();
+      } else {
+        canvas.strokeStyle = this.color;
+        canvas.stroke();
+      }
+      canvas.closePath();
     }
-    if(this.style === 'fill') {
-      canvas.fillStyle = this.color;
-      canvas.fill();
-    } else {
-      canvas.strokeStyle = this.color;
-      canvas.stroke();
-    }
-    canvas.closePath();
     canvas.restore();
   };
 
@@ -1336,26 +1347,28 @@ var image = function(settings, _this) {
       canvas.translate(-_this.transX, -_this.transY);
     }
     try {
-      if(this.sliceWidth && this.sliceHeight) {
-        canvas.drawImage(
-          _this.loader.getImg(src),
-          this.sliceX,
-          this.sliceY,
-          this.sliceWidth,
-          this.sliceHeight,
-          this.scaled_x,
-          this.scaled_y,
-          this.scaled_width,
-          this.scaled_height
-        );
-      } else {
-        canvas.drawImage(
-          _this.loader.getImg(src),
-          this.scaled_x,
-          this.scaled_y,
-          this.scaled_width,
-          this.scaled_height
-        );
+      if(!this.hide) {
+        if (this.sliceWidth && this.sliceHeight) {
+          canvas.drawImage(
+            _this.loader.getImg(src),
+            this.sliceX,
+            this.sliceY,
+            this.sliceWidth,
+            this.sliceHeight,
+            this.scaled_x,
+            this.scaled_y,
+            this.scaled_width,
+            this.scaled_height
+          );
+        } else {
+          canvas.drawImage(
+            _this.loader.getImg(src),
+            this.scaled_x,
+            this.scaled_y,
+            this.scaled_width,
+            this.scaled_height
+          );
+        }
       }
     } catch (error) {
       throw new Error('The picture is not loaded successfully, please check the picture url : ' + src);
@@ -1423,61 +1436,63 @@ var line = function(settings, _this) {
     // clip path
     clip(this, canvas, scale);
 
-    canvas.beginPath();
-    canvas.lineWidth = this.scaled_lineWidth;
-    canvas.strokeStyle = this.color;
-    canvas.lineDashOffset = this.offset;
-    if(this.dash && utils.isArr(this.dash)) {
-      canvas.setLineDash(this.dash);
-    }
-    if(lineCap) {
-      canvas.lineCap = lineCap;
-    }
-    if(lineJoin) {
-      canvas.lineJoin = lineJoin;
-    }
-    if(smooth) {
-      var getCtrlPoint = function(ps, i, a, b) {
-        var pAx, pAy, pBx, pBy;
-        if(!a || !b) {
-          a = 0.25;
-          b = 0.25;
-        }
-        if( i < 1) {
-          pAx = ps[0][0] + (ps[1][0] - ps[0][0]) * a;
-          pAy = ps[0][1] + (ps[1][1] - ps[0][1]) * a;
-        } else {
-          pAx = ps[i][0] + (ps[i + 1][0] - ps[i - 1][0])*a;
-          pAy = ps[i][1] + (ps[i + 1][1] - ps[i - 1][1])*a;
-        }
-        if(i > ps.length-3) {
-          var last = ps.length - 1;
-          pBx = ps[last][0] - (ps[last][0] - ps[last - 1][0]) * b;
-          pBy = ps[last][1] - (ps[last][1] - ps[last - 1][1]) * b;
-        } else {
-          pBx = ps[i + 1][0] - (ps[i + 2][0] - ps[i][0]) * b;
-          pBy = ps[i + 1][1] - (ps[i + 2][1] - ps[i][1]) * b;
-        }
-        return {
-          pA:{x: pAx, y: pAy},
-          pB:{x: pBx, y: pBy}
-        };
-      };
-      for(var i = 0; i < matrix.length; i++) {
-        if(i === 0) {
-          canvas.moveTo(matrix[i][0], matrix[i][1]);
-        } else {
-          var cMatrix = getCtrlPoint(matrix, i - 1);
-          canvas.bezierCurveTo(cMatrix.pA.x, cMatrix.pA.y, cMatrix.pB.x, cMatrix.pB.y, matrix[i].x, matrix[i].y);
-        }
+    if(!this.hide) {
+      canvas.beginPath();
+      canvas.lineWidth = this.scaled_lineWidth;
+      canvas.strokeStyle = this.color;
+      canvas.lineDashOffset = this.offset;
+      if(this.dash && utils.isArr(this.dash)) {
+        canvas.setLineDash(this.dash);
       }
-    } else {
-      matrix.forEach(function(point, i) {
-        i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
-      });
+      if(lineCap) {
+        canvas.lineCap = lineCap;
+      }
+      if(lineJoin) {
+        canvas.lineJoin = lineJoin;
+      }
+      if(smooth) {
+        var getCtrlPoint = function(ps, i, a, b) {
+          var pAx, pAy, pBx, pBy;
+          if(!a || !b) {
+            a = 0.25;
+            b = 0.25;
+          }
+          if( i < 1) {
+            pAx = ps[0][0] + (ps[1][0] - ps[0][0]) * a;
+            pAy = ps[0][1] + (ps[1][1] - ps[0][1]) * a;
+          } else {
+            pAx = ps[i][0] + (ps[i + 1][0] - ps[i - 1][0])*a;
+            pAy = ps[i][1] + (ps[i + 1][1] - ps[i - 1][1])*a;
+          }
+          if(i > ps.length-3) {
+            var last = ps.length - 1;
+            pBx = ps[last][0] - (ps[last][0] - ps[last - 1][0]) * b;
+            pBy = ps[last][1] - (ps[last][1] - ps[last - 1][1]) * b;
+          } else {
+            pBx = ps[i + 1][0] - (ps[i + 2][0] - ps[i][0]) * b;
+            pBy = ps[i + 1][1] - (ps[i + 2][1] - ps[i][1]) * b;
+          }
+          return {
+            pA:{x: pAx, y: pAy},
+            pB:{x: pBx, y: pBy}
+          };
+        };
+        for(var i = 0; i < matrix.length; i++) {
+          if(i === 0) {
+            canvas.moveTo(matrix[i][0], matrix[i][1]);
+          } else {
+            var cMatrix = getCtrlPoint(matrix, i - 1);
+            canvas.bezierCurveTo(cMatrix.pA.x, cMatrix.pA.y, cMatrix.pB.x, cMatrix.pB.y, matrix[i].x, matrix[i].y);
+          }
+        }
+      } else {
+        matrix.forEach(function(point, i) {
+          i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
+        });
+      }
+      canvas.stroke();
+      canvas.closePath();
     }
-    canvas.stroke();
-    canvas.closePath();
     canvas.restore();
   };
 
@@ -1511,29 +1526,31 @@ var rectangle = function(settings, _this) {
     // clip path
     clip(this, canvas, scale);
 
-    canvas.beginPath();
-    var matrix = this.scaled_matrix;
-    var radius = this.radius;
+    if(!this.hide) {
+      canvas.beginPath();
+      var matrix = this.scaled_matrix;
+      var radius = this.radius;
 
-    canvas.moveTo(matrix[0][0] + radius.tl * scale, matrix[0][1]);
-    canvas.lineTo(matrix[1][0] - radius.tr * scale, matrix[0][1]);
-    canvas.quadraticCurveTo(matrix[1][0], matrix[0][1], matrix[1][0], matrix[0][1] + radius.tr * scale);
-    canvas.lineTo(matrix[1][0], matrix[2][1] - radius.br * scale);
-    canvas.quadraticCurveTo(matrix[1][0], matrix[2][1], matrix[1][0] - radius.br * scale, matrix[2][1]);
-    canvas.lineTo(matrix[0][0] + radius.bl * scale, matrix[2][1]);
-    canvas.quadraticCurveTo(matrix[0][0], matrix[2][1], matrix[0][0], matrix[2][1] - radius.bl * scale);
-    canvas.lineTo(matrix[0][0], matrix[0][1] + radius.tl * scale);
-    canvas.quadraticCurveTo(matrix[0][0], matrix[0][1], matrix[0][0] + radius.tl * scale, matrix[0][1]);
+      canvas.moveTo(matrix[0][0] + radius.tl * scale, matrix[0][1]);
+      canvas.lineTo(matrix[1][0] - radius.tr * scale, matrix[0][1]);
+      canvas.quadraticCurveTo(matrix[1][0], matrix[0][1], matrix[1][0], matrix[0][1] + radius.tr * scale);
+      canvas.lineTo(matrix[1][0], matrix[2][1] - radius.br * scale);
+      canvas.quadraticCurveTo(matrix[1][0], matrix[2][1], matrix[1][0] - radius.br * scale, matrix[2][1]);
+      canvas.lineTo(matrix[0][0] + radius.bl * scale, matrix[2][1]);
+      canvas.quadraticCurveTo(matrix[0][0], matrix[2][1], matrix[0][0], matrix[2][1] - radius.bl * scale);
+      canvas.lineTo(matrix[0][0], matrix[0][1] + radius.tl * scale);
+      canvas.quadraticCurveTo(matrix[0][0], matrix[0][1], matrix[0][0] + radius.tl * scale, matrix[0][1]);
 
-    if(this.style !== 'stroke') {
-      canvas.fillStyle = this.color || COLOR;
-      canvas.fill();
-    } else {
-      canvas.strokeStyle = this.color || COLOR;
-      canvas.lineWidth = this.lineWidth;
-      canvas.stroke();
+      if(this.style !== 'stroke') {
+        canvas.fillStyle = this.color || COLOR;
+        canvas.fill();
+      } else {
+        canvas.strokeStyle = this.color || COLOR;
+        canvas.lineWidth = this.lineWidth;
+        canvas.stroke();
+      }
+      canvas.closePath();
     }
-    canvas.closePath();
     canvas.restore();
   };
 
@@ -1587,45 +1604,48 @@ var text = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    if(this.background) {
-      if(this.background.color) {
-        canvas.save();
-        canvas.fillStyle = this.background.color;
-        canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
-        canvas.restore();
-      } else if(this.background.img) {
-        canvas.drawImage(
-          _this.loader.getImg(this.background.img),
-          this.scaled_x,
-          this.scaled_y,
-          this.scaled_width,
-          this.scaled_height
-        );
+
+    if(!this.hide) {
+      if(this.background) {
+        if(this.background.color) {
+          canvas.save();
+          canvas.fillStyle = this.background.color;
+          canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
+          canvas.restore();
+        } else if(this.background.img) {
+          canvas.drawImage(
+            _this.loader.getImg(this.background.img),
+            this.scaled_x,
+            this.scaled_y,
+            this.scaled_width,
+            this.scaled_height
+          );
+        }
       }
-    }
-    canvas.font = font;
-    canvas.textBaseline = 'top';
+      canvas.font = font;
+      canvas.textBaseline = 'top';
 
-    textWidth = canvas.measureText(this.text).width;
-    ellipsisText = text_ellipsis(canvas, this.text, this.scaled_width - 8);
+      textWidth = canvas.measureText(this.text).width;
+      ellipsisText = text_ellipsis(canvas, this.text, this.scaled_width - 8);
 
-    if(this.style === 'stroke') {
-      canvas.strokeStyle = this.color;
-      if(center) {
-        if(textWidth < this.scaled_width - 8) {
-          canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+      if(this.style === 'stroke') {
+        canvas.strokeStyle = this.color;
+        if(center) {
+          if(textWidth < this.scaled_width - 8) {
+            canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+          }
+        } else {
+          canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
-      }
-    } else {
-      canvas.fillStyle = this.color;
-      if(center) {
-        if(textWidth < this.scaled_width - 8) {
-          canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+        canvas.fillStyle = this.color;
+        if(center) {
+          if(textWidth < this.scaled_width - 8) {
+            canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+          }
+        } else {
+          canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
         }
-      } else {
-        canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
       }
     }
     canvas.restore();
@@ -1657,26 +1677,28 @@ var polygon = function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    // clip path
-    canvas.beginPath();
-    clip(this, canvas, scale);
-    canvas.closePath();
-    canvas.beginPath();
+    if(!this.hide) {
+      // clip path
+      canvas.beginPath();
+      clip(this, canvas, scale);
+      canvas.closePath();
+      canvas.beginPath();
 
-    matrix.forEach(function (point, i) {
-      i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
-    });
-    canvas.lineTo(matrix[0][0], matrix[0][1]);
+      matrix.forEach(function (point, i) {
+        i === 0 ? canvas.moveTo(point[0], point[1]) : canvas.lineTo(point[0], point[1]);
+      });
+      canvas.lineTo(matrix[0][0], matrix[0][1]);
 
-    if(this.style === 'fill') {
-      canvas.fillStyle = this.color;
-      canvas.fill();
-    } else {
-      canvas.strokeStyle = this.color;
-      canvas.lineWidth = this.scaled_lineWidth;
-      canvas.stroke();
+      if(this.style === 'fill') {
+        canvas.fillStyle = this.color;
+        canvas.fill();
+      } else {
+        canvas.strokeStyle = this.color;
+        canvas.lineWidth = this.scaled_lineWidth;
+        canvas.stroke();
+      }
+      canvas.closePath();
     }
-    canvas.closePath();
     canvas.restore();
   };
 
@@ -1799,14 +1821,22 @@ var group = function(settings, _this) {
     this._._objects = utils.reverse(this._.objects);
   };
 
-  var remove = function(child) {
-    var index = this.children.indexOf(child);
-    if(~index) {
-      child.parent = null;
-      this.children.splice(index, 1);
-      this._.objects = this._.objects.filter(function (o) { return o !== child; });
-      this._._objects = utils.reverse(this._.objects);
+  var remove = function(childs) {
+    var this$1 = this;
+
+    var list = childs;
+    if(!utils.isArr(childs)) {
+      list = [childs];
     }
+    list.forEach(function (child) {
+      var index = this$1.children.indexOf(child);
+      if(~index) {
+        child.parent = null;
+        this$1.children.splice(index, 1);
+        this$1._.objects = this$1._.objects.filter(function (o) { return o !== child; });
+        this$1._._objects = utils.reverse(this$1._.objects);
+      }
+    });
   };
 
   return Object.assign({}, display(settings, _this), {

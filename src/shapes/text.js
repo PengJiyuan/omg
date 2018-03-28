@@ -44,45 +44,48 @@ export default function(settings, _this) {
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
-    if(this.background) {
-      if(this.background.color) {
-        canvas.save();
-        canvas.fillStyle = this.background.color;
-        canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
-        canvas.restore();
-      } else if(this.background.img) {
-        canvas.drawImage(
-          _this.loader.getImg(this.background.img),
-          this.scaled_x,
-          this.scaled_y,
-          this.scaled_width,
-          this.scaled_height
-        );
+
+    if(!this.hide) {
+      if(this.background) {
+        if(this.background.color) {
+          canvas.save();
+          canvas.fillStyle = this.background.color;
+          canvas.fillRect(this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height);
+          canvas.restore();
+        } else if(this.background.img) {
+          canvas.drawImage(
+            _this.loader.getImg(this.background.img),
+            this.scaled_x,
+            this.scaled_y,
+            this.scaled_width,
+            this.scaled_height
+          );
+        }
       }
-    }
-    canvas.font = font;
-    canvas.textBaseline = 'top';
+      canvas.font = font;
+      canvas.textBaseline = 'top';
 
-    textWidth = canvas.measureText(this.text).width;
-    ellipsisText = text_ellipsis(canvas, this.text, this.scaled_width - 8);
+      textWidth = canvas.measureText(this.text).width;
+      ellipsisText = text_ellipsis(canvas, this.text, this.scaled_width - 8);
 
-    if(this.style === 'stroke') {
-      canvas.strokeStyle = this.color;
-      if(center) {
-        if(textWidth < this.scaled_width - 8) {
-          canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+      if(this.style === 'stroke') {
+        canvas.strokeStyle = this.color;
+        if(center) {
+          if(textWidth < this.scaled_width - 8) {
+            canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+          }
+        } else {
+          canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
         }
       } else {
-        canvas.strokeText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
-      }
-    } else {
-      canvas.fillStyle = this.color;
-      if(center) {
-        if(textWidth < this.scaled_width - 8) {
-          canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+        canvas.fillStyle = this.color;
+        if(center) {
+          if(textWidth < this.scaled_width - 8) {
+            canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft + (this.scaled_width - textWidth - 8)/2, this.scaled_y + this.scaled_paddingTop);
+          }
+        } else {
+          canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
         }
-      } else {
-        canvas.fillText(ellipsisText, this.scaled_x + this.scaled_paddingLeft, this.scaled_y + this.scaled_paddingTop);
       }
     }
     canvas.restore();

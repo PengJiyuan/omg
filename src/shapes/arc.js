@@ -14,27 +14,29 @@ export default function(settings, _this) {
     }
     canvas.translate(this.scaled_moveX, this.scaled_moveY);
     canvas.translate(this.scaled_x, this.scaled_y);
-    canvas.beginPath();
-    if(!isNaN(this.startAngle) && !isNaN(this.endAngle)) {
-      canvas.arc(0, 0, this.scaled_radius, Math.PI / 180 * this.startAngle, Math.PI / 180 * this.endAngle, false);
-      canvas.save();
-      canvas.rotate(Math.PI / 180 * this.endAngle);
-      canvas.moveTo(this.scaled_radius, 0);
-      canvas.lineTo(0, 0);
-      canvas.restore();
-      canvas.rotate(Math.PI / 180 * this.startAngle);
-      canvas.lineTo(this.scaled_radius, 0);
-    } else {
-      canvas.arc(0, 0, this.scaled_radius, 0, Math.PI*2);
+    if(!this.hide) {
+      canvas.beginPath();
+      if(!isNaN(this.startAngle) && !isNaN(this.endAngle)) {
+        canvas.arc(0, 0, this.scaled_radius, Math.PI / 180 * this.startAngle, Math.PI / 180 * this.endAngle, false);
+        canvas.save();
+        canvas.rotate(Math.PI / 180 * this.endAngle);
+        canvas.moveTo(this.scaled_radius, 0);
+        canvas.lineTo(0, 0);
+        canvas.restore();
+        canvas.rotate(Math.PI / 180 * this.startAngle);
+        canvas.lineTo(this.scaled_radius, 0);
+      } else {
+        canvas.arc(0, 0, this.scaled_radius, 0, Math.PI*2);
+      }
+      if(this.style === 'fill') {
+        canvas.fillStyle = this.color;
+        canvas.fill();
+      } else {
+        canvas.strokeStyle = this.color;
+        canvas.stroke();
+      }
+      canvas.closePath();
     }
-    if(this.style === 'fill') {
-      canvas.fillStyle = this.color;
-      canvas.fill();
-    } else {
-      canvas.strokeStyle = this.color;
-      canvas.stroke();
-    }
-    canvas.closePath();
     canvas.restore();
   };
 

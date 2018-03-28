@@ -20,29 +20,31 @@ export default function(settings, _this) {
     // clip path
     clip(this, canvas, scale);
 
-    canvas.beginPath();
-    const matrix = this.scaled_matrix;
-    const radius = this.radius;
+    if(!this.hide) {
+      canvas.beginPath();
+      const matrix = this.scaled_matrix;
+      const radius = this.radius;
 
-    canvas.moveTo(matrix[0][0] + radius.tl * scale, matrix[0][1]);
-    canvas.lineTo(matrix[1][0] - radius.tr * scale, matrix[0][1]);
-    canvas.quadraticCurveTo(matrix[1][0], matrix[0][1], matrix[1][0], matrix[0][1] + radius.tr * scale);
-    canvas.lineTo(matrix[1][0], matrix[2][1] - radius.br * scale);
-    canvas.quadraticCurveTo(matrix[1][0], matrix[2][1], matrix[1][0] - radius.br * scale, matrix[2][1]);
-    canvas.lineTo(matrix[0][0] + radius.bl * scale, matrix[2][1]);
-    canvas.quadraticCurveTo(matrix[0][0], matrix[2][1], matrix[0][0], matrix[2][1] - radius.bl * scale);
-    canvas.lineTo(matrix[0][0], matrix[0][1] + radius.tl * scale);
-    canvas.quadraticCurveTo(matrix[0][0], matrix[0][1], matrix[0][0] + radius.tl * scale, matrix[0][1]);
+      canvas.moveTo(matrix[0][0] + radius.tl * scale, matrix[0][1]);
+      canvas.lineTo(matrix[1][0] - radius.tr * scale, matrix[0][1]);
+      canvas.quadraticCurveTo(matrix[1][0], matrix[0][1], matrix[1][0], matrix[0][1] + radius.tr * scale);
+      canvas.lineTo(matrix[1][0], matrix[2][1] - radius.br * scale);
+      canvas.quadraticCurveTo(matrix[1][0], matrix[2][1], matrix[1][0] - radius.br * scale, matrix[2][1]);
+      canvas.lineTo(matrix[0][0] + radius.bl * scale, matrix[2][1]);
+      canvas.quadraticCurveTo(matrix[0][0], matrix[2][1], matrix[0][0], matrix[2][1] - radius.bl * scale);
+      canvas.lineTo(matrix[0][0], matrix[0][1] + radius.tl * scale);
+      canvas.quadraticCurveTo(matrix[0][0], matrix[0][1], matrix[0][0] + radius.tl * scale, matrix[0][1]);
 
-    if(this.style !== 'stroke') {
-      canvas.fillStyle = this.color || COLOR;
-      canvas.fill();
-    } else {
-      canvas.strokeStyle = this.color || COLOR;
-      canvas.lineWidth = this.lineWidth;
-      canvas.stroke();
+      if(this.style !== 'stroke') {
+        canvas.fillStyle = this.color || COLOR;
+        canvas.fill();
+      } else {
+        canvas.strokeStyle = this.color || COLOR;
+        canvas.lineWidth = this.lineWidth;
+        canvas.stroke();
+      }
+      canvas.closePath();
     }
-    canvas.closePath();
     canvas.restore();
   };
 

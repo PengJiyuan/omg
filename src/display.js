@@ -109,6 +109,7 @@ class Display {
   }
 
   animateTo(keys, configs = {}) {
+    this.animating = true;
     let data = {};
     const to = keys;
     const from = {};
@@ -128,6 +129,10 @@ class Display {
         data[key] = configs[key];
       }
     }
+    data.onFinish = () => {
+      this.animating = false;
+      configs.onFinish && configs.onFinish(keys);
+    };
     const tween = new Tween(data);
     this._.animationList.push(tween);
     this._.tick();
@@ -171,6 +176,10 @@ export function display(settings, _this) {
     isShape: true,
 
     parent: null,
+
+    hide: settings.hide,
+
+    animating: false,
 
     // Need to be updated points when added to the group for the second time?
     forceUpdate: false,
