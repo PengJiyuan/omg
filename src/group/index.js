@@ -51,10 +51,10 @@ export default function(settings, _this) {
     }
     canvas.closePath();
     const title = this.title;
-    const size = title.fontSize || 14;
-    const paddingTop = title.paddingTop || 4;
-    const paddingLeft = title.paddingLeft || 2;
     if(title && typeof title === 'object') {
+      const size = title.fontSize || 14;
+      const paddingTop = title.paddingTop || 4;
+      const paddingLeft = title.paddingLeft || 2;
       canvas.fillStyle = '#000';
       canvas.textBaseline = 'top';
       canvas.font = `normal 400 ${size * scale}px ${title.fontFamily || 'arial,sans-serif'}`;

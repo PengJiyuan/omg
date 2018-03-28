@@ -1770,10 +1770,10 @@ var group = function(settings, _this) {
     }
     canvas.closePath();
     var title = this.title;
-    var size = title.fontSize || 14;
-    var paddingTop = title.paddingTop || 4;
-    var paddingLeft = title.paddingLeft || 2;
     if(title && typeof title === 'object') {
+      var size = title.fontSize || 14;
+      var paddingTop = title.paddingTop || 4;
+      var paddingLeft = title.paddingLeft || 2;
       canvas.fillStyle = '#000';
       canvas.textBaseline = 'top';
       canvas.font = "normal 400 " + (size * scale) + "px " + (title.fontFamily || 'arial,sans-serif');
