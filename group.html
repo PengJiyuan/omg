@@ -44,6 +44,12 @@
       padding: 10
     },
     zindex: 10
+  }).on('mouseenter', function(cur) {
+    cur.background.color = '#444';
+    world.redraw();
+  }).on('mouseleave', function(cur) {
+    cur.background.color = '#000';
+    world.redraw();
   });
 
   world.addChild(group);
@@ -57,7 +63,7 @@
       height: 30,
       color: '#bbb'
     }).on('mouseenter', function(cur) {
-      cur.color = '#ccc';
+      cur.color = '#ef4';
       world.redraw();
     }).on('mouseleave', function(cur) {
       cur.color = '#bbb';
@@ -89,25 +95,25 @@
         easing: 'quintInOut',
         duration: 300
       });
-      // group.children.forEach(function(child, i) {
-      //   child.animateTo({
-      //     width: 380
-      //   }, {
-      //     easing: 'quintInOut',
-      //     duration: 300,
-      //     delay: 50 * (i + 1)
-      //   });
-      // });
+      group.children.forEach(function(child, i) {
+        child.animateTo({
+          width: 380
+        }, {
+          easing: 'quintInOut',
+          duration: 300,
+          delay: 50 * (i + 1)
+        });
+      });
     } else if(group.width === 400 && !world.animating) {
-      // group.children.forEach(function(child, i) {
-      //   child.animateTo({
-      //     width: 180
-      //   }, {
-      //     easing: 'quintInOut',
-      //     duration: 300,
-      //     delay: 50 * (5 - i)
-      //   });
-      // });
+      group.children.forEach(function(child, i) {
+        child.animateTo({
+          width: 180
+        }, {
+          easing: 'quintInOut',
+          duration: 300,
+          delay: 50 * (5 - i)
+        });
+      });
       group.animateTo({
         width: 200
       }, {
