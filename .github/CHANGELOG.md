@@ -63,8 +63,16 @@
 
 #### v3.1.0
 * 添加group的概念，group也可以当作图形来理解，但是可以添加子图形。子图形的参照起点坐标将会是group的起点。
-* TODO: Group支持group拖拽，真正包裹子图形进行拖拽动画。
-* TODO: autoSize的实现，自动根据子图形的边界去生成group的边界。
+* group添加remove函数，用于移除group中的子图形。
+* group添加子组件新增updated判断和forceUpdate选项。
+* 添加clip。绘制动画的时候（比如线）支持动画绘制（从左向右展开）。
+* resize事件优化，canvas支持改变style.position。
+* group支持添加title绘制。
+* onmouseenter, onmouseleave事件优化
+* 图形Rectangle新增border-radius。
+* 图形text添加图片背景选项。
+* 修复获取鼠标坐标点异常的问题。
+
 
 ## ToDo
 
@@ -73,5 +81,5 @@
 * 对象之间的两两交互，模拟drag, drop事件, 新增dragin, dragout, drop事件。(Done)
 * 外部拖拽与页面内对象交互，像原生的drag，drop. (Done) -- 见demo源代码
 * 浏览器兼容性测试
-* 添加基本，常见的图形的绘制（In progress）
-* 增加group组件，几个图形可以放到一个group中，作为一个整体来添加事件和操作。
+* 添加基本，常见的图形的绘制（Done）
+* 增加group组件，几个图形可以放到一个group中，作为一个整体来添加事件和操作。(Done)

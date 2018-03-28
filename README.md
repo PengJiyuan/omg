@@ -225,6 +225,18 @@ const arcb = stage.arc({
 });
 ```
 
+### Hide Shapes
+```javascript
+const arcb = stage.arc({
+  ...,
+  hide: true
+});
+
+// or
+
+arcb.hide = true;
+```
+
 ### Expand Shapes
 
 If the default shapes not enough, you can expand shapes simply.
@@ -353,6 +365,14 @@ const group = stage.group({
   y: 100,
   width: 200,
   height: 200,
+  title: {
+    title: {
+      text: 'Group Name',
+      fontSize: 14,
+      paddingTop: 12,
+      paddingLeft: 14
+    }
+  },
   /**
    * @param {Object} background - 可以给group指定背景，目前只支持颜色
    * @TODO: 支持图片背景
@@ -369,13 +389,6 @@ const group = stage.group({
   border: {
     color: '#000',
     lineWidth: 2 // TODO
-  },
-  /**
-   * @param {Object} autoSize - 该项指定后，不需要再指定group的宽高，会自动识别，包裹所有子图形。
-   * @TODO autoSize待添加
-   * /
-  autoSize: {
-    padding: 10 // 自动包裹子元素，边缘padding的像素
   },
   zindex: 10
 }).on('mousedown', function() {
