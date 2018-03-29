@@ -1813,7 +1813,7 @@ var group = function(settings, _this) {
     if(!~this._.objects.indexOf(this)) {
       throw 'before add, please addChild the parent!';
     }
-    childs.sort(function (a, b) { return a.zindex - b.zindex; });
+
     childs.forEach(function (child) {
       if(child.isShape) {
         child.parent = this$1;
@@ -1886,11 +1886,11 @@ var OMG = function OMG(config) {
 
   this.transY = 0;
 
-  this.deviceScale = 1;
+  this.deviceScale = config.deviceScale || 1;
 
-  this.minDeviceScale = 0.5 * this.deviceScale;
+  this.minDeviceScale = config.minDeviceScale || 0.5 * this.deviceScale;
 
-  this.maxDeviceScale = 4 * this.deviceScale;
+  this.maxDeviceScale = config.maxDeviceScale || 4 * this.deviceScale;
 
   this.scale = this.deviceScale;
 

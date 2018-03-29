@@ -92,7 +92,7 @@ export default function(settings, _this) {
     if(!~this._.objects.indexOf(this)) {
       throw 'before add, please addChild the parent!';
     }
-    childs.sort((a, b) => a.zindex - b.zindex);
+
     childs.forEach(child => {
       if(child.isShape) {
         child.parent = this;

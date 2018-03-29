@@ -25,11 +25,11 @@ export class OMG {
 
     this.transY = 0;
 
-    this.deviceScale = 1;
+    this.deviceScale = config.deviceScale || 1;
 
-    this.minDeviceScale = 0.5 * this.deviceScale;
+    this.minDeviceScale = config.minDeviceScale || 0.5 * this.deviceScale;
 
-    this.maxDeviceScale = 4 * this.deviceScale;
+    this.maxDeviceScale = config.maxDeviceScale || 4 * this.deviceScale;
 
     this.scale = this.deviceScale;
 
