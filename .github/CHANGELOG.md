@@ -82,6 +82,10 @@
 #### v3.1.2
 * 当shape的属性为hide时，在触发事件的时候将之忽略。
 
+#### v3.1.3
+* `gruop.add()`的时候不对child进行排序。
+* 在初始化的时候，新增对 初始缩放比例(deviceScale), 最大缩放比例(maxDeviceScale), 最小缩放比例(minDeviceScale)的操作。
+
 
 ## ToDo
 
