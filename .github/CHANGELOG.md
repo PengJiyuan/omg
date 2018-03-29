@@ -79,6 +79,9 @@
 * group.remove增加function类型的参数。`group.remove(g => g.type === 'polygon')`.
 * 增加`group.updateAllChildsPosition()`, 用于调用更新group的所有子图形的坐标.
 
+#### v3.1.2
+* 当shape的属性为hide时，在触发事件的时候将之忽略。
+
 
 ## ToDo
 
