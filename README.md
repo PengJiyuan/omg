@@ -410,6 +410,7 @@ Remove an child element from group.
 2. remove([Function])  -  remove group's children filter by function.
 
 * **Function** `group.updateAllChildsPosition()`
+
 update all group's children's position.
 
 ### Add shapes to stage.
