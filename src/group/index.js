@@ -115,7 +115,6 @@ export default function(settings, _this) {
     } else if(!utils.isArr(childs)) {
       list = [childs];
     }
-    console.log(list);
     list.forEach(child => {
       const index = this.children.indexOf(child);
       if(~index) {

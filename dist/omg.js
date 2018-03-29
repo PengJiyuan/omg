@@ -1838,7 +1838,6 @@ var group = function(settings, _this) {
     } else if(!utils.isArr(childs)) {
       list = [childs];
     }
-    console.log(list);
     list.forEach(function (child) {
       var index = this$1.children.indexOf(child);
       if(~index) {
