@@ -73,6 +73,12 @@
 * 图形text添加图片背景选项。
 * 修复获取鼠标坐标点异常的问题。
 
+#### v3.1.1
+* 修复group的title不存在时的bug.
+* 调整group及子图形的zindex的计算方法。
+* group.remove增加function类型的参数。`group.remove(g => g.type === 'polygon')`.
+* 增加`group.updateAllChildsPosition()`, 用于调用更新group的所有子图形的坐标.
+
 
 ## ToDo
 
