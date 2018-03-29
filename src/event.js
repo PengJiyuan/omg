@@ -15,7 +15,7 @@ export class Event {
   }
 
   triggerEvents() {
-    const hasEvents = this._.objects.some(item => {
+    const hasEvents = this._.objects.filter(item => !item.hide).some(item => {
       return item.events && utils.isArr(item.events) || item.enableDrag;
     });
     if(!hasEvents && !this._.enableGlobalTranslate && !this._.enableGlobalScale) {
@@ -97,7 +97,7 @@ export class Event {
 
     // trigger mouseenter and mousemove
     const movedOn = that._._objects.filter(item => {
-      return item.isPointInner(mX, mY);
+      return item.isPointInner(mX, mY) && !item.hide;
     });
 
     if(isDragging) {
@@ -161,7 +161,7 @@ export class Event {
     // global setting event mousedown
     this._.globalMousedown && this._.globalMousedown(e_down);
 
-    const hasDrags = this._.objects.some(item => {
+    const hasDrags = this._.objects.filter(item => !item.hide).some(item => {
       return item.enableDrag;
     });
 
@@ -173,7 +173,7 @@ export class Event {
 
     // mousedown
     const whichDown = this._._objects.filter(item => {
-      return item.isPointInner(pX, pY) && !item.isBg;
+      return item.isPointInner(pX, pY) && !item.isBg && !item.hide;
     });
 
     if(whichDown && whichDown.length > 0) {
@@ -187,7 +187,7 @@ export class Event {
 
     // mouseDrag
     if(hasDrags) {
-      whichIn = that._._objects.filter(item => {
+      whichIn = that._._objects.filter(item => !item.hide).filter(item => {
         return item.isPointInner(pX, pY) && !item.isBg;
       });
 

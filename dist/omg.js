@@ -160,7 +160,7 @@ Event.prototype.getPos = function getPos (e) {
 };
 
 Event.prototype.triggerEvents = function triggerEvents () {
-  var hasEvents = this._.objects.some(function (item) {
+  var hasEvents = this._.objects.filter(function (item) { return !item.hide; }).some(function (item) {
     return item.events && utils.isArr(item.events) || item.enableDrag;
   });
   if(!hasEvents && !this._.enableGlobalTranslate && !this._.enableGlobalScale) {
@@ -242,7 +242,7 @@ Event.prototype.mouseEnterOrMove = function mouseEnterOrMove (e_moveOrEnter) {
 
   // trigger mouseenter and mousemove
   var movedOn = that._._objects.filter(function (item) {
-    return item.isPointInner(mX, mY);
+    return item.isPointInner(mX, mY) && !item.hide;
   });
 
   if(isDragging) {
@@ -306,7 +306,7 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
   // global setting event mousedown
   this._.globalMousedown && this._.globalMousedown(e_down);
 
-  var hasDrags = this._.objects.some(function (item) {
+  var hasDrags = this._.objects.filter(function (item) { return !item.hide; }).some(function (item) {
     return item.enableDrag;
   });
 
@@ -318,7 +318,7 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
 
   // mousedown
   var whichDown = this._._objects.filter(function (item) {
-    return item.isPointInner(pX, pY) && !item.isBg;
+    return item.isPointInner(pX, pY) && !item.isBg && !item.hide;
   });
 
   if(whichDown && whichDown.length > 0) {
@@ -332,7 +332,7 @@ Event.prototype.mouseDown = function mouseDown (e_down) {
 
   // mouseDrag
   if(hasDrags) {
-    whichIn = that._._objects.filter(function (item) {
+    whichIn = that._._objects.filter(function (item) { return !item.hide; }).filter(function (item) {
       return item.isPointInner(pX, pY) && !item.isBg;
     });
 
