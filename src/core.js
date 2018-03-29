@@ -19,6 +19,8 @@ export class OMG {
 
     this.objects = [];
 
+    this.groupRecords = 0,
+
     this.transX = 0;
 
     this.transY = 0;

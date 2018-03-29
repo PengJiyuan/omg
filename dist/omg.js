@@ -1786,12 +1786,19 @@ var group = function(settings, _this) {
   var updateChild = function(child) {
     if(!child.updated || child.forceUpdate) {
       child.updated = true;
-      child.moveX += child.parent.x;
-      child.moveY += child.parent.y;
+      child.moveX = child.parent.x + child.parent.moveX;
+      child.moveY = child.parent.y + child.parent.moveY;
       child.enableChangeIndex = false;
       child.fixed = false;
       child.drag = false;
     }
+  };
+
+  var updateAllChildsPosition = function() {
+    this.children.forEach(function (child) {
+      child.moveX = child.parent.x + child.parent.moveX;
+      child.moveY = child.parent.y + child.parent.moveY;
+    });
   };
 
   /**
@@ -1810,7 +1817,8 @@ var group = function(settings, _this) {
     childs.forEach(function (child) {
       if(child.isShape) {
         child.parent = this$1;
-        child.zindex = this$1.zindex + 0.1;
+        this$1._.groupRecords += 0.0000000001;
+        child.zindex = this$1.zindex + this$1._.groupRecords;
         updateChild(child);
         // group暂时不添加拖拽
         this$1.enableDrag = false;
@@ -1825,9 +1833,12 @@ var group = function(settings, _this) {
     var this$1 = this;
 
     var list = childs;
-    if(!utils.isArr(childs)) {
+    if(typeof childs === 'function') {
+      list = this.children.filter(childs);
+    } else if(!utils.isArr(childs)) {
       list = [childs];
     }
+    console.log(list);
     list.forEach(function (child) {
       var index = this$1.children.indexOf(child);
       if(~index) {
@@ -1848,7 +1859,8 @@ var group = function(settings, _this) {
     title: settings.title,
     children: [],
     add: add,
-    remove: remove
+    remove: remove,
+    updateAllChildsPosition: updateAllChildsPosition
   });
 };
 
@@ -1871,7 +1883,7 @@ var OMG = function OMG(config) {
 
   this.objects = [];
 
-  this.transX = 0;
+  this.groupRecords = 0, this.transX = 0;
 
   this.transY = 0;
 

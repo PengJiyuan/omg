@@ -67,12 +67,19 @@ export default function(settings, _this) {
   const updateChild = function(child) {
     if(!child.updated || child.forceUpdate) {
       child.updated = true;
-      child.moveX += child.parent.x;
-      child.moveY += child.parent.y;
+      child.moveX = child.parent.x + child.parent.moveX;
+      child.moveY = child.parent.y + child.parent.moveY;
       child.enableChangeIndex = false;
       child.fixed = false;
       child.drag = false;
     }
+  };
+
+  const updateAllChildsPosition = function() {
+    this.children.forEach(child => {
+      child.moveX = child.parent.x + child.parent.moveX;
+      child.moveY = child.parent.y + child.parent.moveY;
+    });
   };
 
   /**
@@ -89,7 +96,8 @@ export default function(settings, _this) {
     childs.forEach(child => {
       if(child.isShape) {
         child.parent = this;
-        child.zindex = this.zindex + 0.1;
+        this._.groupRecords += 0.0000000001;
+        child.zindex = this.zindex + this._.groupRecords;
         updateChild(child);
         // group暂时不添加拖拽
         this.enableDrag = false;
@@ -102,9 +110,12 @@ export default function(settings, _this) {
 
   const remove = function(childs) {
     let list = childs;
-    if(!utils.isArr(childs)) {
+    if(typeof childs === 'function') {
+      list = this.children.filter(childs);
+    } else if(!utils.isArr(childs)) {
       list = [childs];
     }
+    console.log(list);
     list.forEach(child => {
       const index = this.children.indexOf(child);
       if(~index) {
@@ -125,6 +136,7 @@ export default function(settings, _this) {
     title: settings.title,
     children: [],
     add,
-    remove
+    remove,
+    updateAllChildsPosition
   });
 }
