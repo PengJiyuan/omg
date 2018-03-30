@@ -19,7 +19,7 @@ export class ImageLoader {
 
   loadImg(img) {
     const timer = setInterval(() => {
-      if(img.complete === true){
+      if(img.complete === true) {
         this.loadNum++;
         clearInterval(timer);
       }

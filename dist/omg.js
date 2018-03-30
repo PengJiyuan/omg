@@ -610,7 +610,7 @@ ImageLoader.prototype.loadImg = function loadImg (img) {
     var this$1 = this;
 
   var timer = setInterval(function () {
-    if(img.complete === true){
+    if(img.complete === true) {
       this$1.loadNum++;
       clearInterval(timer);
     }
