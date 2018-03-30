@@ -1119,10 +1119,10 @@ Display.prototype.animateTo = function animateTo (keys, configs) {
   data.from = from;
   data.to = to;
   data.onUpdate = function (keys) {
-    configs.onUpdate && configs.onUpdate(keys);
     for (var key in to) {
       this$1[key] = keys[key];
     }
+    configs.onUpdate && configs.onUpdate(keys);
   };
   for(var key$1 in configs) {
     if(key$1 !== 'onUpdate') {

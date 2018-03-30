@@ -119,10 +119,10 @@ class Display {
     data.from = from;
     data.to = to;
     data.onUpdate = (keys) => {
-      configs.onUpdate && configs.onUpdate(keys);
       for (let key in to) {
         this[key] = keys[key];
       }
+      configs.onUpdate && configs.onUpdate(keys);
     };
     for(let key in configs) {
       if(key !== 'onUpdate') {
