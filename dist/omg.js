@@ -1,5 +1,5 @@
 /*!
- * omg.js v3.1.3
+ * omg.js v3.1.4
  * Author: PengJiyuan
  */
 (function (global, factory) {
@@ -67,7 +67,7 @@
   }
 })();
 
-var version = "3.1.3";
+var version = "3.1.4";
 
 var utils = {
 
