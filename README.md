@@ -6,9 +6,13 @@
 [![][downloads-image]][downloads-url]
 
 Oh my goodness! Awesome Canvas Render Library. [Demo](https://omg.js.org)
+<div style="align: center">
+  <img src=".github/demo1.gif" />
+</div>
 
-<img src=".github/demo1.gif" />
-<img src=".github/demo2.gif" />
+<div style="align: center">
+  <img src=".github/demo2.gif" />
+</div>
 
 ## Install
 
