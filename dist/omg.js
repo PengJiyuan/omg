@@ -1774,7 +1774,7 @@ var group = function(settings, _this) {
       var size = title.fontSize || 14;
       var paddingTop = title.paddingTop || 4;
       var paddingLeft = title.paddingLeft || 2;
-      canvas.fillStyle = '#000';
+      canvas.fillStyle = title.color || '#000';
       canvas.textBaseline = 'top';
       canvas.font = "normal 400 " + (size * scale) + "px " + (title.fontFamily || 'arial,sans-serif');
       canvas.fillText(title.text, this.scaled_x + paddingLeft * scale, this.scaled_y + paddingTop * scale);
@@ -1826,6 +1826,7 @@ var group = function(settings, _this) {
       }
     });
     utils.insertArray(this._.objects, this._.objects.indexOf(this) + 1, 0, childs);
+    this._.objects.sort(function (a, b) { return a.zindex - b.zindex; });
     this._._objects = utils.reverse(this._.objects);
   };
 
@@ -2042,11 +2043,14 @@ OMG.prototype.imgReady = function imgReady () {
 };
 
 OMG.prototype.show = function show () {
+    var this$1 = this;
+
   var _this = this;
   // dirty, ready to remove
   if(this.prepareImage) {
     this.imgReady();
     this.loader.ready(function () {
+      typeof this$1.prepareImage === 'function' && this$1.prepareImage();
       _this.draw();
       _this._event.triggerEvents();
     });

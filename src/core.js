@@ -182,6 +182,7 @@ export class OMG {
     if(this.prepareImage) {
       this.imgReady();
       this.loader.ready(() => {
+        typeof this.prepareImage === 'function' && this.prepareImage();
         _this.draw();
         _this._event.triggerEvents();
       });

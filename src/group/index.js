@@ -55,7 +55,7 @@ export default function(settings, _this) {
       const size = title.fontSize || 14;
       const paddingTop = title.paddingTop || 4;
       const paddingLeft = title.paddingLeft || 2;
-      canvas.fillStyle = '#000';
+      canvas.fillStyle = title.color || '#000';
       canvas.textBaseline = 'top';
       canvas.font = `normal 400 ${size * scale}px ${title.fontFamily || 'arial,sans-serif'}`;
       canvas.fillText(title.text, this.scaled_x + paddingLeft * scale, this.scaled_y + paddingTop * scale);
@@ -105,6 +105,7 @@ export default function(settings, _this) {
       }
     });
     utils.insertArray(this._.objects, this._.objects.indexOf(this) + 1, 0, childs);
+    this._.objects.sort((a, b) => a.zindex - b.zindex);
     this._._objects = utils.reverse(this._.objects);
   };
 
