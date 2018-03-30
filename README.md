@@ -7,6 +7,9 @@
 
 Oh my goodness! Awesome Canvas Render Library. [Demo](https://omg.js.org)
 
+<img src=".github/demo1.png" />
+<img src=".github/demo2.png" />
+
 ## Install
 
 **NPM**    
