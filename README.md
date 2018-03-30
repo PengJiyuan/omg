@@ -42,7 +42,11 @@ const stage = omg({
   enableGlobalScale: true, // 开启全局缩放
   position: 'absolute', // canvas.style.position
   images: [], // 提前加载的图片列表
-  prepareImage: true // 提前加载图片
+  prepareImage: true, // 提前加载图片
+  // or
+  prepareImage: () => {
+    hideLoading();
+  }
 });
 
 stage.init();
