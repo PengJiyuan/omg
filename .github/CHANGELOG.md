@@ -86,6 +86,10 @@
 * `gruop.add()`的时候不对child进行排序。
 * 在初始化的时候，新增对 初始缩放比例(deviceScale), 最大缩放比例(maxDeviceScale), 最小缩放比例(minDeviceScale)的操作。
 
+#### v3.1.4
+* 初始化参数prepareImage 增加 函数类型，会在加载完图片之后触发，可用于在加载完图片之后隐藏loading层。
+* 修复animateTo的onUpdate的触发顺序。
+
 
 ## ToDo
 
