@@ -11,7 +11,7 @@
   "description": "Oh my goodness! Awesome Canvas Render Library.",
   "main": "dist/omg.js",
   "scripts": {
-    "build": "rm -rf dist/ && node rollup.config.js --beauty && node rollup.config.js --minify",
+    "build": "rm -rf dist/ && node rollup.config.js --beauty && node rollup.config.js --minify && cp dist/omg.min.js examples/omg.min.js",
     "dev": "rm -rf dist/ && node rollup.config.js --example",
     "eslint": "eslint src --ext .js --cache",
     "release": "cd scripts && node release.js",
@@ -29,12 +29,15 @@
   "homepage": "https://github.com/PengJiyuan/omg.js#readme",
   "dependencies": {},
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
     "colors": "^1.1.2",
     "eslint": "^4.8.0",
     "fs-extra": "^4.0.2",
     "pre-commit": "^1.2.2",
     "rollup": "^0.50.0",
-    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-uglify": "^2.0.1"
   },

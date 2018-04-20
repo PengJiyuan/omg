@@ -4,7 +4,7 @@
 
 require('colors');
 const rollup = require('rollup');
-const bubble = require('rollup-plugin-buble');
+const babel = require('rollup-plugin-babel');
 const json = require('rollup-plugin-json');
 const uglify = require('rollup-plugin-uglify');
 const fs = require('fs-extra');
@@ -18,7 +18,9 @@ const inputOptions = {
   input: 'src/index.js',
   plugins: [
     json(),
-    bubble()
+    babel({
+      exclude: 'node_modules/**'
+    })
   ]
 };
 const outputOptions = {
