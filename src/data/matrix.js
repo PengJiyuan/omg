@@ -1,3 +1,5 @@
+/* @flow */
+
 /*!
  * @PengJiyuan
  *
@@ -13,7 +15,7 @@ const COS = Math.cos;
 const SIN = Math.sin;
 const ABS = Math.abs;
 
-const createTransformMatrix = (originMatrix = [0, 0], angle) => {
+const createTransformMatrix = (originMatrix: Array<number> = [0, 0], angle: number): Array<Array<number>> => {
   const tx = originMatrix[0];
   const ty = originMatrix[1];
   const radian = - (PI / 180 * angle);
@@ -30,7 +32,7 @@ const createTransformMatrix = (originMatrix = [0, 0], angle) => {
  * d, e, f  *  y  =  d*x + e*y + f*1
  * g, h, i     1     g*x + h*y + i*1
  */
-export const getTransformMatrix = (originMatrix, matrix, angle = 0) => {
+export const getTransformMatrix = (originMatrix: Array<number>, matrix: Array<Array<number>>, angle: number = 0): Array<Array<number>> => {
   const t = createTransformMatrix(originMatrix, angle);
   const ret = [];
   matrix.forEach(m => {
