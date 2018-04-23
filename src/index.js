@@ -1,3 +1,5 @@
+/* @flow */
+
 /**
  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
           ___                    ___                    ___       │
@@ -15,8 +17,9 @@
   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
 */
 
-import { OMG } from './core.js';
+import type {configSettings} from './core';
+import {OMG} from './core';
 
-export default (config) => {
+export default (config: configSettings) => {
   return new OMG(config);
 };

@@ -13,6 +13,20 @@ import { Tween } from './tween/index';
 import clip from './clip/index';
 import * as ext from './extend/export';
 
+export type configSettings = {
+  deviceScale: ?number,
+  minDeviceScale: ?number,
+  maxDeviceScale: ?number,
+  prepareImage: boolean | Function | void,
+  element: HTMLCanvasElement,
+  width: number,
+  height: number,
+  position: ?string,
+  enableGlobalTranslate: ?boolean,
+  enableGlobalScale: ?boolean,
+  images: ?Array<string>
+}
+
 export class OMG {
 
   version: string;
@@ -56,19 +70,7 @@ export class OMG {
   // shapes
   group: Function;
 
-  constructor(config: {
-    deviceScale: ?number,
-    minDeviceScale: ?number,
-    maxDeviceScale: ?number,
-    prepareImage: boolean | Function | void,
-    element: HTMLCanvasElement,
-    width: number,
-    height: number,
-    position: ?string,
-    enableGlobalTranslate: ?boolean,
-    enableGlobalScale: ?boolean,
-    images: ?Array<string>
-  }) {
+  constructor(config: configSettings) {
 
     this.version = version;
 
