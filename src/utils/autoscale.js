@@ -1,3 +1,5 @@
+/* @flow */
+
 // https://github.com/component/autoscale-canvas/blob/master/index.js
 
 /**
@@ -8,7 +10,11 @@
  * @api public
  */
 
-export default (canvasList, opt) => {
+export default (canvasList: Array<HTMLCanvasElement>, opt: {
+  position: string,
+  width: number,
+  height: number
+}): Array<HTMLCanvasElement> => {
   let ratio = window.devicePixelRatio || 1,
     ctx = null;
 

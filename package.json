@@ -15,7 +15,8 @@
     "dev": "rm -rf dist/ && node rollup.config.js --example",
     "eslint": "eslint src --ext .js --cache",
     "release": "cd scripts && node release.js",
-    "extra": "cp dist/omg.min.js examples/omg.min.js && git add ."
+    "extra": "cp dist/omg.min.js examples/omg.min.js && git add .",
+    "flow": "flow"
   },
   "author": "PengJiyuan <pjy@isweety.me>",
   "license": "MIT",
@@ -29,11 +30,17 @@
   "homepage": "https://github.com/PengJiyuan/omg.js#readme",
   "dependencies": {},
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.3",
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-flow": "^6.23.0",
     "colors": "^1.1.2",
     "eslint": "^4.8.0",
+    "eslint-plugin-flowtype": "^2.46.2",
+    "flow-bin": "^0.70.0",
     "fs-extra": "^4.0.2",
     "pre-commit": "^1.2.2",
     "rollup": "^0.50.0",

@@ -1,7 +1,7 @@
 import { display } from '../display';
 import { COLOR } from '../data/default';
 import {DefineScale} from '../data/define';
-import utils from '../utils/helpers';
+import * as utils from '../utils/helpers';
 import clip from '../clip/index';
 
 export default function(settings, _this) {

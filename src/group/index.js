@@ -6,7 +6,7 @@ import { display } from '../display';
 import { COLOR, LINE_WIDTH, RADIUS} from '../data/default';
 import { DefineScale, DefineMatrix } from '../data/define';
 // import getBounding from './bounding';
-import utils from '../utils/helpers';
+import * as utils from '../utils/helpers';
 
 export default function(settings, _this) {
   const draw = function() {

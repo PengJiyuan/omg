@@ -1,0 +1,14 @@
+[ignore]
+.*/node_modules/.*
+.*/scripts/.*
+.*/examples/.*
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]

@@ -1,11 +1,16 @@
+/* @flow */
+
 export class ImageLoader {
+
+  imageList: Array<HTMLImageElement>;
+  loadNum: number;
 
   constructor() {
     this.imageList = [];
     this.loadNum = 0;
   }
 
-  ready(callback) {
+  ready(callback: Function) {
     this.imageList.forEach(img => {
       this.loadImg(img);
     });
@@ -17,7 +22,7 @@ export class ImageLoader {
     }, 50);
   }
 
-  loadImg(img) {
+  loadImg(img: HTMLImageElement) {
     const timer = setInterval(() => {
       if(img.complete === true) {
         this.loadNum++;
@@ -26,20 +31,18 @@ export class ImageLoader {
     }, 50);
   }
 
-  addImg(imageArray) {
+  addImg(imageArray: Array<string>) {
     imageArray.forEach((src) => {
       let img = new Image();
       img.src = src;
-      img.name = src;
-      img.loaded = false;
       this.imageList.push(img);
     });
   }
 
-  getImg(name) {
+  getImg(name: string) {
     let target;
     this.imageList.forEach((img) => {
-      if(img.name == name){
+      if(img.src == name){
         target = img;
       }
     });

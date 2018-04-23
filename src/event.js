@@ -1,4 +1,4 @@
-import utils from './utils/helpers';
+import * as utils from './utils/helpers';
 
 export class Event {
   constructor(_this) {

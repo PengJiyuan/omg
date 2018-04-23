@@ -71,77 +71,82 @@
 
 var version = "3.1.4";
 
-var utils = {
-  getPos: function getPos(e) {
-    var ev = e || event;
-    var _ref = [ev.offsetX, ev.offsetY],
-        x = _ref[0],
-        y = _ref[1];
+function getPos(e) {
+  var ev = e || window.event;
+  var _ref = [ev.offsetX, ev.offsetY],
+      x = _ref[0],
+      y = _ref[1];
 
-    return { x: x, y: y };
-  },
-  bind: function bind(target, eventType, handler) {
-    if (window.addEventListener) {
-      target.addEventListener(eventType, handler, false);
-    } else if (target.attachEvent) {
-      target.attachEvent('on' + eventType, handler);
-    } else {
-      target['on' + eventType] = handler;
-    }
-    return target;
-  },
-  unbind: function unbind(target, eventType, handler) {
-    if (window.removeEventListener) {
-      target.removeEventListener(eventType, handler, false);
-    } else if (window.detachEvent) {
-      target.detachEvent(eventType, handler);
-    } else {
-      target['on' + eventType] = '';
-    }
-  },
+  return { x: x, y: y };
+}
 
-
-  // do not change the origin array
-  reverse: function reverse(array) {
-    var _ref2 = [array.length, []],
-        length = _ref2[0],
-        ret = _ref2[1];
-
-    for (var i = 0; i < length; i++) {
-      ret[i] = array[length - i - 1];
-    }
-    return ret;
-  },
-  formatFloat: function formatFloat(f) {
-    var m = Math.pow(10, 10);
-    return parseInt(f * m, 10) / m;
-  },
-
-
-  /**
-   * @param {Array} arr
-   */
-  getMax: function getMax(arr) {
-    return Math.max.apply(null, arr);
-  },
-
-  /**
-   * @param {Array} arr
-   */
-  getMin: function getMin(arr) {
-    return Math.min.apply(null, arr);
-  },
-  insertArray: function insertArray(originArray, start, number, _insertArray) {
-    var args = [start, number].concat(_insertArray);
-    Array.prototype.splice.apply(originArray, args);
-  },
-  isArr: function isArr(obj) {
-    return Object.prototype.toString.call(obj) === '[object Array]';
-  },
-  isObj: function isObj(obj) {
-    return Object.prototype.toString.call(obj) === '[object Object]';
+function bind(target, eventType, handler) {
+  if (window.addEventListener) {
+    target.addEventListener(eventType, handler, false);
+  } else if (target.attachEvent) {
+    target.attachEvent('on' + eventType, handler);
   }
-};
+  return target;
+}
+
+function unbind(target, eventType, handler) {
+  if (window.removeEventListener) {
+    target.removeEventListener(eventType, handler, false);
+  } else if (window.detachEvent) {
+    target.detachEvent && target.detachEvent(eventType, handler);
+  }
+}
+
+// do not change the origin array
+function reverse(array) {
+  var _ref2 = [array.length, []],
+      length = _ref2[0],
+      ret = _ref2[1];
+
+  for (var i = 0; i < length; i++) {
+    ret[i] = array[length - i - 1];
+  }
+  return ret;
+}
+
+function formatFloat(f) {
+  var m = Math.pow(10, 10);
+  return parseInt(f * m, 10) / m;
+}
+
+function getMax(arr) {
+  return Math.max.apply(null, arr);
+}
+
+function getMin(arr) {
+  return Math.min.apply(null, arr);
+}
+
+function insertArray(originArray, start, number, insertArray) {
+  var args = [start, number].concat(insertArray);
+  Array.prototype.splice.apply(originArray, args);
+}
+
+function isArr(obj) {
+  return !!(Object.prototype.toString.call(obj) === '[object Array]');
+}
+
+function isObj(obj) {
+  return !!(Object.prototype.toString.call(obj) === '[object Object]');
+}
+
+var utils = Object.freeze({
+	getPos: getPos,
+	bind: bind,
+	unbind: unbind,
+	reverse: reverse,
+	formatFloat: formatFloat,
+	getMax: getMax,
+	getMin: getMin,
+	insertArray: insertArray,
+	isArr: isArr,
+	isObj: isObj
+});
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -306,7 +311,7 @@ var Event = function () {
 
   createClass(Event, [{
     key: 'getPos',
-    value: function getPos(e) {
+    value: function getPos$$1(e) {
       var ev = e || event;
       var _ref = [ev.offsetX, ev.offsetY],
           x = _ref[0],
@@ -320,7 +325,7 @@ var Event = function () {
       var hasEvents = this._.objects.filter(function (item) {
         return !item.hide;
       }).some(function (item) {
-        return item.events && utils.isArr(item.events) || item.enableDrag;
+        return item.events && isArr(item.events) || item.enableDrag;
       });
       if (!hasEvents && !this._.enableGlobalTranslate && !this._.enableGlobalScale) {
         return;
@@ -344,7 +349,7 @@ var Event = function () {
       }
 
       if (!this.triggeredMouseDown) {
-        utils.bind(this._.element, 'mousedown', this.mouseDown.bind(this));
+        bind(this._.element, 'mousedown', this.mouseDown.bind(this));
         this.triggeredMouseDown = true;
       }
 
@@ -357,12 +362,12 @@ var Event = function () {
   }, {
     key: 'bindMouseWheel',
     value: function bindMouseWheel() {
-      utils.bind(this._.element, 'wheel', this.mouseWheel.bind(this));
+      bind(this._.element, 'wheel', this.mouseWheel.bind(this));
     }
   }, {
     key: 'unBindMouseWheel',
     value: function unBindMouseWheel() {
-      utils.unbind(this._.element, 'wheel', this.mouseWheel.bind(this));
+      unbind(this._.element, 'wheel', this.mouseWheel.bind(this));
     }
   }, {
     key: 'mouseWheel',
@@ -377,12 +382,12 @@ var Event = function () {
   }, {
     key: 'bindMouseMove',
     value: function bindMouseMove() {
-      utils.bind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+      bind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
     }
   }, {
     key: 'unBindMouseMove',
     value: function unBindMouseMove() {
-      utils.unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+      unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
     }
   }, {
     key: 'mouseEnterOrMove',
@@ -558,13 +563,13 @@ var Event = function () {
           // event dragend
           hasEventDragEnd && dragEndCb(whichDown[0]);
 
-          utils.unbind(document, 'mousemove', move_Event);
-          utils.unbind(document, 'mouseup', up_Event);
+          unbind(document, 'mousemove', move_Event);
+          unbind(document, 'mouseup', up_Event);
           whichIn[0].isDragging = false;
         };
         if (whichIn && whichIn.length > 0 && whichIn[0].enableDrag) {
-          utils.bind(document, 'mousemove', move_Event);
-          utils.bind(document, 'mouseup', up_Event);
+          bind(document, 'mousemove', move_Event);
+          bind(document, 'mouseup', up_Event);
         }
       }
 
@@ -584,12 +589,12 @@ var Event = function () {
         };
 
         var up_dragCanvas = function up_dragCanvas() {
-          utils.unbind(document, 'mousemove', move_dragCanvas);
-          utils.unbind(document, 'mouseup', up_dragCanvas);
+          unbind(document, 'mousemove', move_dragCanvas);
+          unbind(document, 'mouseup', up_dragCanvas);
         };
 
-        utils.bind(document, 'mousemove', move_dragCanvas);
-        utils.bind(document, 'mouseup', up_dragCanvas);
+        bind(document, 'mousemove', move_dragCanvas);
+        bind(document, 'mouseup', up_dragCanvas);
       }
     }
   }, {
@@ -599,7 +604,7 @@ var Event = function () {
       var cacheData = this._.objects[i];
       this._.objects.splice(i, 1);
       this._.objects.push(cacheData);
-      this._._objects = utils.reverse(this._.objects);
+      this._._objects = reverse(this._.objects);
       this._.redraw();
     }
   }]);
@@ -611,11 +616,11 @@ var Color = function () {
     classCallCheck(this, Color);
   }
 
-  // converts hex to RGB
-
-
   createClass(Color, [{
     key: 'hexToRGB',
+
+
+    // converts hex to RGB
     value: function hexToRGB(hex) {
       var rgb = [];
 
@@ -628,6 +633,7 @@ var Color = function () {
 
       hex.replace(/../g, function (color) {
         rgb.push(parseInt(color, 0x10));
+        return color;
       });
 
       return {
@@ -646,7 +652,7 @@ var Color = function () {
       r /= 255, g /= 255, b /= 255;
       var max = Math.max(r, g, b),
           min = Math.min(r, g, b);
-      var h = void 0,
+      var h = 0,
           s = void 0,
           l = (max + min) / 2;
 
@@ -678,10 +684,8 @@ var Color = function () {
     }
 
     // converts hsl to RGB
-
-  }, {
-    key: 'hslToRGB',
-    value: function hslToRGB() {}
+    // hslToRGB() {
+    // }
 
     // color lighten
 
@@ -699,7 +703,7 @@ var Color = function () {
       }
       if (this.isRgba(color)) {
         rgba = this.getRgba(color);
-        a = +rgba.a - +(percent.slice(0, -1) / 100);
+        a = +rgba.a - Number(percent.slice(0, -1)) / 100;
         return 'rgba(' + rgba.r + ', ' + rgba.g + ', ' + rgba.b + ', ' + a + ')';
       } else {
         hsl = this.getHsl(color);
@@ -727,7 +731,7 @@ var Color = function () {
       }
       if (this.isRgba(color)) {
         rgba = this.getRgba(color);
-        a = +rgba.a + +(percent.slice(0, -1) / 100);
+        a = +rgba.a + Number(percent.slice(0, -1)) / 100;
         return 'rgba(' + rgba.r + ', ' + rgba.g + ', ' + rgba.b + ', ' + a + ')';
       } else {
         hsl = this.getHsl(color);
@@ -741,20 +745,17 @@ var Color = function () {
   }, {
     key: 'isHex',
     value: function isHex(color) {
-      return (/^#[a-fA-F0-9]{3}$|#[a-fA-F0-9]{6}$/.test(color)
-      );
+      return !!/^#[a-fA-F0-9]{3}$|#[a-fA-F0-9]{6}$/.test(color);
     }
   }, {
     key: 'isRgb',
     value: function isRgb(color) {
-      return (/^rgb\((\s*[0-5]{0,3}\s*,?){3}\)$/.test(color)
-      );
+      return !!/^rgb\((\s*[0-5]{0,3}\s*,?){3}\)$/.test(color);
     }
   }, {
     key: 'isRgba',
     value: function isRgba(color) {
-      return (/^rgba\((\s*[0-5]{0,3}\s*,?){3}[0-9.\s]*\)$/.test(color)
-      );
+      return !!/^rgba\((\s*[0-5]{0,3}\s*,?){3}[0-9.\s]*\)$/.test(color);
     }
   }, {
     key: 'getRgb',
@@ -870,8 +871,6 @@ var ImageLoader = function () {
       imageArray.forEach(function (src) {
         var img = new Image();
         img.src = src;
-        img.name = src;
-        img.loaded = false;
         _this3.imageList.push(img);
       });
     }
@@ -880,7 +879,7 @@ var ImageLoader = function () {
     value: function getImg(name) {
       var target = void 0;
       this.imageList.forEach(function (img) {
-        if (img.name == name) {
+        if (img.src == name) {
           target = img;
         }
       });
@@ -1091,10 +1090,10 @@ function getBounding(points, lineWidth) {
   var yList = points.map(function (point) {
     return point[1];
   });
-  var minX = utils.getMin(xList) - lw;
-  var maxX = utils.getMax(xList) + lw;
-  var minY = utils.getMin(yList) - lw;
-  var maxY = utils.getMax(yList) + lw;
+  var minX = getMin(xList) - lw;
+  var maxX = getMax(xList) + lw;
+  var minY = getMin(yList) - lw;
+  var maxY = getMax(yList) + lw;
   var lt = [minX, minY];
   var lb = [minX, maxY];
   var rt = [maxX, minY];
@@ -1714,7 +1713,7 @@ var line = function (settings, _this) {
       canvas.lineWidth = this.scaled_lineWidth;
       canvas.strokeStyle = this.color;
       canvas.lineDashOffset = this.offset;
-      if (this.dash && utils.isArr(this.dash)) {
+      if (this.dash && isArr(this.dash)) {
         canvas.setLineDash(this.dash);
       }
       if (lineCap) {
@@ -2027,13 +2026,13 @@ var group = function (settings, _this) {
     canvas.lineTo(matrix[0][0], matrix[0][1] + radius.tl * scale);
     canvas.quadraticCurveTo(matrix[0][0], matrix[0][1], matrix[0][0] + radius.tl * scale, matrix[0][1]);
 
-    if (utils.isObj(this.background)) {
+    if (isObj(this.background)) {
       var bg = this.background;
       if (bg.color) {
         canvas.fillStyle = bg.color || COLOR;
         canvas.fill();
       }
-    } else if (utils.isObj(this.border)) {
+    } else if (isObj(this.border)) {
       var border = this.border;
       canvas.strokeStyle = border.color || COLOR;
       canvas.lineWidth = border.lineWidth || LINE_WIDTH;
@@ -2078,7 +2077,7 @@ var group = function (settings, _this) {
   var add = function add(childs) {
     var _this2 = this;
 
-    if (!utils.isArr(childs)) {
+    if (!isArr(childs)) {
       throw 'The parameter must be an array';
     }
     if (!~this._.objects.indexOf(this)) {
@@ -2096,11 +2095,11 @@ var group = function (settings, _this) {
         _this2.children.push(child);
       }
     });
-    utils.insertArray(this._.objects, this._.objects.indexOf(this) + 1, 0, childs);
+    insertArray(this._.objects, this._.objects.indexOf(this) + 1, 0, childs);
     this._.objects.sort(function (a, b) {
       return a.zindex - b.zindex;
     });
-    this._._objects = utils.reverse(this._.objects);
+    this._._objects = reverse(this._.objects);
   };
 
   var remove = function remove(childs) {
@@ -2109,7 +2108,7 @@ var group = function (settings, _this) {
     var list = childs;
     if (typeof childs === 'function') {
       list = this.children.filter(childs);
-    } else if (!utils.isArr(childs)) {
+    } else if (!isArr(childs)) {
       list = [childs];
     }
     list.forEach(function (child) {
@@ -2120,7 +2119,7 @@ var group = function (settings, _this) {
         _this3._.objects = _this3._.objects.filter(function (o) {
           return o !== child;
         });
-        _this3._._objects = utils.reverse(_this3._.objects);
+        _this3._._objects = reverse(_this3._.objects);
       }
     });
   };
@@ -2152,6 +2151,7 @@ var ext = Object.freeze({
 });
 
 var OMG = function () {
+  // support event types
   function OMG(config) {
     classCallCheck(this, OMG);
 
@@ -2172,12 +2172,9 @@ var OMG = function () {
 
     this.scale = this.deviceScale;
 
-    // the instance of image loader
-    this.loader = null;
+    this.loader = new ImageLoader();
 
     this.prepareImage = config.prepareImage;
-
-    this.pointerInnerArray = [];
 
     this.globalMousedown = void 0;
 
@@ -2189,17 +2186,20 @@ var OMG = function () {
 
     this.animationList = [];
 
-    this.animationId = null;
+    this.animationId = 0;
 
     this.animating = false;
 
-    this.fpsFunc = null;
+    this.cacheIdPool = {};
+
+    this.fpsFunc = void 0;
 
     this.fps = 0;
 
     this.fpsCacheTime = 0;
 
-    // support event types
+    this.graphs = {};
+
     this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
 
     this._event = new Event(this);
@@ -2210,7 +2210,6 @@ var OMG = function () {
 
     this.canvas = this.element.getContext('2d');
 
-    // init the width and height
     this.width = config.width;
 
     this.height = config.height;
@@ -2242,17 +2241,24 @@ var OMG = function () {
 
     this.shapes = shapes;
   }
+  // shapes
+
 
   createClass(OMG, [{
     key: 'init',
     value: function init() {
       var _this2 = this;
 
-      Object.keys(this.shapes).forEach(function (shape) {
-        _this2[shape] = function (settings) {
-          return this.shapes[shape](settings, this);
+      var _loop = function _loop(shape) {
+        _this2.graphs[shape] = function (settings) {
+          return _this2.shapes[shape](settings, _this2);
         };
-      });
+      };
+
+      for (var shape in this.shapes) {
+        _loop(shape);
+      }
+
       this.group = function (settings) {
         return group(settings, this);
       };
@@ -2264,25 +2270,28 @@ var OMG = function () {
         this.shapes[key] = ext[key];
       }
     }
+
+    // Array<Object> | Object
+
   }, {
     key: 'addChild',
     value: function addChild(child) {
       // multi or single
-      if (utils.isArr(child)) {
+      if (isArr(child)) {
         this.objects = this.objects.concat(child);
-      } else {
+      } else if (isObj(child)) {
         this.objects.push(child);
       }
       this.objects.sort(function (a, b) {
         return a.zindex - b.zindex;
       });
       // copy the reverse events array
-      this._objects = utils.reverse(this.objects);
+      this._objects = reverse(this.objects);
     }
   }, {
     key: 'removeChild',
     value: function removeChild(child) {
-      if (utils.isArr(child)) {
+      if (isArr(child)) {
         this.objects = this.objects.filter(function (o) {
           return !~child.indexOf(o);
         });
@@ -2291,19 +2300,19 @@ var OMG = function () {
           return o !== child;
         });
       }
-      this._objects = utils.reverse(this.objects);
+      this._objects = reverse(this.objects);
     }
   }, {
     key: 'removeFirstChild',
     value: function removeFirstChild() {
       this.objects.pop();
-      this._objects = utils.reverse(this.objects);
+      this._objects = reverse(this.objects);
     }
   }, {
     key: 'removeLastChild',
     value: function removeLastChild() {
       this.objects.shift();
-      this._objects = utils.reverse(this.objects);
+      this._objects = reverse(this.objects);
     }
   }, {
     key: 'removeAllChilds',
@@ -2314,7 +2323,6 @@ var OMG = function () {
   }, {
     key: 'imgReady',
     value: function imgReady() {
-      this.loader = new ImageLoader();
       this.loader.addImg(this.images);
     }
   }, {
@@ -2366,7 +2374,7 @@ var OMG = function () {
         if (_this4.fpsFunc) {
           var now = Date.now();
           if (now - _this4.fpsCacheTime >= 1000) {
-            _this4.fpsFunc(_this4.fps);
+            _this4.fpsFunc && _this4.fpsFunc(_this4.fps);
             _this4.fps = 0;
             _this4.fpsCacheTime = now;
           } else {
@@ -2386,9 +2394,9 @@ var OMG = function () {
         _this4.redraw();
         if (_this4.animationList.length === 0 && _this4.animating) {
           _this4.animating = false;
-          cancelAnimationFrame(_this4[_this4.animationId]);
+          cancelAnimationFrame(_this4.cacheIdPool[_this4.animationId]);
         } else {
-          _this4[_this4.animationId] = requestAnimationFrame(func);
+          _this4.cacheIdPool[_this4.animationId] = requestAnimationFrame(func);
         }
       };
       if (this.animationList.length > 0 && !this.animating) {
@@ -2421,7 +2429,7 @@ var OMG = function () {
   }, {
     key: 'fpsOff',
     value: function fpsOff() {
-      this.fpsFunc = null;
+      this.fpsFunc = void 0;
       this.fps = 0;
     }
 
@@ -2442,7 +2450,7 @@ var OMG = function () {
     value: function clearAnimation() {
       this.animationList = [];
       this.animating = false;
-      cancelAnimationFrame(this[this.animationId]);
+      cancelAnimationFrame(this.cacheIdPool[this.animationId]);
     }
 
     // get current version
@@ -2480,7 +2488,17 @@ var OMG = function () {
 
   }, {
     key: 'resize',
-    value: function resize(opt) {
+    value: function (_resize) {
+      function resize(_x) {
+        return _resize.apply(this, arguments);
+      }
+
+      resize.toString = function () {
+        return _resize.toString();
+      };
+
+      return resize;
+    }(function (opt) {
       var _this5 = this;
 
       var update = function update() {
@@ -2494,7 +2512,7 @@ var OMG = function () {
         _this5.redraw();
       };
       if (!window.onresize) {
-        utils.bind(window, 'resize', function () {
+        bind(window, 'resize', function () {
           if (opt.resize) {
             opt.resize(update);
           } else {
@@ -2502,7 +2520,7 @@ var OMG = function () {
           }
         });
       }
-    }
+    })
   }]);
   return OMG;
 }();

@@ -1,10 +1,12 @@
+/* @flow */
+
 import './utils/polyfill';
 import { version } from '../package.json';
 import { Event } from './event';
 import { Color } from './utils/color';
 import { ImageLoader } from './utils/imageLoader';
 import autoscale from './utils/autoscale';
-import utils from './utils/helpers';
+import * as utils from './utils/helpers';
 import shapes from './shapes/index';
 import group from './group/index';
 import { Tween } from './tween/index';
@@ -13,7 +15,60 @@ import * as ext from './extend/export';
 
 export class OMG {
 
-  constructor(config) {
+  version: string;
+  graphs: Object;
+  objects: Array<Object>;
+  _objects: Array<Object>;
+  groupRecords: number;
+  transX: number;
+  transY: number;
+  deviceScale: number | void;
+  minDeviceScale: number | void;
+  maxDeviceScale: number | void;
+  scale: number;
+  loader: Object;
+  prepareImage: boolean | Function | void;
+  globalMousedown: Function | void;
+  globalMousemove: Function | void;
+  isDragging: boolean | void;
+  Tween: any;
+  animationList: Array<any>;
+  animationId: number | void;
+  animating: boolean | void;
+  cacheIdPool: Object;
+  fpsFunc: Function | void;
+  fps: number;
+  fpsCacheTime: number;
+  eventTypes: Array<string>; // support event types
+  _event: Object;
+  color: Color;
+  element: HTMLCanvasElement;
+  canvas: CanvasRenderingContext2D;
+  width: number;
+  height: number;
+  ext: Object;
+  clip: Function;
+  enableGlobalScale: boolean | void;
+  enableGlobalTranslate: boolean | void;
+  images: Array<string>;
+  utils: Object;
+  shapes: Object;
+  // shapes
+  group: Function;
+
+  constructor(config: {
+    deviceScale: ?number,
+    minDeviceScale: ?number,
+    maxDeviceScale: ?number,
+    prepareImage: boolean | Function | void,
+    element: HTMLCanvasElement,
+    width: number,
+    height: number,
+    position: ?string,
+    enableGlobalTranslate: ?boolean,
+    enableGlobalScale: ?boolean,
+    images: ?Array<string>
+  }) {
 
     this.version = version;
 
@@ -33,12 +88,9 @@ export class OMG {
 
     this.scale = this.deviceScale;
 
-    // the instance of image loader
-    this.loader = null;
+    this.loader = new ImageLoader();
 
     this.prepareImage = config.prepareImage;
-
-    this.pointerInnerArray = [];
 
     this.globalMousedown = void(0);
 
@@ -50,17 +102,20 @@ export class OMG {
 
     this.animationList = [];
 
-    this.animationId = null;
+    this.animationId = 0;
 
     this.animating = false;
 
-    this.fpsFunc = null;
+    this.cacheIdPool = {};
+
+    this.fpsFunc = void(0);
 
     this.fps = 0;
 
     this.fpsCacheTime = 0;
 
-    // support event types
+    this.graphs = {};
+
     this.eventTypes = [
       'mousedown',
       'mouseup',
@@ -82,7 +137,6 @@ export class OMG {
 
     this.canvas =  this.element.getContext('2d');
 
-    // init the width and height
     this.width = config.width;
 
     this.height = config.height;
@@ -117,27 +171,29 @@ export class OMG {
   }
 
   init() {
-    Object.keys(this.shapes).forEach(shape => {
-      this[shape] = function(settings) {
+    for(let shape in this.shapes) {
+      this.graphs[shape] = settings => {
         return this.shapes[shape](settings, this);
       };
-    });
+    }
+
     this.group = function(settings) {
       return group(settings, this);
     };
   }
 
-  extend(ext) {
+  extend(ext: Object): void {
     for (let key in ext) {
       this.shapes[key] = ext[key];
     }
   }
 
-  addChild(child) {
+  // Array<Object> | Object
+  addChild(child: any) {
     // multi or single
     if(utils.isArr(child)) {
       this.objects = this.objects.concat(child);
-    } else {
+    } else if(utils.isObj(child)) {
       this.objects.push(child);
     }
     this.objects.sort((a, b) => {
@@ -147,7 +203,7 @@ export class OMG {
     this._objects = utils.reverse(this.objects);
   }
 
-  removeChild(child) {
+  removeChild(child: Array<Object> | Object) {
     if(utils.isArr(child)) {
       this.objects = this.objects.filter(o => !~child.indexOf(o));
     } else {
@@ -172,7 +228,6 @@ export class OMG {
   }
 
   imgReady() {
-    this.loader = new ImageLoader();
     this.loader.addImg(this.images);
   }
 
@@ -215,7 +270,7 @@ export class OMG {
       if(this.fpsFunc) {
         const now = Date.now();
         if(now - this.fpsCacheTime >= 1000) {
-          this.fpsFunc(this.fps);
+          this.fpsFunc && this.fpsFunc(this.fps);
           this.fps = 0;
           this.fpsCacheTime = now;
         } else {
@@ -235,9 +290,9 @@ export class OMG {
       this.redraw();
       if(this.animationList.length === 0 && this.animating) {
         this.animating = false;
-        cancelAnimationFrame(this[this.animationId]);
+        cancelAnimationFrame(this.cacheIdPool[this.animationId]);
       } else {
-        this[this.animationId] = requestAnimationFrame(func);
+        this.cacheIdPool[this.animationId] = requestAnimationFrame(func);
       }
     };
     if(this.animationList.length > 0 && !this.animating) {
@@ -257,19 +312,19 @@ export class OMG {
    *   console.log(fps);
    * });
    */
-  fpsOn(func) {
+  fpsOn(func: Function) {
     this.fpsFunc = func;
     this.fpsCacheTime = Date.now();
   }
 
   // fps off
   fpsOff() {
-    this.fpsFunc = null;
+    this.fpsFunc = void(0);
     this.fps = 0;
   }
 
   // add an animation to animationList.
-  animate(func) {
+  animate(func: Function) {
     this._event.triggerEvents();
     this.animationList.push(func);
     this.tick();
@@ -279,7 +334,7 @@ export class OMG {
   clearAnimation() {
     this.animationList = [];
     this.animating = false;
-    cancelAnimationFrame(this[this.animationId]);
+    cancelAnimationFrame(this.cacheIdPool[this.animationId]);
   }
 
   // get current version
@@ -288,12 +343,12 @@ export class OMG {
   }
 
   // global mousedown event.
-  mousedown(func) {
+  mousedown(func: Function) {
     this.globalMousedown = func;
   }
 
   // global mousemove event
-  mousemove(func) {
+  mousemove(func: Function) {
     this.globalMousemove = func;
   }
 
@@ -305,7 +360,11 @@ export class OMG {
    * @param {Function} opt.height - height after resize
    * @param {Function} opt.resize - callback triggered after resize
    */
-  resize(opt) {
+  resize(opt: {
+    width: () => number,
+    height: () => number,
+    resize: Function
+  }) {
     const update = () => {
       this.width = opt.width();
       this.height = opt.height();

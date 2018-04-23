@@ -4,10 +4,12 @@
         "es6": true,
         "node": true
     },
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended", "plugin:flowtype/recommended"],
     "parserOptions": {
         "sourceType": "module"
     },
+    "plugins": ["flowtype"],
+    "parser": "babel-eslint",
     "rules": {
         "indent": [2, 2, {"SwitchCase": 1, "ignoredNodes": ["ConditionalExpression"]}],
         "no-useless-escape": 0,

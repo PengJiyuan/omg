@@ -1,9 +1,9 @@
+/* @flow */
+
 export class Color {
 
-  constructor() {}
-
   // converts hex to RGB
-  hexToRGB(hex) {
+  hexToRGB(hex: string): Object {
     const rgb = [];
 
     hex = hex.substr(1);
@@ -15,6 +15,7 @@ export class Color {
 
     hex.replace(/../g, color => {
       rgb.push(parseInt(color, 0x10));
+      return color;
     });
 
     return {
@@ -26,11 +27,11 @@ export class Color {
   }
 
   // converts rgb to HSL
-  rgbToHSL(r, g, b) {
+  rgbToHSL(r: number, g: number, b: number): Object {
     r /= 255, g /= 255, b /= 255;
     const max = Math.max(r, g, b),
       min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
+    let h: number = 0, s, l = (max + min) / 2;
 
     if(max == min){
       h = s = 0; // achromatic
@@ -60,18 +61,18 @@ export class Color {
   }
 
   // converts hsl to RGB
-  hslToRGB() {
-  }
+  // hslToRGB() {
+  // }
 
   // color lighten
-  lighten(color, percent) {
+  lighten(color: string, percent: string): string | void {
     let hsl, h, s, l, rgba, a;
     if(!color || !percent || !/^[0-9]{1,2}%$/.test(percent)) {
       return;
     }
     if(this.isRgba(color)) {
       rgba = this.getRgba(color);
-      a = +rgba.a - +( percent.slice(0, -1) / 100 );
+      a = +rgba.a - Number(percent.slice(0, -1)) / 100;
       return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${a})`;
     } else {
       hsl = this.getHsl(color);
@@ -84,14 +85,14 @@ export class Color {
   }
 
   // color darken
-  darken(color, percent) {
+  darken(color: string, percent: string): string | void {
     let hsl, h, s, l, rgba, a;
     if(!color || !percent || !/^[0-9]{1,2}%$/.test(percent)) {
       return;
     }
     if(this.isRgba(color)) {
       rgba = this.getRgba(color);
-      a = +rgba.a + +( percent.slice(0, -1) / 100 );
+      a = +rgba.a + Number(percent.slice(0, -1)) / 100;
       return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${a})`;
     } else {
       hsl = this.getHsl(color);
@@ -103,19 +104,19 @@ export class Color {
     }
   }
 
-  isHex(color) {
-    return /^#[a-fA-F0-9]{3}$|#[a-fA-F0-9]{6}$/.test(color);
+  isHex(color: string): boolean {
+    return !!(/^#[a-fA-F0-9]{3}$|#[a-fA-F0-9]{6}$/.test(color));
   }
 
-  isRgb(color) {
-    return /^rgb\((\s*[0-5]{0,3}\s*,?){3}\)$/.test(color);
+  isRgb(color: string): boolean {
+    return !!(/^rgb\((\s*[0-5]{0,3}\s*,?){3}\)$/.test(color));
   }
 
-  isRgba(color) {
-    return /^rgba\((\s*[0-5]{0,3}\s*,?){3}[0-9.\s]*\)$/.test(color);
+  isRgba(color: string): boolean {
+    return !!(/^rgba\((\s*[0-5]{0,3}\s*,?){3}[0-9.\s]*\)$/.test(color));
   }
 
-  getRgb(color) {
+  getRgb(color: string): Object {
     let rgb, r, g, b;
     if(this.isHex(color)) {
       rgb = this.hexToRGB(color);
@@ -127,7 +128,7 @@ export class Color {
     return { r, g, b };
   }
 
-  getRgba(color) {
+  getRgba(color: string): Object {
     let rgba, r, g, b, a;
     rgba = color.slice(5, -1).split(',');
     [ r, g, b, a ] = [ rgba[0], rgba[1], rgba[2], rgba[3] ];
@@ -135,7 +136,7 @@ export class Color {
     return { r, g, b, a };
   }
 
-  getHsl(color) {
+  getHsl(color: string): Object {
     let hsl, rgb, r, g, b, h, s, l;
     rgb = this.getRgb(color);
     [ r, g, b ] = [ rgb.r, rgb.g, rgb.b ];

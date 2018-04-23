@@ -155,7 +155,7 @@
 	var createRect = function() {
 		var w = Math.random() * (rr[1] - rr[0]) + rr[0];
 		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.5)';
-		var rect = stage.rectangle({
+		var rect = stage.graphs.rectangle({
 			x: Math.random() * width,
 			y: Math.random() * height,
 			rotate: Math.ceil(Math.random() * 90),
@@ -177,7 +177,7 @@
 	var createArc = function() {
 		var r = Math.random() * (rr[1] - rr[0]) + rr[0];
 		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.3)';
-		var arc = stage.arc({
+		var arc = stage.graphs.arc({
 			x: Math.random() * width - 80,
 			y: Math.random() * height - 80,
 			radius: r,
