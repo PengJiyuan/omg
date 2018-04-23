@@ -1,4 +1,7 @@
-function clip(_this, canvas, scale) {
+/* @flow */
+
+// TODO: declare shape...
+function clip(_this: Object, canvas: CanvasRenderingContext2D, scale: number): void {
   if(_this.cliping) {
     const bounding = _this.getBounding();
     if(_this.cliping.column) {

@@ -1661,6 +1661,7 @@ var RADIUS = {
   br: 0
 };
 
+// TODO: declare shape...
 function clip(_this, canvas, scale) {
   if (_this.cliping) {
     var bounding = _this.getBounding();
