@@ -1,3 +1,5 @@
+/* @flow */
+
 /**
  * A group is a container that can be inserted into child nodes
  */
@@ -7,8 +9,21 @@ import { COLOR, LINE_WIDTH, RADIUS} from '../data/default';
 import { DefineScale, DefineMatrix } from '../data/define';
 // import getBounding from './bounding';
 import * as utils from '../utils/helpers';
+import type {OMG} from '../core';
 
-export default function(settings, _this) {
+type groupSettings = {
+  background: {color: string},
+  border: {color: string, lineWidth: number},
+  radius: {
+    tl: number,
+    tr: number,
+    bl: number,
+    br: number
+  } | void,
+  title: string
+}
+
+export default function(settings: groupSettings, _this: OMG) {
   const draw = function() {
     const canvas = _this.canvas;
     const scale = _this.scale;

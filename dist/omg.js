@@ -2031,9 +2031,9 @@ var group = function (settings, _this) {
         canvas.fill();
       }
     } else if (isObj(this.border)) {
-      var border = this.border;
-      canvas.strokeStyle = border.color || COLOR;
-      canvas.lineWidth = border.lineWidth || LINE_WIDTH;
+      var _border = this.border;
+      canvas.strokeStyle = _border.color || COLOR;
+      canvas.lineWidth = _border.lineWidth || LINE_WIDTH;
       canvas.stroke();
     }
     canvas.closePath();

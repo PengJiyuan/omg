@@ -22,7 +22,7 @@ export const DefineScale = function(scale: number, ...args: Array<string>): void
  * @params: {x, y, width, height}
  * define matrix and origin point.
  */
-export const DefineMatrix = function(x: number, y: number, width: number, height: number, rotate: number): void {
+export const DefineMatrix = function(x: number, y: number, width: number, height: number, rotate?: number): void {
   this.matrix = [
     [x, y],
     [x + width, y],
