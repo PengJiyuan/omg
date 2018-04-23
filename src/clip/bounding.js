@@ -1,10 +1,12 @@
+/* @flow */
+
 import * as utils from '../utils/helpers';
 
 /**
  * @param {Array}  points - point list
  * @return {Array} bounding points. left top, right top, right bottom, left bottom.
  */
-function getBounding(points, lineWidth) {
+function getBounding(points: Array<Array<number>>, lineWidth: number) {
   const lw = lineWidth ? lineWidth : 0;
   const xList = points.map(point => point[0]);
   const yList = points.map(point => point[1]);
