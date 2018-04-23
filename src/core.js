@@ -30,9 +30,9 @@ export type configSettings = {
 export class OMG {
 
   version: string;
-  graphs: Object;
-  objects: Array<Object>;
-  _objects: Array<Object>;
+  graphs: {[graph_name: string]: Object};
+  objects: Array<GraghShape>;
+  _objects: Array<GraghShape>;
   groupRecords: number;
   transX: number;
   transY: number;
