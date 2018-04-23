@@ -1,10 +1,12 @@
+/* @flow */
+
 import { display } from '../display';
 import { COLOR } from '../data/default';
 import {DefineScale} from '../data/define';
 import * as utils from '../utils/helpers';
 import clip from '../clip/index';
 
-export default function(settings, _this) {
+export default function(settings: Object, _this: Global): GraghShape {
   let totalLength;
 
   const draw = function() {

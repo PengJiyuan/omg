@@ -1,9 +1,11 @@
+/* @flow */
+
 import { display } from '../display';
 import { COLOR, RADIUS } from '../data/default';
 import { DefineScale, DefineMatrix } from '../data/define';
 import clip from '../clip/index';
 
-export default function(settings, _this) {
+export default function(settings: Object, _this: Global): GraghShape {
   const draw = function() {
     const canvas = _this.canvas;
     const scale = _this.scale;

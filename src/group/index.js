@@ -9,7 +9,6 @@ import { COLOR, LINE_WIDTH, RADIUS} from '../data/default';
 import { DefineScale, DefineMatrix } from '../data/define';
 // import getBounding from './bounding';
 import * as utils from '../utils/helpers';
-import type {OMG} from '../core';
 
 type groupSettings = {
   background: {color: string},
@@ -23,7 +22,7 @@ type groupSettings = {
   title: string
 }
 
-export default function(settings: groupSettings, _this: OMG) {
+export default function(settings: groupSettings, _this: Global) {
   const draw = function() {
     const canvas = _this.canvas;
     const scale = _this.scale;

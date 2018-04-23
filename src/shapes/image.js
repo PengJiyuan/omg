@@ -1,7 +1,9 @@
+/* @flow */
+
 import { display } from '../display';
 import { DefineScale } from '../data/define';
 
-export default function(settings, _this) {
+export default function(settings: Object, _this: Global): GraghShape {
   // insert into images
   if(settings.src) {
     !~_this.images.indexOf(settings.src) && _this.images.push(settings.src);

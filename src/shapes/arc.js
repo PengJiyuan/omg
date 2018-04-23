@@ -4,7 +4,7 @@ import { display } from '../display';
 import { DefineScale } from '../data/define';
 import type {OMG} from '../core';
 
-export default function(settings: Object, _this: OMG) {
+export default function(settings: Object, _this: OMG): GraghShape {
   const draw = function() {
     const canvas = _this.canvas;
     const scale = _this.scale;
