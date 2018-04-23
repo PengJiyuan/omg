@@ -1,9 +1,11 @@
-export default (x, y, r, sa, ea) => {
+/* @flow */
+
+export default (x: number, y: number, r: number, sa: number, ea: number) => {
   const pi = Math.PI;
   let dis, isIn;
   // Sector
   if(!isNaN(sa) && !isNaN(ea)) {
-    var angle;
+    let angle = 0;
     // 4th quadrant
     if(x >= 0 && y >= 0) {
       if(x === 0) {

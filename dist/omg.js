@@ -950,7 +950,7 @@ var insideArc = (function (x, y, r, sa, ea) {
       isIn = void 0;
   // Sector
   if (!isNaN(sa) && !isNaN(ea)) {
-    var angle;
+    var angle = 0;
     // 4th quadrant
     if (x >= 0 && y >= 0) {
       if (x === 0) {
