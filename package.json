@@ -49,6 +49,7 @@
     "rollup-plugin-uglify": "^2.0.1"
   },
   "pre-commit": [
+    "flow",
     "eslint",
     "build",
     "extra"
