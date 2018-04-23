@@ -1,3 +1,5 @@
+// No flow check, because flow do not support dynamic assign value.
+
 import isPointInner from './inside';
 import getBounding from './clip/bounding';
 import { Tween } from './tween/index';

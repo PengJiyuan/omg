@@ -22,9 +22,9 @@ export class OMG {
   groupRecords: number;
   transX: number;
   transY: number;
-  deviceScale: number | void;
-  minDeviceScale: number | void;
-  maxDeviceScale: number | void;
+  deviceScale: number;
+  minDeviceScale: number;
+  maxDeviceScale: number;
   scale: number;
   loader: Object;
   prepareImage: boolean | Function | void;

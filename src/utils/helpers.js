@@ -1,12 +1,12 @@
 /* @flow */
 
-export function getPos(e: MouseEvent): Object {
+export function getPos(e: MouseEvent): {x: number, y: number} {
   const ev = e || window.event;
   const [ x, y ] = [ ev.offsetX, ev.offsetY ];
   return {x, y};
 }
 
-export function bind(target: HTMLElement, eventType: string, handler: EventListener): HTMLElement {
+export function bind(target: HTMLElement | Document, eventType: string, handler: Function): HTMLElement | Document {
   if (window.addEventListener) {
     target.addEventListener(eventType, handler, false);
   } else if (target.attachEvent) {
@@ -15,7 +15,7 @@ export function bind(target: HTMLElement, eventType: string, handler: EventListe
   return target;
 }
 
-export function unbind(target: HTMLElement, eventType: string, handler: EventListener): void {
+export function unbind(target: HTMLElement | Document, eventType: string, handler: Function): void {
   if (window.removeEventListener) {
     target.removeEventListener(eventType, handler, false);
   } else if (window.detachEvent) {

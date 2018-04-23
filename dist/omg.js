@@ -312,12 +312,7 @@ var Event = function () {
   createClass(Event, [{
     key: 'getPos',
     value: function getPos$$1(e) {
-      var ev = e || event;
-      var _ref = [ev.offsetX, ev.offsetY],
-          x = _ref[0],
-          y = _ref[1];
-
-      return { x: x, y: y };
+      return getPos(e);
     }
   }, {
     key: 'triggerEvents',
@@ -1268,6 +1263,8 @@ var Tween = function () {
   }]);
   return Tween;
 }();
+
+// No flow check, because flow do not support dynamic assign value.
 
 var Display = function () {
   function Display(settings, _this) {

@@ -1,17 +1,25 @@
+/* @flow */
+
 import * as utils from './utils/helpers';
+import type {OMG} from './core';
 
 export class Event {
-  constructor(_this) {
+
+  _: OMG;
+  triggeredMouseDown: boolean;
+  triggeredMouseMove: boolean;
+  cacheX: number;
+  cacheY: number;
+
+  constructor(_this: OMG) {
     // global this
     this._ = _this;
     this.triggeredMouseDown = false;
     this.triggeredMouseMove = false;
   }
 
-  getPos(e) {
-    const ev = e || event;
-    const [ x, y ] = [ ev.offsetX, ev.offsetY ];
-    return { x, y };
+  getPos(e: MouseEvent): {x: number, y: number} {
+    return utils.getPos(e);
   }
 
   triggerEvents() {
@@ -65,7 +73,7 @@ export class Event {
     utils.unbind(this._.element, 'wheel', this.mouseWheel.bind(this));
   }
 
-  mouseWheel(e) {
+  mouseWheel(e: WheelEvent) {
     if(e.deltaY && e.deltaY > 0) {
       this._.scale = this._.scale - 0.01 >= this._.minDeviceScale ? this._.scale - 0.01 : this._.minDeviceScale;
     } else if(e.deltaY && e.deltaY < 0) {
@@ -82,7 +90,7 @@ export class Event {
     utils.unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
   }
 
-  mouseEnterOrMove(e_moveOrEnter) {
+  mouseEnterOrMove(e_moveOrEnter: MouseEvent) {
     const that = this;
     let isDragging;
 
@@ -155,7 +163,7 @@ export class Event {
 
   }
 
-  mouseDown(e_down) {
+  mouseDown(e_down: MouseEvent) {
     let that = this, whichIn, hasEventDrag, hasEventDragEnd, dragCb, dragEndCb;
 
     // global setting event mousedown
@@ -281,7 +289,7 @@ export class Event {
     }
   }
 
-  changeOrder(item) {
+  changeOrder(item: mixed) {
     const i = this._.objects.indexOf(item);
     const cacheData = this._.objects[i];
     this._.objects.splice(i, 1);
