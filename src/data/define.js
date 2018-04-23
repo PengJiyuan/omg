@@ -1,3 +1,5 @@
+/* @flow */
+
 /**
  * Define some vars.
  * @includes: set {x, y, width, height, moveX, moveY...} to scaled_xxx.
@@ -6,7 +8,7 @@
  */
 import { getTransformMatrix } from './matrix';
 
-export const DefineScale = function(scale, ...args) {
+export const DefineScale = function(scale: number, ...args: Array<string>): void {
   args.forEach(a => {
     if(a === 'matrix') {
       this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
@@ -20,7 +22,7 @@ export const DefineScale = function(scale, ...args) {
  * @params: {x, y, width, height}
  * define matrix and origin point.
  */
-export const DefineMatrix = function(x, y, width, height, rotate) {
+export const DefineMatrix = function(x: number, y: number, width: number, height: number, rotate: number): void {
   this.matrix = [
     [x, y],
     [x + width, y],
