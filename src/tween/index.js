@@ -1,7 +1,36 @@
+/* @flow */
+
 import * as easing from './easing';
 
+type TweenSettings = {
+  from: Object,
+  to: Object,
+  duration: number,
+  delay: number,
+  easing: string,
+  onStart: Function,
+  onUpdate: Function,
+  onFinish: Function
+}
+
 export class Tween {
-  constructor(settings) {
+
+  from: Object;
+  to: Object;
+  duration: number;
+  elapsed: number;
+  delay: number;
+  easing: string;
+  onStart: Function;
+  onUpdate: Function;
+  onFinish: Function;
+  startTime: number;
+  started: boolean;
+  finished: boolean;
+  keys: Object;
+  time: number;
+
+  constructor(settings: TweenSettings) {
     const {
       from,
       to,
