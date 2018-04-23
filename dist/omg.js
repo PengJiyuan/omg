@@ -920,7 +920,7 @@ var insideRectangle = (function (x, y, recX, recY, recW, recH) {
   return xRight && xLeft && yTop && yBottom;
 });
 
-// from https://github.com/ecomfe/zrender/blob/master/src/contain/line.js
+// https://github.com/ecomfe/zrender/blob/master/src/contain/line.js
 var insideLine = (function (x0, y0, x1, y1, lineWidth, x, y) {
   if (lineWidth === 0) {
     return false;

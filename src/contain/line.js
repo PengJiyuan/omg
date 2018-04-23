@@ -1,5 +1,7 @@
-// from https://github.com/ecomfe/zrender/blob/master/src/contain/line.js
-export default (x0, y0, x1, y1, lineWidth, x, y) => {
+/* @flow */
+
+// https://github.com/ecomfe/zrender/blob/master/src/contain/line.js
+export default (x0: number, y0: number, x1: number, y1: number, lineWidth: number, x: number, y: number): boolean => {
   if (lineWidth === 0) {
     return false;
   }
