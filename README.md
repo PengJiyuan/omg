@@ -27,7 +27,7 @@ const OMG = require('omg.js');
 console.log(OMG); // ...
 ```
 
-**DOWNLOAD**    
+**DOWNLOAD**
 
 [Source Code](dist/omg.min.js)
 
