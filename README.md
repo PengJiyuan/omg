@@ -60,7 +60,7 @@ const stage = omg({
 
 stage.init();
 
-const rect = stage.rectangle({
+const rect = stage.graphs.rectangle({
   x: 120,
   y: 120,
   width: 200,
@@ -114,12 +114,12 @@ stage.init();
 stage.getVersion(); // v x.x.x
 ```
 
-### Shapes
+### Graphs
 
 **Rectangle**
 
 ```javascript
-const rect = stage.rectangle({
+const rect = stage.graphs.rectangle({
   x: 0,
   y: 0,
   width: 110,
@@ -137,7 +137,7 @@ const rect = stage.rectangle({
 
 **Line & Polyline**
 ```javascript
-const polyline = stage.line({
+const polyline = stage.graphs.line({
   matrix: [
     [10, 180],
     [40, 50],
@@ -152,7 +152,7 @@ const polyline = stage.line({
 
 **Polygon**
 ```javascript
-const polygon = stage.polygon({
+const polygon = stage.graphs.polygon({
   matrix: [
     [310, 120],
     [360, 120],
@@ -169,7 +169,7 @@ const polygon = stage.polygon({
 **Image**
 
 ```javascript
-const image = stage.image({
+const image = stage.graphs.image({
   x: 0,
   y: 0,
   width: 800,
@@ -178,7 +178,7 @@ const image = stage.image({
 });
 
 // For more detail, check canvas api.
-const image3 = stage.image({
+const image3 = stage.graphs.image({
   x: 200,
   y: 200,
   width: 97,
@@ -194,7 +194,7 @@ const image3 = stage.image({
 **Text**
 
 ```javascript
-const text = stage.text({
+const text = stage.graphs.text({
   x: 300,
   y: 40,
   width: 150,
@@ -215,7 +215,7 @@ const text = stage.text({
 **Circle**
 
 ```javascript
-const arc = stage.arc({
+const arc = stage.graphs.arc({
   x: 400,
   y: 400,
   radius: 30,
@@ -227,7 +227,7 @@ const arc = stage.arc({
 **Sector**
 
 ```javascript
-const arcb = stage.arc({
+const arcb = stage.graphs.arc({
   x: 130,
   y: 380,
   radius: 100,
@@ -240,7 +240,7 @@ const arcb = stage.arc({
 
 ### Hide Shapes
 ```javascript
-const arcb = stage.arc({
+const arcb = stage.graphs.arc({
   ...,
   hide: true
 });
@@ -303,7 +303,7 @@ stage.extend({
 stage.init();
 
 // use your extend shape
-const shape = stage.yourShape({
+const shape = stage.graphs.yourShape({
   ...settings
 });
 
