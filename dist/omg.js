@@ -866,6 +866,7 @@ var ImageLoader = function () {
       imageArray.forEach(function (src) {
         var img = new Image();
         img.src = src;
+        img.id = src;
         _this3.imageList.push(img);
       });
     }
@@ -874,7 +875,7 @@ var ImageLoader = function () {
     value: function getImg(name) {
       var target = void 0;
       this.imageList.forEach(function (img) {
-        if (img.src == name) {
+        if (img.id == name) {
           target = img;
         }
       });

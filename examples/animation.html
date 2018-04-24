@@ -24,16 +24,16 @@
 </div>
 <script src="./omg.min.js"></script>
 <script>
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
 		enableGlobalTranslate: false
 	});
 
-	world.init();
+	stage.init();
 
-	var rect1 = world.rectangle({
+	var rect1 = stage.graphs.rectangle({
 		x: 200,
 		y: 500,
 		width: 100,
@@ -41,7 +41,7 @@
 		zindex: 2,
 		color: '#ef8376'
 	});
-  var rect2 = world.rectangle({
+  var rect2 = stage.graphs.rectangle({
 		x: 200,
 		y: 500,
 		width: 100,
@@ -81,9 +81,9 @@
 		});
   }
 
-	world.addChild([rect1, rect2]);
+	stage.addChild([rect1, rect2]);
 
-	world.show();
+	stage.show();
 
 	move(rect1, 0);
 	setTimeout(function() {

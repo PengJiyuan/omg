@@ -35,6 +35,7 @@ export class ImageLoader {
     imageArray.forEach((src) => {
       let img = new Image();
       img.src = src;
+      img.id = src;
       this.imageList.push(img);
     });
   }
@@ -42,7 +43,7 @@ export class ImageLoader {
   getImg(name: string) {
     let target;
     this.imageList.forEach((img) => {
-      if(img.src == name){
+      if(img.id == name) {
         target = img;
       }
     });

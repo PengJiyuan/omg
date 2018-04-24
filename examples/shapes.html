@@ -30,7 +30,7 @@
 
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -38,9 +38,9 @@
 		prepareImage: true
 	});
 
-	world.init();
+	stage.init();
 
-	var polygon = world.polygon({
+	var polygon = stage.graphs.polygon({
 		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
 		color: 'black',
 		type: 'fill'
@@ -49,10 +49,10 @@
 		drag: true
 	}).on('mouseenter', function() {
 		polygon.color = 'green';
-		world.redraw();
+		stage.redraw();
 	}).on('mouseleave', function() {
 		polygon.color = 'black';
-		world.redraw();
+		stage.redraw();
 	});
 
 	function bounce(cur, radius) {
@@ -64,7 +64,7 @@
 		});
 	}
 
-	var arca = world.arc({
+	var arca = stage.graphs.arc({
 		x: 130,
 		y: 380,
 		radius: 100,
@@ -77,13 +77,13 @@
 		changeIndex: true
 	}).on('mouseenter', function(cur) {
 		bounce(cur, 130);
-		world.redraw();
+		stage.redraw();
 	}).on('mouseleave', function(cur) {
 		bounce(cur, 100);
-		world.redraw();
+		stage.redraw();
 	});
 
-	var arcb = world.arc({
+	var arcb = stage.graphs.arc({
 		x: 130,
 		y: 380,
 		radius: 100,
@@ -96,13 +96,13 @@
 		changeIndex: true
 	}).on('mouseenter', function(cur) {
 		bounce(cur, 130);
-		world.redraw();
+		stage.redraw();
 	}).on('mouseleave', function(cur) {
 		bounce(cur, 100);
-		world.redraw();
+		stage.redraw();
 	});
 
-	var arcc = world.arc({
+	var arcc = stage.graphs.arc({
 		x: 130,
 		y: 380,
 		radius: 100,
@@ -115,13 +115,13 @@
 		changeIndex: true
 	}).on('mouseenter', function(cur) {
 		bounce(cur, 130);
-		world.redraw();
+		stage.redraw();
 	}).on('mouseleave', function(cur) {
 		bounce(cur, 100);
-		world.redraw();
+		stage.redraw();
 	});
 
-	var image = world.image({
+	var image = stage.graphs.image({
 		x: 0,
 		y: 0,
 		width: 800,
@@ -133,7 +133,7 @@
 		zindex: -1
 	});
 
-	var text = world.text({
+	var text = stage.graphs.text({
 		x: 300,
 		y: 40,
 		width: 150,
@@ -152,7 +152,7 @@
 		bg: true
 	});
 
-	var image3 = world.image({
+	var image3 = stage.graphs.image({
 		x: 300,
 		y: 200,
 		width: 97,
@@ -169,27 +169,27 @@
 		changeIndex: true
 	});
 
-	var arc = world.arc({
+	var arc = stage.graphs.arc({
 		x: 400,
 		y: 400,
 		radius: 30,
 		color: 'rgba(255, 255, 255, 0.5)',
 		style: 'fill'
 	}).on('mouseenter', function() {
-		world.element.style.cursor = 'pointer';
+		stage.element.style.cursor = 'pointer';
 	}).on('mouseleave', function() {
-		world.element.style.cursor = 'default';
+		stage.element.style.cursor = 'default';
 	}).on('dragend', function() {
 		arc.moveX = 0;
 		arc.moveY = 0;
-		world.redraw();
+		stage.redraw();
 	}).config({
 		drag: true,
 		changeIndex: true,
 		fixed: true
 	});
 
-	var arc2 = world.arc({
+	var arc2 = stage.graphs.arc({
 		x: 400,
 		y: 400,
 		radius: 80,
@@ -200,35 +200,9 @@
 		bg: true
 	});
 
-	world.addChild([image, text, image3, arc2, arc, arca, arcb, arcc, polygon]);
+	stage.addChild([image, text, image3, arc2, arc, arca, arcb, arcc, polygon]);
 
-	// world.addChild(
-	// 	world.coord({
-	// 		x: 10,
-	// 		y: 0,
-	// 		width: 300,
-	// 		height: 250,
-	// 		xAxis: {
-	// 			data: ["C#", "PHP", "JS", "C", "C++"]
-	// 		},
-	// 		yAxis: {
-
-	// 		},
-	// 		series: [{
-	// 			data: [-0.11358, -0.622, 0.33, 0.44, 0.5555]
-	// 		}],
-	// 		boundaryGap: true,
-	// 		backgroundColor: '#F3F3F3',//'#'+(~~(Math.random()*(1<<24))).toString(16)
-	// 		title: 'Test Title'
-	// 	}).config({
-	// 		fixed: true,
-	// 		drag: false,
-	// 		changeIndex: false,
-	// 		zindex: 0
-	// 	})
-	// );
-
-	var line = world.line({
+	var line = stage.graphs.line({
 		matrix: [
 			[10, 60], 
 			[100, 180],
@@ -244,16 +218,16 @@
 	}).on('mouseenter mousemove', function(cur) {
 		cur.lineWidth = 8;
 		cur.color = '#ccc';
-		world.redraw();
-		world.element.style.cursor = 'pointer';
+		stage.redraw();
+		stage.element.style.cursor = 'pointer';
 	}).on('mouseleave', function(cur) {
 		cur.color = '#ef8376';
 		cur.lineWidth = 4;
-		world.redraw();
-		world.element.style.cursor = 'default';
+		stage.redraw();
+		stage.element.style.cursor = 'default';
 	});
 
-	var a = world.rectangle({
+	var a = stage.graphs.rectangle({
 		x: 120,
 		y: 120,
 		width: 100,
@@ -265,72 +239,17 @@
 		changeIndex: true
 	}).on('mouseenter', function(cur) {
 		cur.color = 'blue';
-		world.element.style.cursor = 'pointer';
-		world.redraw();
+		stage.element.style.cursor = 'pointer';
+		stage.redraw();
 	}).on('mouseleave', function(cur) {
 		cur.color = 'red';
-		world.element.style.cursor = 'default';
-		world.redraw();
+		stage.element.style.cursor = 'default';
+		stage.redraw();
 	});
 
-	world.addChild([line, a]);
+	stage.addChild([line, a]);
 
-	world.show();
-
-	// drag and drop
-
-	// var dg = document.getElementById('dg');
-	// dg.onselectstart = function() {
- //    return false;
- //  };
- //  dg.ondragstart = function(ev) {
- //    ev.dataTransfer.effectAllowed = "move";
- //    //ev.dataTransfer.setData("text", ev.target.innerHTML);
- //    ev.dataTransfer.setDragImage(ev.target, 0, 0);
- //    return true;
- //  };
-
- //  world.element.ondragover = function(e) {
- //  	e.preventDefault();
- //  	var x = world._event.getPos(e).x;
- //  	var y = world._event.getPos(e).y;
- //  	var which = world._objects.filter(function(item) {
- //  		return item.isPointInner(x, y);
- //  	});
- //  	if(which.length > 0 ) {
- //  		which[0].color = '#000';
- //  		world.redraw();
- //  	}
- //  }
-
- //  world.element.ondrop = function(ev) {
- //  	var x = world._event.getPos(ev).x;
- //  	var y = world._event.getPos(ev).y;
- //  	var width = Math.random()*300;
- //    var a = world.rectangle({
-	// 		x: x,
-	// 		y: y,
-	// 		width: width,
-	// 		height: width,
-	// 		color: '#'+(~~(Math.random()*(1<<24))).toString(16)
-	// 	}).on('mousedown', function() {
-	// 		console.log('click a');
-	// 	}).on('mouseenter', function() {
-	// 		a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
-	// 		world.redraw();
-	// 	}).on('mouseleave', function() {
-	// 		a.color = '#'+(~~(Math.random()*(1<<24))).toString(16);
-	// 		world.redraw();
-	// 	}).config({
-	// 		drag: true,
-	// 		changeIndex: true
-	// 	});
-
- //    world.addChild(a);
-
-	// 	world.redraw();
- //    return false;
-	// };
+	stage.show();
 
 </script>
 </body>
