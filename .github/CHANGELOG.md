@@ -90,6 +90,9 @@
 * 初始化参数prepareImage 增加 函数类型，会在加载完图片之后触发，可用于在加载完图片之后隐藏loading层。
 * 修复animateTo的onUpdate的触发顺序。
 
+#### v4.0.0-beta.0
+* 添加flow。
+* graph的绘制接口调整，不向下兼容。直接通过stage.shape(...)调整为stage.graphs.shape(...)。
 
 ## ToDo
 
