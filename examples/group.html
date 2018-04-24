@@ -22,7 +22,7 @@
 </div>
 <script src="./omg.min.js"></script>
 <script>
-  var world = omg({
+  var stage = omg({
     element: document.getElementById('canvas'),
     width: document.body.clientWidth,
     height: document.body.clientHeight,
@@ -30,9 +30,9 @@
     enableGlobalScale: false
   });
 
-  world.init();
+  stage.init();
 
-  var group = world.group({
+  var group = stage.group({
     x: 100,
     y: 100,
     width: 200,
@@ -46,17 +46,17 @@
     zindex: 10
   }).on('mouseenter', function(cur) {
     cur.background.color = '#444';
-    world.redraw();
+    stage.redraw();
   }).on('mouseleave', function(cur) {
     cur.background.color = '#000';
-    world.redraw();
+    stage.redraw();
   });
 
-  world.addChild(group);
+  stage.addChild(group);
 
   var childs = [];
   for(var i = 0;i < 5; i++) {
-    var child = world.rectangle({
+    var child = stage.graphs.rectangle({
       x: 10,
       y: 40 * i + 10,
       width: 180,
@@ -64,16 +64,16 @@
       color: '#bbb'
     }).on('mouseenter', function(cur) {
       cur.color = '#ef4';
-      world.redraw();
+      stage.redraw();
     }).on('mouseleave', function(cur) {
       cur.color = '#bbb';
-      world.redraw();
+      stage.redraw();
     });
     childs.push(child);
   }
   group.add(childs);
 
-  var button = world.arc({
+  var button = stage.graphs.arc({
     x: 198,
     y: 380,
     radius: 20,
@@ -81,14 +81,14 @@
     color: '#000'
   }).on('mouseenter', function(cur) {
     cur.color = '#222';
-    world.element.style.cursor = 'pointer';
-    world.redraw();
+    stage.element.style.cursor = 'pointer';
+    stage.redraw();
   }).on('mouseleave', function(cur) {
     cur.color = '#000';
-    world.element.style.cursor = 'default';
-    world.redraw();
+    stage.element.style.cursor = 'default';
+    stage.redraw();
   }).on('mousedown', function(cur) {
-    if(group.width === 200 && !world.animating) {
+    if(group.width === 200 && !stage.animating) {
       group.animateTo({
         width: 400
       }, {
@@ -104,7 +104,7 @@
           delay: 50 * (i + 1)
         });
       });
-    } else if(group.width === 400 && !world.animating) {
+    } else if(group.width === 400 && !stage.animating) {
       group.children.forEach(function(child, i) {
         child.animateTo({
           width: 180
@@ -124,7 +124,7 @@
     }
   });
 
-  var text = world.text({
+  var text = stage.graphs.text({
 		x: 135,
 		y: 40,
 		width: 150,
@@ -137,8 +137,8 @@
 		bg: true
   });
 
-  world.addChild([button, text]);
-  world.show();
+  stage.addChild([button, text]);
+  stage.show();
 
 </script>
 </body>

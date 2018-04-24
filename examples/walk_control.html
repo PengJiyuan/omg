@@ -35,7 +35,7 @@
 
 	var start = document.getElementById('start');
 	var stop = document.getElementById('stop');
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -43,16 +43,16 @@
 		prepareImage: true
 	});
 
-	world.init();
+	stage.init();
 
 	var fpsEle = document.getElementById('fps');
 
-	world.fpsOn(function(fps) {
+	stage.fpsOn(function(fps) {
 		fpsEle.innerHTML = 'FPS: ' + fps;
 	});
 
 
-	var image = world.image({
+	var image = stage.graphs.image({
 		x: 0,
 		y: 0,
 		width: 800,
@@ -63,7 +63,7 @@
 		fixed: true
 	});
 
-	var image3 = world.image({
+	var image3 = stage.graphs.image({
 		x: 200,
 		y: 200,
 		width: 97,
@@ -79,16 +79,16 @@
 		drag: true
 	});
 
-	var arc = world.arc({
+	var arc = stage.graphs.arc({
 		x: 400,
 		y: 400,
 		radius: 30,
 		color: 'rgba(255, 255, 255, 0.5)',
 		style: 'fill'
 	}).on('mouseenter', function() {
-		world.element.style.cursor = 'pointer';
+		stage.element.style.cursor = 'pointer';
 	}).on('mouseleave', function() {
-		world.element.style.cursor = 'default';
+		stage.element.style.cursor = 'default';
 	}).on('drag', function() {
 		var mx = arc.moveX,
 			my = arc.moveY,
@@ -159,14 +159,14 @@
 	}).on('dragend', function() {
 		arc.moveX = 0;
 		arc.moveY = 0;
-		world.redraw();
+		stage.redraw();
 	}).config({
 		drag: true,
 		changeIndex: true,
 		fixed: true
 	});
 
-	var arc2 = world.arc({
+	var arc2 = stage.graphs.arc({
 		x: 400,
 		y: 400,
 		radius: 80,
@@ -177,8 +177,8 @@
 		bg: true
 	});
 
-	world.addChild([image, image3, arc2, arc]);
-	world.show();
+	stage.addChild([image, image3, arc2, arc]);
+	stage.show();
 
 	var num = 0;
 	function go() {
@@ -242,20 +242,20 @@
 			image3.moveY = -200;
 		}
 
-		if(image3.moveX > world.width - 200 - 64) {
-			image3.moveX = world.width - 200 - 64;
+		if(image3.moveX > stage.width - 200 - 64) {
+			image3.moveX = stage.width - 200 - 64;
 		}
 
-		if(image3.moveY > world.height - 200 - 110) {
-			image3.moveY = world.height - 200 - 110;
+		if(image3.moveY > stage.height - 200 - 110) {
+			image3.moveY = stage.height - 200 - 110;
 		}
 
-		world.redraw();
+		stage.redraw();
 
 		num ++;
 	}
 
-	world.animate(go)
+	stage.animate(go)
 
 </script>
 </body>

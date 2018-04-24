@@ -24,7 +24,7 @@
 </div>
 <script src="./omg.min.js"></script>
 <script>
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -33,10 +33,10 @@
 		prepareImage: true
 	});
 
-	world.init();
+	stage.init();
 
 	function createRect(x, y, width, height, zindex) {
-		return world.rectangle({
+		return stage.graphs.rectangle({
 				x: x,
 				y: y,
 				width: width,
@@ -48,16 +48,16 @@
 				drag: true
 			}).on('mouseenter', function(cur) {
 				cur.color = '#555';
-				world.redraw();
+				stage.redraw();
 			}).on('mouseleave', function(cur) {
 				cur.color = '#222';
-				world.redraw();
+				stage.redraw();
 			});
 	}
 
 	var rect1 = createRect(20, 20, 50, 50, 4);
 
-	var line = world.line({
+	var line = stage.graphs.line({
 		matrix: [
 			[10, 60], 
 			[100, 180],
@@ -72,17 +72,17 @@
 		color: '#ef8376'
 	}).on('mouseenter mousemove', function(cur) {
 		cur.color = '#000';
-		world.redraw();
-		world.element.style.cursor = 'pointer';
+		stage.redraw();
+		stage.element.style.cursor = 'pointer';
 	}).on('mouseleave', function(cur) {
 		cur.color = '#ef8376';
-		world.redraw();
-		world.element.style.cursor = 'default';
+		stage.redraw();
+		stage.element.style.cursor = 'default';
 	});
 
-	world.addChild([rect1, line]);
+	stage.addChild([rect1, line]);
 
-	world.show();
+	stage.show();
 
 </script>
 </body>

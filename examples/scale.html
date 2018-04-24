@@ -39,7 +39,7 @@
 </div>
 <script src="./omg.min.js"></script>
 <script>
-  var world = omg({
+  var stage = omg({
     element: document.getElementById('canvas'),
     width: document.body.clientWidth,
     height: document.body.clientHeight,
@@ -48,9 +48,9 @@
     prepareImage: true
   });
 
-  world.init();
+  stage.init();
 
-  var rect1 = world.rectangle({
+  var rect1 = stage.graphs.rectangle({
     x: 200,
     y: 500,
     width: 100,
@@ -65,19 +65,19 @@
     },
     color: '#ef8376'
   }).on('mouseenter mousemove', function() {
-    world.element.style.cursor = 'pointer';
+    stage.element.style.cursor = 'pointer';
     rect1.color = '#000';
-    world.redraw();
+    stage.redraw();
   }).on('mouseleave', function() {
-    world.element.style.cursor = 'default';
+    stage.element.style.cursor = 'default';
     rect1.color = '#ef8376';
-    world.redraw();
+    stage.redraw();
   }).config({
     drag: true,
     // cliping: true
   });
 
-  var arc = world.arc({
+  var arc = stage.graphs.arc({
     x: 130,
     y: 380,
     radius: 100,
@@ -87,15 +87,15 @@
     style: 'fill'
   }).on('mouseenter', function(cur) {
     cur.color = '#555';
-    world.redraw();
+    stage.redraw();
   }).on('mouseleave', function(cur) {
     cur.color = '#e1a376';
-    world.redraw();
+    stage.redraw();
   }).config({
     drag: true
   });
 
-  var text = world.text({
+  var text = stage.graphs.text({
     x: 300,
     y: 40,
     width: 140,
@@ -111,13 +111,13 @@
     color: '#fff'
   }).on('mouseenter', function(cur) {
     cur.backgroundColor = '#555';
-    world.redraw();
+    stage.redraw();
   }).on('mouseleave', function(cur) {
     cur.backgroundColor = 'blue';
-    world.redraw();
+    stage.redraw();
   });
 
-  var image = world.image({
+  var image = stage.graphs.image({
     x: 300,
     y: 200,
     width: 97,
@@ -132,7 +132,7 @@
   });
 
 
-  var line = world.line({
+  var line = stage.graphs.line({
     matrix: [
       [10, 180], 
       [40, 50], 
@@ -146,16 +146,16 @@
   }).on('mouseenter', function(cur) {
     cur.color = '#000';
     cur.lineWidth = 6;
-    world.redraw();
+    stage.redraw();
   }).on('mouseleave', function(cur) {
     cur.color = '#555';
     cur.lineWidth = 3;
-    world.redraw();
+    stage.redraw();
   }).config({
     cliping: true
   });
 
-  var polygon = world.polygon({
+  var polygon = stage.graphs.polygon({
     matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
     style: 'stroke',
     lineWidth: 2
@@ -165,17 +165,17 @@
   }).on('mouseenter', function(cur) {
     cur.color = '#000';
     cur.lineWidth = 7;
-    world.redraw();
+    stage.redraw();
   }).on('mouseleave', function(cur) {
     cur.color = '#555';
     cur.lineWidth = 2;
-    world.redraw();
+    stage.redraw();
   }).config({
     cliping: true
   });
 
-  world.addChild([rect1, arc, text, image, line, polygon]);
-  world.show();
+  stage.addChild([rect1, arc, text, image, line, polygon]);
+  stage.show();
 
   line.animateTo({
     boundingWidth: line.getBounding().w
