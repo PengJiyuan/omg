@@ -1,6 +1,6 @@
 /* @flow */
 
-/*!
+/**
  * @PengJiyuan
  *
  * Two-dimensional coordinate system

@@ -1478,7 +1478,7 @@ function display(settings, _this) {
   });
 }
 
-/*!
+/**
  * @PengJiyuan
  *
  * Two-dimensional coordinate system
