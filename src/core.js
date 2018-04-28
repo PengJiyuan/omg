@@ -189,6 +189,23 @@ export class OMG {
     }
   }
 
+  // Confused flow.
+  setGlobalProps(props: {[prop_name: string]: any}) {
+    for(let key in props) {
+      switch(key) {
+        case 'enableGlobalTranslate':
+          this.enableGlobalTranslate = props[key];
+          break;
+        case 'enableGlobalScale':
+          this.enableGlobalScale = props[key];
+          break;
+        default:
+          break;
+      }
+    }
+    this._event.triggerEvents();
+  }
+
   // Array<Object> | Object
   addChild(child: any) {
     // multi or single
@@ -318,7 +335,6 @@ export class OMG {
     this.fpsCacheTime = Date.now();
   }
 
-  // fps off
   fpsOff() {
     this.fpsFunc = void(0);
     this.fps = 0;

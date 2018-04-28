@@ -2307,6 +2307,26 @@ var OMG = function () {
       }
     }
 
+    // Confused flow.
+
+  }, {
+    key: 'setGlobalProps',
+    value: function setGlobalProps(props) {
+      for (var key in props) {
+        switch (key) {
+          case 'enableGlobalTranslate':
+            this.enableGlobalTranslate = props[key];
+            break;
+          case 'enableGlobalScale':
+            this.enableGlobalScale = props[key];
+            break;
+          default:
+            break;
+        }
+      }
+      this._event.triggerEvents();
+    }
+
     // Array<Object> | Object
 
   }, {
@@ -2459,9 +2479,6 @@ var OMG = function () {
       this.fpsFunc = func;
       this.fpsCacheTime = Date.now();
     }
-
-    // fps off
-
   }, {
     key: 'fpsOff',
     value: function fpsOff() {

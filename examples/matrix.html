@@ -92,28 +92,20 @@
 
     // 全局拖拽设置
     function translateReverse() {
-        let translateBtn = document.getElementById("translateReverseBtn");
-        if (stage.enableGlobalTranslate) {
-            translateBtn.innerHTML = "开启拖拽";
-            stage.enableGlobalTranslate = false;
-        } else {
-            translateBtn.innerHTML = "关闭拖拽";
-            stage.enableGlobalTranslate = true;
-				}
-				stage._event.triggerEvents();
+			let translateBtn = document.getElementById("translateReverseBtn");
+			stage.setGlobalProps({
+				enableGlobalTranslate: !stage.enableGlobalTranslate
+			});
+			translateBtn.innerHTML = stage.enableGlobalTranslate ? "开启拖拽" : "关闭拖拽";
     }
 
     // 缩放设置
     function scaleeReverse() {
-        let scaleeBtn = document.getElementById("scaleeReverseBtn");
-        if (stage.enableGlobalScale) {
-            scaleeBtn.innerHTML = "开启缩放";
-            stage.enableGlobalScale = false;
-        } else {
-            scaleeBtn.innerHTML = "关闭缩放";
-            stage.enableGlobalScale = true;
-        }
-        stage._event.triggerEvents();
+			let scaleeBtn = document.getElementById("scaleeReverseBtn");
+			stage.setGlobalProps({
+				enableGlobalScale: !stage.enableGlobalScale
+			});
+			scaleeBtn.innerHTML = stage.enableGlobalScale ? "开启缩放" : "关闭缩放";
     }
 
 </script>
