@@ -183,6 +183,21 @@ export class OMG {
     };
   }
 
+  reset() {
+    this.transX = 0;
+    this.transY = 0;
+    this.scale = this.deviceScale;
+    this.objects.filter(o => !o.parent).forEach(o => {
+      o.moveX = 0;
+      o.moveY = 0;
+    });
+    this.objects.filter(o => o.type === 'group').forEach(o => {
+      o.updateAllChildsPosition();
+    });
+    this._objects = utils.reverse(this.objects);
+    this.redraw();
+  }
+
   extend(ext: Object): void {
     for (let key in ext) {
       this.shapes[key] = ext[key];

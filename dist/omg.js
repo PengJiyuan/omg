@@ -2302,6 +2302,26 @@ var OMG = function () {
       };
     }
   }, {
+    key: 'reset',
+    value: function reset() {
+      this.transX = 0;
+      this.transY = 0;
+      this.scale = this.deviceScale;
+      this.objects.filter(function (o) {
+        return !o.parent;
+      }).forEach(function (o) {
+        o.moveX = 0;
+        o.moveY = 0;
+      });
+      this.objects.filter(function (o) {
+        return o.type === 'group';
+      }).forEach(function (o) {
+        o.updateAllChildsPosition();
+      });
+      this._objects = reverse(this.objects);
+      this.redraw();
+    }
+  }, {
     key: 'extend',
     value: function extend(ext) {
       for (var key in ext) {
