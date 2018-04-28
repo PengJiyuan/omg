@@ -29,46 +29,47 @@ export type configSettings = {
 
 export class OMG {
 
-  version: string;
-  graphs: {[graph_name: string]: Object};
-  objects: Array<GraghShape>;
-  _objects: Array<GraghShape>;
-  groupRecords: number;
-  transX: number;
-  transY: number;
-  deviceScale: number;
-  minDeviceScale: number;
-  maxDeviceScale: number;
-  scale: number;
-  loader: Object;
+  version: string;                       // OMG's current version
+  objects: Array<GraghShape>;            // All shapes list
+  _objects: Array<GraghShape>;           // All shapes list's reverse list
+  groupRecords: number;                  // For generating and recording the graphs' zindex in a group
+  transX: number;                        // The number of global translate x
+  transY: number;                        // The number of global translate y
+  deviceScale: number;                   // Default scale rate
+  minDeviceScale: number;                // Minimum scale rate
+  maxDeviceScale: number;                // Maximum scale rate
+  scale: number;                         // Current scale rate
+  loader: Object;                        // Instance of imageLoader
+  // Ture or a function can be define. Before render, will load images first.
+  // If prepareImage is a function, will trigger after images loaded.
   prepareImage: boolean | Function | void;
-  globalMousedown: Function | void;
-  globalMousemove: Function | void;
-  isDragging: boolean | void;
-  Tween: any;
-  animationList: Array<any>;
-  animationId: number | void;
-  animating: boolean | void;
-  cacheIdPool: Object;
-  fpsFunc: Function | void;
-  fps: number;
-  fpsCacheTime: number;
-  eventTypes: Array<string>; // support event types
-  _event: Object;
-  color: Color;
-  element: HTMLCanvasElement;
-  canvas: CanvasRenderingContext2D;
-  width: number;
-  height: number;
-  ext: Object;
-  clip: Function;
-  enableGlobalScale: boolean | void;
-  enableGlobalTranslate: boolean | void;
-  images: Array<string>;
-  utils: Object;
-  shapes: Object;
+  globalMousedown: Function | void;      // Global mousedown function.
+  globalMousemove: Function | void;      // Global mousemove function.
+  Tween: any;                            // Class Tween
+  animationList: Array<any>;             // The List contains page's all animation instance.
+  animating: boolean | void;             // Whether the page is animating
+  animationId: number | void;            // Animation's id.
+  cacheIdPool: Object;                   // An object contains animationId
+  fpsFunc: Function | void;              // If define fpsFunc, can get real-time fps.
+  fps: number;                           // Real-time fps.
+  fpsCacheTime: number;                  // Used to cache timestamps which used to calculate fps.
+  eventTypes: Array<string>;             // All supported event types list.
+  _event: Object;                        // Instance of class event.
+  color: Color;                          // Class color.
+  element: HTMLCanvasElement;            // Element canvas.
+  canvas: CanvasRenderingContext2D;      // canvas.getContext2D()
+  width: number;                         // canvas's with
+  height: number;                        // canvas's height
+  ext: Object;                           // Export functions for extends custom graphs.
+  clip: Function;                        // Export clip function.
+  enableGlobalScale: boolean | void;     // Enable global translate?
+  enableGlobalTranslate: boolean | void; // Enable global scale?
+  images: Array<string>;                 // The image list for preload.
+  utils: Object;                         // Some helper functions
+  shapes: Object;                        // All shapes function.
   // shapes
-  group: Function;
+  group: Function;                        // Group instance
+  graphs: {[graph_name: string]: Object}; // graphs contains all graphs' instance.
 
   constructor(config: configSettings) {
 
@@ -97,8 +98,6 @@ export class OMG {
     this.globalMousedown = void(0);
 
     this.globalMousemove = void(0);
-
-    this.isDragging = false;
 
     this.Tween = Tween;
 

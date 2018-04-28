@@ -2151,7 +2151,26 @@ var ext = Object.freeze({
 });
 
 var OMG = function () {
-  // support event types
+  // graphs contains all graphs' instance.
+
+  // All shapes function.
+  // shapes
+  // The image list for preload.
+  // Enable global translate?
+  // Export functions for extends custom graphs.
+  // canvas's with
+  // Element canvas.
+  // Instance of class event.
+  // Used to cache timestamps which used to calculate fps.
+  // If define fpsFunc, can get real-time fps.
+  // Animation's id.
+  // The List contains page's all animation instance.
+  // Global mousemove function.
+  // Current scale rate
+  // Minimum scale rate
+  // The number of global translate y
+  // For generating and recording the graphs' zindex in a group
+  // All shapes list
   function OMG(config) {
     classCallCheck(this, OMG);
 
@@ -2179,8 +2198,6 @@ var OMG = function () {
     this.globalMousedown = void 0;
 
     this.globalMousemove = void 0;
-
-    this.isDragging = false;
 
     this.Tween = Tween;
 
@@ -2240,8 +2257,27 @@ var OMG = function () {
     this.utils = utils;
 
     this.shapes = shapes;
-  }
-  // shapes
+  } // Group instance
+  // Some helper functions
+  // Enable global scale?
+  // Export clip function.
+  // canvas's height
+  // canvas.getContext2D()
+  // Class color.
+  // All supported event types list.
+  // Real-time fps.
+  // An object contains animationId
+  // Whether the page is animating
+  // Class Tween
+  // Global mousedown function.
+  // Instance of imageLoader
+  // Ture or a function can be define. Before render, will load images first.
+  // If prepareImage is a function, will trigger after images loaded.
+  // Maximum scale rate
+  // Default scale rate
+  // The number of global translate x
+  // All shapes list's reverse list
+  // OMG's current version
 
 
   createClass(OMG, [{
