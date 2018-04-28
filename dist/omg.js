@@ -1685,18 +1685,13 @@ var line = function (settings, _this) {
     }
 
     if (!this.fixed) {
-      this.scaled_matrix = this.matrix.map(function (m) {
-        return m.map(function (n) {
-          return n * scale;
-        });
-      });
-      DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
     }
 
     var matrix = this.scaled_matrix;
 
     canvas.save();
-    canvas.translate(this.scaled_moveX, this.scaled_moveX);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if (this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }

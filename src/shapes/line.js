@@ -21,14 +21,13 @@ export default function(settings: Object, _this: Global): GraghShape {
     }
 
     if(!this.fixed) {
-      this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
-      DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
     }
 
     const matrix = this.scaled_matrix;
 
     canvas.save();
-    canvas.translate(this.scaled_moveX, this.scaled_moveX);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
