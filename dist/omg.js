@@ -301,7 +301,18 @@ var createClass = function () {
 
 var Event = function () {
   function Event(_this) {
+    var _this2 = this;
+
     classCallCheck(this, Event);
+
+    this.mouseWheel = function (e) {
+      if (e.deltaY && e.deltaY > 0) {
+        _this2._.scale = _this2._.scale - 0.01 >= _this2._.minDeviceScale ? _this2._.scale - 0.01 : _this2._.minDeviceScale;
+      } else if (e.deltaY && e.deltaY < 0) {
+        _this2._.scale = _this2._.scale + 0.01 <= _this2._.maxDeviceScale ? _this2._.scale + 0.01 : _this2._.maxDeviceScale;
+      }
+      _this2._.redraw();
+    };
 
     // global this
     this._ = _this;
@@ -357,22 +368,12 @@ var Event = function () {
   }, {
     key: 'bindMouseWheel',
     value: function bindMouseWheel() {
-      bind(this._.element, 'wheel', this.mouseWheel.bind(this));
+      bind(this._.element, 'wheel', this.mouseWheel);
     }
   }, {
     key: 'unBindMouseWheel',
     value: function unBindMouseWheel() {
-      unbind(this._.element, 'wheel', this.mouseWheel.bind(this));
-    }
-  }, {
-    key: 'mouseWheel',
-    value: function mouseWheel(e) {
-      if (e.deltaY && e.deltaY > 0) {
-        this._.scale = this._.scale - 0.01 >= this._.minDeviceScale ? this._.scale - 0.01 : this._.minDeviceScale;
-      } else if (e.deltaY && e.deltaY < 0) {
-        this._.scale = this._.scale + 0.01 <= this._.maxDeviceScale ? this._.scale + 0.01 : this._.maxDeviceScale;
-      }
-      this._.redraw();
+      unbind(this._.element, 'wheel', this.mouseWheel);
     }
   }, {
     key: 'bindMouseMove',

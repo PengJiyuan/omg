@@ -66,14 +66,14 @@ export class Event {
   }
 
   bindMouseWheel() {
-    utils.bind(this._.element, 'wheel', this.mouseWheel.bind(this));
+    utils.bind(this._.element, 'wheel', this.mouseWheel);
   }
 
   unBindMouseWheel() {
-    utils.unbind(this._.element, 'wheel', this.mouseWheel.bind(this));
+    utils.unbind(this._.element, 'wheel', this.mouseWheel);
   }
 
-  mouseWheel(e: WheelEvent) {
+  mouseWheel = (e: WheelEvent) => {
     if(e.deltaY && e.deltaY > 0) {
       this._.scale = this._.scale - 0.01 >= this._.minDeviceScale ? this._.scale - 0.01 : this._.minDeviceScale;
     } else if(e.deltaY && e.deltaY < 0) {

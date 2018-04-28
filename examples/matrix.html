@@ -22,6 +22,12 @@
 <div class="container">
 		<canvas id="canvas"></canvas>
 </div>
+<button id="translateReverseBtn" type="button" onclick="translateReverse()" class="btn btn-info btn-rounded">
+	关闭拖拽
+</button>
+<button id="scaleeReverseBtn" type="button" onclick="scaleeReverse()" class="btn btn-info btn-rounded">
+	关闭缩放
+</button>
 <script src="./omg.min.js"></script>
 <script>
 	var stage = omg({
@@ -83,6 +89,32 @@
 	stage.addChild([rect1, line]);
 
 	stage.show();
+
+    // 全局拖拽设置
+    function translateReverse() {
+        let translateBtn = document.getElementById("translateReverseBtn");
+        if (stage.enableGlobalTranslate) {
+            translateBtn.innerHTML = "开启拖拽";
+            stage.enableGlobalTranslate = false;
+        } else {
+            translateBtn.innerHTML = "关闭拖拽";
+            stage.enableGlobalTranslate = true;
+				}
+				stage._event.triggerEvents();
+    }
+
+    // 缩放设置
+    function scaleeReverse() {
+        let scaleeBtn = document.getElementById("scaleeReverseBtn");
+        if (stage.enableGlobalScale) {
+            scaleeBtn.innerHTML = "开启缩放";
+            stage.enableGlobalScale = false;
+        } else {
+            scaleeBtn.innerHTML = "关闭缩放";
+            stage.enableGlobalScale = true;
+        }
+        stage._event.triggerEvents();
+    }
 
 </script>
 </body>
