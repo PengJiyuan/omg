@@ -49,7 +49,7 @@
 				height: height,
 				zindex: zindex,
 				rotate: 45,
-				color: '#'+(~~(Math.random()*(1<<24))).toString(16)
+				color: '#000'
 			}).config({
 				drag: true
 			}).on('mouseenter', function(cur) {
@@ -61,7 +61,7 @@
 			});
 	}
 
-	var rect1 = createRect(20, 20, 50, 50, 4);
+	var rect1 = createRect(20, 20, 50, 50, 40);
 
 	var line = stage.graphs.line({
 		matrix: [

@@ -3,6 +3,7 @@
 import isPointInner from './inside';
 import getBounding from './clip/bounding';
 import { Tween } from './tween/index';
+import * as utils from './utils/helpers';
 
 class Display {
 
@@ -86,25 +87,14 @@ class Display {
   }
 
   config(obj) {
-    if(Object.prototype.toString.call(obj) !== '[object Object]') {
-      return;
+    if(!utils.isObj(obj)) {
+      return this;
     }
-    if(obj.drag) {
-      this.enableDrag = obj.drag;
-    }
-    if(obj.changeIndex) {
-      this.enableChangeIndex = obj.changeIndex;
-    }
-    if(obj.fixed) {
-      this.fixed = obj.fixed;
-    }
-    if(obj.bg) {
-      this.isBg = obj.bg;
-    }
-    // Whether the graphic is animating drawn
-    if(obj.cliping) {
-      this.cliping = obj.cliping;
-    }
+    this.enableDrag = obj.drag || false;
+    this.enableChangeIndex = obj.changeIndex || false;
+    this.fixed = obj.fixed || false;
+    this.isBg = obj.bg || false;
+    this.cliping = obj.cliping || false; // Whether the graphic is animating drawn
     this.zindex = obj.zindex || 0;
 
     return this;
