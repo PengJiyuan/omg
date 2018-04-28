@@ -94,6 +94,9 @@
 * 添加flow。
 * graph的绘制接口调整，不向下兼容。直接通过stage.shape(...)调整为stage.graphs.shape(...)。
 
+#### v4.0.0
+* 修复无法移除wheel事件的bug。
+
 ## ToDo
 
 * 给时间触发添加顺序(index) (Done)
