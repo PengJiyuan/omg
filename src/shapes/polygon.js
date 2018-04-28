@@ -10,7 +10,9 @@ export default function(settings: Object, _this: Global): GraghShape {
     const canvas = _this.canvas;
     const scale = _this.scale;
 
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    if(!this.fixed) {
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    }
 
     const matrix = this.scaled_matrix;
 

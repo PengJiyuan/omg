@@ -18,6 +18,7 @@ declare type GraghShape = {
   isBg: boolean,
   enableChangeIndex: boolean,
   enableDrag: boolean,
+  fixed: boolean,
   isDragging: boolean,
   hasEnter: boolean,
   hasDraggedIn: boolean,

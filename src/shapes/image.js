@@ -14,7 +14,9 @@ export default function(settings: Object, _this: Global): GraghShape {
     const src = settings.src;
     const scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    if(!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    }
 
     canvas.save();
     canvas.translate(this.scaled_moveX, this.scaled_moveY);

@@ -11,6 +11,12 @@ class Display {
 
     this._ = _this;
 
+    this.enableDrag = false;
+    this.enableChangeIndex = false;
+    this.fixed = false;
+    this.cliping = false;
+    this.zindex = 0;
+
     // scaled_xxx, the value xxx after scaled, finally display value.
     this.commonData = {
 
@@ -51,10 +57,6 @@ class Display {
   }
 
   on(eventTypes, callback) {
-    if(this.isBg) {
-      return;
-    }
-
     if(!eventTypes) {
       throw 'no eventTypes defined!';
     }
@@ -90,12 +92,11 @@ class Display {
     if(!utils.isObj(obj)) {
       return this;
     }
-    this.enableDrag = obj.drag || false;
-    this.enableChangeIndex = obj.changeIndex || false;
-    this.fixed = obj.fixed || false;
-    this.isBg = obj.bg || false;
-    this.cliping = obj.cliping || false; // Whether the graphic is animating drawn
-    this.zindex = obj.zindex || 0;
+    this.enableDrag = obj.drag || this.enableDrag;
+    this.enableChangeIndex = obj.changeIndex || this.enableChangeIndex;
+    this.fixed = obj.fixed || this.fixed;
+    this.cliping = obj.cliping || this.cliping; // Whether the graphic is animating drawn
+    this.zindex = obj.zindex || this.zindex;
 
     return this;
   }

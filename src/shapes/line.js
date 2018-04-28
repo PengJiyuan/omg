@@ -20,8 +20,10 @@ export default function(settings: Object, _this: Global): GraghShape {
       throw 'The line needs at least two points';
     }
 
-    this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+    if(!this.fixed) {
+      this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+    }
 
     const matrix = this.scaled_matrix;
 

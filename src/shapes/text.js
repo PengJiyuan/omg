@@ -37,7 +37,9 @@ export default function(settings: Object, _this: Global): GraghShape {
     const size = fontSize * scale;
     const font = `normal ${fontWeight} ${size}px ${fontFamily}`;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
+    if(!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
+    }
 
     let textWidth, ellipsisText;
 

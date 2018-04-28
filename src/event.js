@@ -170,7 +170,7 @@ export class Event {
     this._.globalMousedown && this._.globalMousedown(e_down);
 
     const hasDrags = this._.objects.filter(item => !item.hide).some(item => {
-      return item.enableDrag;
+      return item.enableDrag && !item.fixed;
     });
 
     // drag shape
@@ -181,7 +181,7 @@ export class Event {
 
     // mousedown
     const whichDown = this._._objects.filter(item => {
-      return item.isPointInner(pX, pY) && !item.isBg && !item.hide;
+      return item.isPointInner(pX, pY) && !item.hide;
     });
 
     if(whichDown && whichDown.length > 0) {
@@ -196,7 +196,7 @@ export class Event {
     // mouseDrag
     if(hasDrags) {
       whichIn = that._._objects.filter(item => !item.hide).filter(item => {
-        return item.isPointInner(pX, pY) && !item.isBg;
+        return item.isPointInner(pX, pY) && !item.fixed;
       });
 
       hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(item => {

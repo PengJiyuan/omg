@@ -74,6 +74,7 @@
     stage.redraw();
   }).config({
     drag: true,
+    fixed: true
     // cliping: true
   });
 
@@ -161,6 +162,7 @@
     lineWidth: 2
   }).config({
     zindex: 11,
+    cliping: true,
     drag: true
   }).on('mouseenter', function(cur) {
     cur.color = '#000';
@@ -170,8 +172,6 @@
     cur.color = '#555';
     cur.lineWidth = 2;
     stage.redraw();
-  }).config({
-    cliping: true
   });
 
   stage.addChild([rect1, arc, text, image, line, polygon]);

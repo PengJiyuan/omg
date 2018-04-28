@@ -8,7 +8,9 @@ export default function(settings: Object, _this: Global): GraghShape {
     const canvas = _this.canvas;
     const scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
+    if(!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
+    }
 
     canvas.save();
     if(this.fixed) {

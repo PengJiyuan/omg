@@ -473,7 +473,7 @@ var Event = function () {
       var hasDrags = this._.objects.filter(function (item) {
         return !item.hide;
       }).some(function (item) {
-        return item.enableDrag;
+        return item.enableDrag && !item.fixed;
       });
 
       // drag shape
@@ -484,7 +484,7 @@ var Event = function () {
 
       // mousedown
       var whichDown = this._._objects.filter(function (item) {
-        return item.isPointInner(pX, pY) && !item.isBg && !item.hide;
+        return item.isPointInner(pX, pY) && !item.hide;
       });
 
       if (whichDown && whichDown.length > 0) {
@@ -501,7 +501,7 @@ var Event = function () {
         whichIn = that._._objects.filter(function (item) {
           return !item.hide;
         }).filter(function (item) {
-          return item.isPointInner(pX, pY) && !item.isBg;
+          return item.isPointInner(pX, pY) && !item.fixed;
         });
 
         hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function (item) {
@@ -1275,6 +1275,12 @@ var Display = function () {
 
     this._ = _this;
 
+    this.enableDrag = false;
+    this.enableChangeIndex = false;
+    this.fixed = false;
+    this.cliping = false;
+    this.zindex = 0;
+
     // scaled_xxx, the value xxx after scaled, finally display value.
     this.commonData = {
 
@@ -1318,10 +1324,6 @@ var Display = function () {
     value: function on(eventTypes, callback) {
       var _this2 = this;
 
-      if (this.isBg) {
-        return;
-      }
-
       if (!eventTypes) {
         throw 'no eventTypes defined!';
       }
@@ -1362,12 +1364,11 @@ var Display = function () {
       if (!isObj(obj)) {
         return this;
       }
-      this.enableDrag = obj.drag || false;
-      this.enableChangeIndex = obj.changeIndex || false;
-      this.fixed = obj.fixed || false;
-      this.isBg = obj.bg || false;
-      this.cliping = obj.cliping || false; // Whether the graphic is animating drawn
-      this.zindex = obj.zindex || 0;
+      this.enableDrag = obj.drag || this.enableDrag;
+      this.enableChangeIndex = obj.changeIndex || this.enableChangeIndex;
+      this.fixed = obj.fixed || this.fixed;
+      this.cliping = obj.cliping || this.cliping; // Whether the graphic is animating drawn
+      this.zindex = obj.zindex || this.zindex;
 
       return this;
     }
@@ -1555,7 +1556,9 @@ var arc = function (settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
+    }
 
     canvas.save();
     if (this.fixed) {
@@ -1611,7 +1614,9 @@ var image = function (settings, _this) {
     var src = settings.src;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    }
 
     canvas.save();
     canvas.translate(this.scaled_moveX, this.scaled_moveY);
@@ -1679,12 +1684,14 @@ var line = function (settings, _this) {
       throw 'The line needs at least two points';
     }
 
-    this.scaled_matrix = this.matrix.map(function (m) {
-      return m.map(function (n) {
-        return n * scale;
+    if (!this.fixed) {
+      this.scaled_matrix = this.matrix.map(function (m) {
+        return m.map(function (n) {
+          return n * scale;
+        });
       });
-    });
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+    }
 
     var matrix = this.scaled_matrix;
 
@@ -1778,7 +1785,9 @@ var rectangle = function (settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    }
     DefineMatrix.call(this, this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height, this.rotate);
 
     canvas.save();
@@ -1859,7 +1868,9 @@ var text = function (settings, _this) {
     var size = fontSize * scale;
     var font = 'normal ' + fontWeight + ' ' + size + 'px ' + fontFamily;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
+    }
 
     var textWidth = void 0,
         ellipsisText = void 0;
@@ -1927,7 +1938,9 @@ var polygon = function (settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    }
 
     var matrix = this.scaled_matrix;
 
