@@ -135,6 +135,11 @@ function isObj(obj) {
   return !!(Object.prototype.toString.call(obj) === '[object Object]');
 }
 
+function isMobile() {
+  return (/(iphone|ipad|ipod|ios|android|mobile|blackberry|iemobile|mqqbrowser|juc|fennec|wosbrowser|browserng|Webos|symbian|windows phone)/i.test(navigator.userAgent)
+  );
+}
+
 var utils = Object.freeze({
 	getPos: getPos,
 	bind: bind,
@@ -145,7 +150,8 @@ var utils = Object.freeze({
 	getMin: getMin,
 	insertArray: insertArray,
 	isArr: isArr,
-	isObj: isObj
+	isObj: isObj,
+	isMobile: isMobile
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -607,6 +613,318 @@ var Event = function () {
   return Event;
 }();
 
+var MobileEvent = function () {
+  function MobileEvent(_this) {
+    var _this2 = this;
+
+    classCallCheck(this, MobileEvent);
+
+    this.mouseWheel = function (e) {
+      if (e.deltaY && e.deltaY > 0) {
+        _this2._.scale = _this2._.scale - 0.01 >= _this2._.minDeviceScale ? _this2._.scale - 0.01 : _this2._.minDeviceScale;
+      } else if (e.deltaY && e.deltaY < 0) {
+        _this2._.scale = _this2._.scale + 0.01 <= _this2._.maxDeviceScale ? _this2._.scale + 0.01 : _this2._.maxDeviceScale;
+      }
+      _this2._.redraw();
+    };
+
+    // global this
+    this._ = _this;
+    this.triggeredMouseDown = false;
+    this.triggeredMouseMove = false;
+  }
+
+  createClass(MobileEvent, [{
+    key: 'getPos',
+    value: function getPos$$1(e) {
+      return getPos(e);
+    }
+  }, {
+    key: 'triggerEvents',
+    value: function triggerEvents() {
+      var hasEvents = this._.objects.filter(function (item) {
+        return !item.hide;
+      }).some(function (item) {
+        return item.events && isArr(item.events) || item.enableDrag;
+      });
+      if (!hasEvents && !this._.enableGlobalTranslate && !this._.enableGlobalScale) {
+        return;
+      }
+
+      var hasEnterOrMove = this._.objects.some(function (item) {
+        return item.events && item.events.some(function (i) {
+          return i.eventType === 'mouseenter' || i.eventType === 'mousemove' || i.eventType === 'drag' || i.eventType === 'dragin' || i.eventType === 'dragout' || i.eventType === 'drop';
+        });
+      }) || this._.globalMousemove;
+
+      // mouseenter mousemove
+      if (hasEnterOrMove && !this.triggeredMouseMove) {
+        this.bindMouseMove();
+        this.triggeredMouseMove = true;
+      }
+
+      if (!hasEnterOrMove && this.triggeredMouseMove) {
+        this.unBindMouseMove();
+        this.triggeredMouseMove = false;
+      }
+
+      if (!this.triggeredMouseDown) {
+        bind(this._.element, 'mousedown', this.mouseDown.bind(this));
+        this.triggeredMouseDown = true;
+      }
+
+      if (this._.enableGlobalScale) {
+        this.bindMouseWheel();
+      } else {
+        this.unBindMouseWheel();
+      }
+    }
+  }, {
+    key: 'bindMouseWheel',
+    value: function bindMouseWheel() {
+      bind(this._.element, 'wheel', this.mouseWheel);
+    }
+  }, {
+    key: 'unBindMouseWheel',
+    value: function unBindMouseWheel() {
+      unbind(this._.element, 'wheel', this.mouseWheel);
+    }
+  }, {
+    key: 'bindMouseMove',
+    value: function bindMouseMove() {
+      bind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+    }
+  }, {
+    key: 'unBindMouseMove',
+    value: function unBindMouseMove() {
+      unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
+    }
+  }, {
+    key: 'mouseEnterOrMove',
+    value: function mouseEnterOrMove(e_moveOrEnter) {
+      var that = this;
+      var isDragging = void 0;
+
+      var mX = that.getPos(e_moveOrEnter).x;
+      var mY = that.getPos(e_moveOrEnter).y;
+
+      that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
+
+      isDragging = that._.objects.some(function (item) {
+        return item.isDragging;
+      });
+
+      // trigger mouseenter and mousemove
+      var movedOn = that._._objects.filter(function (item) {
+        return item.isPointInner(mX, mY) && !item.hide;
+      });
+
+      if (isDragging) {
+        // dragin
+        if (movedOn && movedOn.length > 1) {
+          movedOn[1].events && movedOn[1].events.forEach(function (i) {
+            if (i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
+              movedOn[1].hasDraggedIn = true;
+              i.callback && i.callback(movedOn[1]);
+            }
+          });
+        }
+
+        // dragout handler
+        var handleDragOut = function handleDragOut(item) {
+          item.hasDraggedIn && item.events.forEach(function (i) {
+            if (i.eventType === 'dragout') {
+              i.callback && i.callback(movedOn[1]);
+            }
+          });
+          item.hasDraggedIn = false;
+        };
+
+        // Determine whether the mouse is dragged out from the shape and trigger dragout handler
+        that._._objects.some(function (item) {
+          return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
+        });
+      } else {
+        // mouseleave handler
+        var handleMoveOut = function handleMoveOut(item) {
+          item.hasEnter && item.events.forEach(function (i) {
+            if (i.eventType === 'mouseleave') {
+              i.callback && i.callback(item);
+            }
+          });
+          item.hasEnter = false;
+        };
+        // normal mousemove
+        // Determine whether the mouse is removed from the shape and trigger mouseleave handler
+        that._._objects.some(function (item) {
+          return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
+        });
+        if (movedOn && movedOn.length > 0) {
+          movedOn[0].events && movedOn[0].events.forEach(function (i) {
+            if (i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
+              movedOn[0].hasEnter = true;
+              i.callback && i.callback(movedOn[0]);
+            } else if (i.eventType === 'mousemove') {
+              i.callback && i.callback(movedOn[0]);
+            }
+          });
+        }
+      }
+    }
+  }, {
+    key: 'mouseDown',
+    value: function mouseDown(e_down) {
+      var that = this,
+          whichIn = void 0,
+          hasEventDrag = void 0,
+          hasEventDragEnd = void 0,
+          dragCb = void 0,
+          dragEndCb = void 0;
+
+      // global setting event mousedown
+      this._.globalMousedown && this._.globalMousedown(e_down);
+
+      var hasDrags = this._.objects.filter(function (item) {
+        return !item.hide;
+      }).some(function (item) {
+        return item.enableDrag && !item.fixed;
+      });
+
+      // drag shape
+      var pX = this.getPos(e_down).x;
+      var pY = this.getPos(e_down).y;
+      that.cacheX = pX;
+      that.cacheY = pY;
+
+      // mousedown
+      var whichDown = this._._objects.filter(function (item) {
+        return item.isPointInner(pX, pY) && !item.hide;
+      });
+
+      if (whichDown && whichDown.length > 0) {
+        if (whichDown[0].enableChangeIndex) {
+          that.changeOrder(whichDown[0]);
+        }
+        whichDown[0].events && whichDown[0].events.some(function (i) {
+          return i.eventType === 'mousedown' && i.callback && i.callback(whichDown[0]);
+        });
+      }
+
+      // mouseDrag
+      if (hasDrags) {
+        whichIn = that._._objects.filter(function (item) {
+          return !item.hide;
+        }).filter(function (item) {
+          return item.isPointInner(pX, pY) && !item.fixed;
+        });
+
+        hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function (item) {
+          if (item.eventType === 'drag') {
+            dragCb = item.callback;
+          }
+          return item.eventType === 'drag';
+        });
+
+        hasEventDragEnd = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function (item) {
+          if (item.eventType === 'dragend') {
+            dragEndCb = item.callback;
+          }
+          return item.eventType === 'dragend';
+        });
+
+        var move_Event = function move_Event(e_move) {
+          var mx = that.getPos(e_move).x;
+          var my = that.getPos(e_move).y;
+
+          whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
+          whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
+
+          // event drag
+          hasEventDrag && dragCb(whichDown[0]);
+
+          that._.redraw();
+          that.cacheX = mx;
+          that.cacheY = my;
+          whichIn[0].isDragging = true;
+        };
+
+        var up_Event = function up_Event(e_up) {
+          var uX = that.getPos(e_up).x;
+          var uY = that.getPos(e_up).y;
+
+          var upOn = that._._objects.filter(function (item) {
+            return item.isPointInner(uX, uY);
+          });
+
+          if (upOn && upOn.length > 1) {
+            if (upOn[1].hasDraggedIn) {
+              upOn[1].hasDraggedIn = false;
+              var dp = upOn[1].events.some(function (i) {
+                return i.eventType === 'drop' && i.callback && i.callback(upOn[1], upOn[0]);
+              });
+              // if not defined event drop, check if event dragout exist
+              // if yes, trigger the callback dragout.
+              !dp && upOn[1].events.some(function (i) {
+                return i.eventType === 'dragout' && i.callback && i.callback(upOn[1]);
+              });
+            }
+          }
+
+          // event dragend
+          hasEventDragEnd && dragEndCb(whichDown[0]);
+
+          unbind(document, 'mousemove', move_Event);
+          unbind(document, 'mouseup', up_Event);
+          whichIn[0].isDragging = false;
+        };
+        if (whichIn && whichIn.length > 0 && whichIn[0].enableDrag) {
+          bind(document, 'mousemove', move_Event);
+          bind(document, 'mouseup', up_Event);
+        }
+      }
+
+      // global translate
+      if (this._.enableGlobalTranslate && !(whichIn && whichIn.length > 0)) {
+
+        var move_dragCanvas = function move_dragCanvas(e_move) {
+          var mx = that.getPos(e_move).x;
+          var my = that.getPos(e_move).y;
+          // that._.originTransX = that._.originTransX + mx - that.cacheX;
+          // that._.originTransY = that._.originTransY  + my - that.cacheY;
+          that._.transX = that._.transX + mx - that.cacheX;
+          that._.transY = that._.transY + my - that.cacheY;
+          that._.redraw();
+          that.cacheX = mx;
+          that.cacheY = my;
+        };
+
+        var up_dragCanvas = function up_dragCanvas() {
+          unbind(document, 'mousemove', move_dragCanvas);
+          unbind(document, 'mouseup', up_dragCanvas);
+        };
+
+        bind(document, 'mousemove', move_dragCanvas);
+        bind(document, 'mouseup', up_dragCanvas);
+      }
+    }
+  }, {
+    key: 'changeOrder',
+    value: function changeOrder(item) {
+      var i = this._.objects.indexOf(item);
+      var cacheData = this._.objects[i];
+      this._.objects.splice(i, 1);
+      this._.objects.push(cacheData);
+      this._._objects = reverse(this._.objects);
+      this._.redraw();
+    }
+  }]);
+  return MobileEvent;
+}();
+
+function event(_this, isMobile) {
+  return isMobile ? new MobileEvent(_this) : new Event(_this);
+}
+
 var Color = function () {
   function Color() {
     classCallCheck(this, Color);
@@ -886,6 +1204,165 @@ var ImageLoader = function () {
   return ImageLoader;
 }();
 
+/**!
+ * code from https://github.com/LiikeJS/Liike/blob/master/src/ease.js
+ */
+var easeInBy = function easeInBy(power) {
+  return function (t) {
+    return Math.pow(t, power);
+  };
+};
+var easeOutBy = function easeOutBy(power) {
+  return function (t) {
+    return 1 - Math.abs(Math.pow(t - 1, power));
+  };
+};
+var easeInOutBy = function easeInOutBy(power) {
+  return function (t) {
+    return t < 0.5 ? easeInBy(power)(t * 2) / 2 : easeOutBy(power)(t * 2 - 1) / 2 + 0.5;
+  };
+};
+
+var linear = function linear(t) {
+  return t;
+};
+var quadIn = easeInBy(2);
+var quadOut = easeOutBy(2);
+var quadInOut = easeInOutBy(2);
+var cubicIn = easeInBy(3);
+var cubicOut = easeOutBy(3);
+var cubicInOut = easeInOutBy(3);
+var quartIn = easeInBy(4);
+var quartOut = easeOutBy(4);
+var quartInOut = easeInOutBy(4);
+var quintIn = easeInBy(5);
+var quintOut = easeOutBy(5);
+var quintInOut = easeInOutBy(5);
+var sineIn = function sineIn(t) {
+  return 1 + Math.sin(Math.PI / 2 * t - Math.PI / 2);
+};
+var sineOut = function sineOut(t) {
+  return Math.sin(Math.PI / 2 * t);
+};
+var sineInOut = function sineInOut(t) {
+  return (1 + Math.sin(Math.PI * t - Math.PI / 2)) / 2;
+};
+var bounceOut = function bounceOut(t) {
+  var s = 7.5625;
+  var p = 2.75;
+
+  if (t < 1 / p) {
+    return s * t * t;
+  }
+  if (t < 2 / p) {
+    t -= 1.5 / p;
+    return s * t * t + 0.75;
+  }
+  if (t < 2.5 / p) {
+    t -= 2.25 / p;
+    return s * t * t + 0.9375;
+  }
+  t -= 2.625 / p;
+  return s * t * t + 0.984375;
+};
+var bounceIn = function bounceIn(t) {
+  return 1 - bounceOut(1 - t);
+};
+var bounceInOut = function bounceInOut(t) {
+  return t < 0.5 ? bounceIn(t * 2) * 0.5 : bounceOut(t * 2 - 1) * 0.5 + 0.5;
+};
+
+var easing = Object.freeze({
+	linear: linear,
+	quadIn: quadIn,
+	quadOut: quadOut,
+	quadInOut: quadInOut,
+	cubicIn: cubicIn,
+	cubicOut: cubicOut,
+	cubicInOut: cubicInOut,
+	quartIn: quartIn,
+	quartOut: quartOut,
+	quartInOut: quartInOut,
+	quintIn: quintIn,
+	quintOut: quintOut,
+	quintInOut: quintInOut,
+	sineIn: sineIn,
+	sineOut: sineOut,
+	sineInOut: sineInOut,
+	bounceOut: bounceOut,
+	bounceIn: bounceIn,
+	bounceInOut: bounceInOut
+});
+
+var Tween = function () {
+  function Tween(settings) {
+    classCallCheck(this, Tween);
+    var from = settings.from,
+        to = settings.to,
+        duration = settings.duration,
+        delay = settings.delay,
+        easing = settings.easing,
+        onStart = settings.onStart,
+        onUpdate = settings.onUpdate,
+        onFinish = settings.onFinish;
+
+
+    for (var key in from) {
+      if (to[key] === undefined) {
+        to[key] = from[key];
+      }
+    }
+    for (var _key in to) {
+      if (from[_key] === undefined) {
+        from[_key] = to[_key];
+      }
+    }
+
+    this.from = from;
+    this.to = to;
+    this.duration = duration || 500;
+    this.delay = delay || 0;
+    this.easing = easing || 'linear';
+    this.onStart = onStart;
+    this.onUpdate = onUpdate;
+    this.onFinish = onFinish;
+    this.startTime = Date.now() + this.delay;
+    this.started = false;
+    this.finished = false;
+    this.keys = {};
+  }
+
+  createClass(Tween, [{
+    key: 'update',
+    value: function update() {
+      this.time = Date.now();
+      // delay some time
+      if (this.time < this.startTime) {
+        return;
+      }
+      // finish animation
+      if (this.elapsed === this.duration) {
+        if (!this.finished) {
+          this.finished = true;
+          this.onFinish && this.onFinish(this.keys);
+        }
+        return;
+      }
+      this.elapsed = this.time - this.startTime;
+      this.elapsed = this.elapsed > this.duration ? this.duration : this.elapsed;
+      for (var key in this.to) {
+        this.keys[key] = this.from[key] + (this.to[key] - this.from[key]) * easing[this.easing](this.elapsed / this.duration);
+      }
+      if (!this.started) {
+        this.onStart && this.onStart(this.keys);
+        this.started = true;
+      }
+      this.onUpdate(this.keys);
+    }
+  }]);
+  return Tween;
+}();
+
 // https://github.com/component/autoscale-canvas/blob/master/index.js
 
 /**
@@ -1106,165 +1583,6 @@ function getBounding(points, lineWidth) {
     h: h
   };
 }
-
-/**!
- * code from https://github.com/LiikeJS/Liike/blob/master/src/ease.js
- */
-var easeInBy = function easeInBy(power) {
-  return function (t) {
-    return Math.pow(t, power);
-  };
-};
-var easeOutBy = function easeOutBy(power) {
-  return function (t) {
-    return 1 - Math.abs(Math.pow(t - 1, power));
-  };
-};
-var easeInOutBy = function easeInOutBy(power) {
-  return function (t) {
-    return t < 0.5 ? easeInBy(power)(t * 2) / 2 : easeOutBy(power)(t * 2 - 1) / 2 + 0.5;
-  };
-};
-
-var linear = function linear(t) {
-  return t;
-};
-var quadIn = easeInBy(2);
-var quadOut = easeOutBy(2);
-var quadInOut = easeInOutBy(2);
-var cubicIn = easeInBy(3);
-var cubicOut = easeOutBy(3);
-var cubicInOut = easeInOutBy(3);
-var quartIn = easeInBy(4);
-var quartOut = easeOutBy(4);
-var quartInOut = easeInOutBy(4);
-var quintIn = easeInBy(5);
-var quintOut = easeOutBy(5);
-var quintInOut = easeInOutBy(5);
-var sineIn = function sineIn(t) {
-  return 1 + Math.sin(Math.PI / 2 * t - Math.PI / 2);
-};
-var sineOut = function sineOut(t) {
-  return Math.sin(Math.PI / 2 * t);
-};
-var sineInOut = function sineInOut(t) {
-  return (1 + Math.sin(Math.PI * t - Math.PI / 2)) / 2;
-};
-var bounceOut = function bounceOut(t) {
-  var s = 7.5625;
-  var p = 2.75;
-
-  if (t < 1 / p) {
-    return s * t * t;
-  }
-  if (t < 2 / p) {
-    t -= 1.5 / p;
-    return s * t * t + 0.75;
-  }
-  if (t < 2.5 / p) {
-    t -= 2.25 / p;
-    return s * t * t + 0.9375;
-  }
-  t -= 2.625 / p;
-  return s * t * t + 0.984375;
-};
-var bounceIn = function bounceIn(t) {
-  return 1 - bounceOut(1 - t);
-};
-var bounceInOut = function bounceInOut(t) {
-  return t < 0.5 ? bounceIn(t * 2) * 0.5 : bounceOut(t * 2 - 1) * 0.5 + 0.5;
-};
-
-var easing = Object.freeze({
-	linear: linear,
-	quadIn: quadIn,
-	quadOut: quadOut,
-	quadInOut: quadInOut,
-	cubicIn: cubicIn,
-	cubicOut: cubicOut,
-	cubicInOut: cubicInOut,
-	quartIn: quartIn,
-	quartOut: quartOut,
-	quartInOut: quartInOut,
-	quintIn: quintIn,
-	quintOut: quintOut,
-	quintInOut: quintInOut,
-	sineIn: sineIn,
-	sineOut: sineOut,
-	sineInOut: sineInOut,
-	bounceOut: bounceOut,
-	bounceIn: bounceIn,
-	bounceInOut: bounceInOut
-});
-
-var Tween = function () {
-  function Tween(settings) {
-    classCallCheck(this, Tween);
-    var from = settings.from,
-        to = settings.to,
-        duration = settings.duration,
-        delay = settings.delay,
-        easing = settings.easing,
-        onStart = settings.onStart,
-        onUpdate = settings.onUpdate,
-        onFinish = settings.onFinish;
-
-
-    for (var key in from) {
-      if (to[key] === undefined) {
-        to[key] = from[key];
-      }
-    }
-    for (var _key in to) {
-      if (from[_key] === undefined) {
-        from[_key] = to[_key];
-      }
-    }
-
-    this.from = from;
-    this.to = to;
-    this.duration = duration || 500;
-    this.delay = delay || 0;
-    this.easing = easing || 'linear';
-    this.onStart = onStart;
-    this.onUpdate = onUpdate;
-    this.onFinish = onFinish;
-    this.startTime = Date.now() + this.delay;
-    this.started = false;
-    this.finished = false;
-    this.keys = {};
-  }
-
-  createClass(Tween, [{
-    key: 'update',
-    value: function update() {
-      this.time = Date.now();
-      // delay some time
-      if (this.time < this.startTime) {
-        return;
-      }
-      // finish animation
-      if (this.elapsed === this.duration) {
-        if (!this.finished) {
-          this.finished = true;
-          this.onFinish && this.onFinish(this.keys);
-        }
-        return;
-      }
-      this.elapsed = this.time - this.startTime;
-      this.elapsed = this.elapsed > this.duration ? this.duration : this.elapsed;
-      for (var key in this.to) {
-        this.keys[key] = this.from[key] + (this.to[key] - this.from[key]) * easing[this.easing](this.elapsed / this.duration);
-      }
-      if (!this.started) {
-        this.onStart && this.onStart(this.keys);
-        this.started = true;
-      }
-      this.onUpdate(this.keys);
-    }
-  }]);
-  return Tween;
-}();
 
 // No flow check, because flow do not support dynamic assign value.
 
@@ -2168,11 +2486,14 @@ var OMG = function () {
   // The number of global translate y
   // For generating and recording the graphs' zindex in a group
   // All shapes list
+  // OMG's current version
   function OMG(config) {
     classCallCheck(this, OMG);
 
 
     this.version = version;
+
+    this.isMobile = isMobile();
 
     this.objects = [];
 
@@ -2216,7 +2537,7 @@ var OMG = function () {
 
     this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
 
-    this._event = new Event(this);
+    this._event = event(this, this.isMobile);
 
     this.color = new Color();
 
@@ -2274,7 +2595,7 @@ var OMG = function () {
   // Default scale rate
   // The number of global translate x
   // All shapes list's reverse list
-  // OMG's current version
+  // Current device is mobile phone
 
 
   createClass(OMG, [{

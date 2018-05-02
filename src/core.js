@@ -2,14 +2,14 @@
 
 import './utils/polyfill';
 import { version } from '../package.json';
-import { Event } from './event';
+import event from './event/index';
 import { Color } from './utils/color';
 import { ImageLoader } from './utils/imageLoader';
+import { Tween } from './tween/index';
 import autoscale from './utils/autoscale';
 import * as utils from './utils/helpers';
 import shapes from './shapes/index';
 import group from './group/index';
-import { Tween } from './tween/index';
 import clip from './clip/index';
 import * as ext from './extend/export';
 
@@ -30,6 +30,7 @@ export type configSettings = {
 export class OMG {
 
   version: string;                       // OMG's current version
+  isMobile: boolean;                     // Current device is mobile phone
   objects: Array<GraghShape>;            // All shapes list
   _objects: Array<GraghShape>;           // All shapes list's reverse list
   groupRecords: number;                  // For generating and recording the graphs' zindex in a group
@@ -74,6 +75,8 @@ export class OMG {
   constructor(config: configSettings) {
 
     this.version = version;
+
+    this.isMobile = utils.isMobile();
 
     this.objects = [];
 
@@ -130,7 +133,7 @@ export class OMG {
       'drop'
     ];
 
-    this._event = new Event(this);
+    this._event = event(this, this.isMobile);
 
     this.color = new Color();
 

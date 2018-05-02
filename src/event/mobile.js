@@ -1,9 +1,9 @@
 /* @flow */
 
-import * as utils from './utils/helpers';
-import type {OMG} from './core';
+import * as utils from '../utils/helpers';
+import type {OMG} from '../core';
 
-export class Event {
+export class MobileEvent {
 
   _: OMG;
   triggeredMouseDown: boolean;

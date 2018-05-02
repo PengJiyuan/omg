@@ -57,3 +57,7 @@ export function isArr(obj: any): boolean %checks {
 export function isObj(obj: any): boolean %checks {
   return !!(Object.prototype.toString.call(obj) === '[object Object]');
 }
+
+export function isMobile(): boolean {
+  return /(iphone|ipad|ipod|ios|android|mobile|blackberry|iemobile|mqqbrowser|juc|fennec|wosbrowser|browserng|Webos|symbian|windows phone)/i.test(navigator.userAgent);
+}
