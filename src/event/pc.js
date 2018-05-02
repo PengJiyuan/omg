@@ -32,12 +32,7 @@ export class Event {
 
     const hasEnterOrMove = this._.objects.some(item => {
       return item.events && item.events.some(i => {
-        return i.eventType === 'mouseenter'
-          || i.eventType === 'mousemove'
-          || i.eventType === 'drag'
-          || i.eventType === 'dragin'
-          || i.eventType === 'dragout'
-          || i.eventType === 'drop';
+        return ~this._.eventTypes.indexOf(i.eventType);
       });
     }) || this._.globalMousemove;
 

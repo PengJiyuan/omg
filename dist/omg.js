@@ -334,6 +334,8 @@ var Event = function () {
   }, {
     key: 'triggerEvents',
     value: function triggerEvents() {
+      var _this3 = this;
+
       var hasEvents = this._.objects.filter(function (item) {
         return !item.hide;
       }).some(function (item) {
@@ -345,7 +347,7 @@ var Event = function () {
 
       var hasEnterOrMove = this._.objects.some(function (item) {
         return item.events && item.events.some(function (i) {
-          return i.eventType === 'mouseenter' || i.eventType === 'mousemove' || i.eventType === 'drag' || i.eventType === 'dragin' || i.eventType === 'dragout' || i.eventType === 'drop';
+          return ~_this3._.eventTypes.indexOf(i.eventType);
         });
       }) || this._.globalMousemove;
 
@@ -2242,7 +2244,9 @@ var text = function (settings, _this) {
     text: settings.text || 'no text',
     style: settings.style || 'fill',
     paddingTop: settings.paddingTop || 0,
-    paddingLeft: settings.paddingLeft || 0
+    paddingLeft: settings.paddingLeft || 0,
+    scaled_paddingTop: (settings.paddingTop || 0) * _this.scale,
+    scaled_paddingLeft: (settings.paddingLeft || 0) * _this.scale
   });
 };
 
@@ -2476,17 +2480,20 @@ var OMG = function () {
   // canvas's with
   // Element canvas.
   // Instance of class event.
-  // Used to cache timestamps which used to calculate fps.
-  // If define fpsFunc, can get real-time fps.
-  // Animation's id.
-  // The List contains page's all animation instance.
-  // Global mousemove function.
-  // Current scale rate
-  // Minimum scale rate
-  // The number of global translate y
-  // For generating and recording the graphs' zindex in a group
-  // All shapes list
-  // OMG's current version
+  // All supported event types list.
+  // Real-time fps.
+  // An object contains animationId
+  // Whether the page is animating
+  // Class Tween
+  // Global mousedown function.
+  // Instance of imageLoader
+  // Ture or a function can be define. Before render, will load images first.
+  // If prepareImage is a function, will trigger after images loaded.
+  // Maximum scale rate
+  // Default scale rate
+  // The number of global translate x
+  // All shapes list's reverse list
+  // Current device is mobile phone
   function OMG(config) {
     classCallCheck(this, OMG);
 
@@ -2535,7 +2542,9 @@ var OMG = function () {
 
     this.graphs = {};
 
-    this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
+    this.eventTypes = ['click', 'mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
+
+    this.mobileEventTypes = ['touchstart', 'touchend', 'touchmove', 'tap'];
 
     this._event = event(this, this.isMobile);
 
@@ -2582,20 +2591,18 @@ var OMG = function () {
   // canvas's height
   // canvas.getContext2D()
   // Class color.
-  // All supported event types list.
-  // Real-time fps.
-  // An object contains animationId
-  // Whether the page is animating
-  // Class Tween
-  // Global mousedown function.
-  // Instance of imageLoader
-  // Ture or a function can be define. Before render, will load images first.
-  // If prepareImage is a function, will trigger after images loaded.
-  // Maximum scale rate
-  // Default scale rate
-  // The number of global translate x
-  // All shapes list's reverse list
-  // Current device is mobile phone
+  // All supported mobile event types list.
+  // Used to cache timestamps which used to calculate fps.
+  // If define fpsFunc, can get real-time fps.
+  // Animation's id.
+  // The List contains page's all animation instance.
+  // Global mousemove function.
+  // Current scale rate
+  // Minimum scale rate
+  // The number of global translate y
+  // For generating and recording the graphs' zindex in a group
+  // All shapes list
+  // OMG's current version
 
 
   createClass(OMG, [{

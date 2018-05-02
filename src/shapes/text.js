@@ -103,6 +103,8 @@ export default function(settings: Object, _this: Global): GraghShape {
     text: settings.text || 'no text',
     style: settings.style || 'fill',
     paddingTop: settings.paddingTop || 0,
-    paddingLeft: settings.paddingLeft || 0
+    paddingLeft: settings.paddingLeft || 0,
+    scaled_paddingTop: (settings.paddingTop || 0) * _this.scale,
+    scaled_paddingLeft: (settings.paddingLeft || 0) * _this.scale
   });
 }

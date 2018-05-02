@@ -55,6 +55,7 @@ export class OMG {
   fps: number;                           // Real-time fps.
   fpsCacheTime: number;                  // Used to cache timestamps which used to calculate fps.
   eventTypes: Array<string>;             // All supported event types list.
+  mobileEventTypes: Array<string>;       // All supported mobile event types list.
   _event: Object;                        // Instance of class event.
   color: Color;                          // Class color.
   element: HTMLCanvasElement;            // Element canvas.
@@ -121,6 +122,7 @@ export class OMG {
     this.graphs = {};
 
     this.eventTypes = [
+      'click',
       'mousedown',
       'mouseup',
       'mouseenter',
@@ -131,6 +133,13 @@ export class OMG {
       'dragin',
       'dragout',
       'drop'
+    ];
+
+    this.mobileEventTypes = [
+      'touchstart',
+      'touchend',
+      'touchmove',
+      'tap'
     ];
 
     this._event = event(this, this.isMobile);
