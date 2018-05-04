@@ -331,7 +331,7 @@ stage.mousemove(function(e) {
 
 #### shape events
 
-All types supported:
+All pc event types supported:
 
 * mousedown
 * mouseup
@@ -343,6 +343,13 @@ All types supported:
 * dragin
 * dragout
 * drop
+
+All mobile event types supported:
+
+* touchstart
+* touchmove
+* touchend
+* tap
 
 Support chain call.
 
@@ -366,8 +373,7 @@ rect.config({
   zindex: 10,
   drag: true, // 允许形状(对象)被拖拽  
   changeIndex: true， // 在形状被选中的时候允许改变个形状展示的顺序
-  fixed: true, // 免受globalTranslate的影响
-  bg: true // 作为bg的话无法绑定事件，可触发globalTranslate
+  fixed: true, // 免受globalTranslate, globalScale的影响
 });
 ```
 
@@ -474,6 +480,13 @@ stage._events.triggerEvents();
 ```javascript
 stage.draw();
 stage.redraw();
+```
+
+### Reset
+Reset OMG to init status.
+
+```javascript
+stage.reset();
 ```
 
 ### Animation
