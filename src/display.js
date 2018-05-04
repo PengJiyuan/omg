@@ -67,16 +67,17 @@ class Display {
 
     this.events = this.events || [];
 
+    const allSupportEventTypes = this._.eventTypes.concat(this._.mobileEventTypes);
     const eTypes = eventTypes.split(' '), that = this;
 
     eTypes.forEach(event => {
-      if(~this._.eventTypes.indexOf(event)) {
+      if(~allSupportEventTypes.indexOf(event)) {
         that.events.push({
           eventType: event,
           callback: callback
         });
       } else {
-        throw `${event} is not in eventTypes!\n Please use event in ${this._.eventTypes}`;
+        throw `${event} is not in eventTypes!\n Please use event in ${allSupportEventTypes}`;
       }
     });
 

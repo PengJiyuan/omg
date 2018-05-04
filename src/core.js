@@ -139,7 +139,14 @@ export class OMG {
       'touchstart',
       'touchend',
       'touchmove',
-      'tap'
+      'tap',
+      'pinch',
+      'spread',
+      'drag',
+      'dragend',
+      'dragin',
+      'dragout',
+      'drop'
     ];
 
     this._event = event(this, this.isMobile);

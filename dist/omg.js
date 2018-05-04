@@ -71,12 +71,21 @@
 
 var version = "4.0.0-beta.0";
 
-function getPos(e) {
+function getPos(e, element, touchend) {
   var ev = e || window.event;
-  var _ref = [ev.offsetX, ev.offsetY],
-      x = _ref[0],
-      y = _ref[1];
+  var ele = element || e.target;
+  var boundingRect = ele.getBoundingClientRect();
 
+  var x = void 0,
+      y = void 0;
+  var touchList = touchend ? ev.changedTouches : ev.touches;
+  if (isMobile()) {
+    x = touchList[0].clientX - boundingRect.left;
+    y = touchList[0].clientY - boundingRect.top;
+  } else {
+    x = ev.offsetX || ev.clientX;
+    y = ev.offsetY || ev.clientY;
+  }
   return { x: x, y: y };
 }
 
@@ -99,9 +108,9 @@ function unbind(target, eventType, handler) {
 
 // do not change the origin array
 function reverse(array) {
-  var _ref2 = [array.length, []],
-      length = _ref2[0],
-      ret = _ref2[1];
+  var _ref = [array.length, []],
+      length = _ref[0],
+      ret = _ref[1];
 
   for (var i = 0; i < length; i++) {
     ret[i] = array[length - i - 1];
@@ -312,6 +321,7 @@ var Event = function () {
     classCallCheck(this, Event);
 
     this.mouseWheel = function (e) {
+      e.preventDefault();
       if (e.deltaY && e.deltaY > 0) {
         _this2._.scale = _this2._.scale - 0.01 >= _this2._.minDeviceScale ? _this2._.scale - 0.01 : _this2._.minDeviceScale;
       } else if (e.deltaY && e.deltaY < 0) {
@@ -329,7 +339,7 @@ var Event = function () {
   createClass(Event, [{
     key: 'getPos',
     value: function getPos$$1(e) {
-      return getPos(e);
+      return getPos(e, this._.element);
     }
   }, {
     key: 'triggerEvents',
@@ -617,29 +627,16 @@ var Event = function () {
 
 var MobileEvent = function () {
   function MobileEvent(_this) {
-    var _this2 = this;
-
     classCallCheck(this, MobileEvent);
-
-    this.mouseWheel = function (e) {
-      if (e.deltaY && e.deltaY > 0) {
-        _this2._.scale = _this2._.scale - 0.01 >= _this2._.minDeviceScale ? _this2._.scale - 0.01 : _this2._.minDeviceScale;
-      } else if (e.deltaY && e.deltaY < 0) {
-        _this2._.scale = _this2._.scale + 0.01 <= _this2._.maxDeviceScale ? _this2._.scale + 0.01 : _this2._.maxDeviceScale;
-      }
-      _this2._.redraw();
-    };
 
     // global this
     this._ = _this;
-    this.triggeredMouseDown = false;
-    this.triggeredMouseMove = false;
   }
 
   createClass(MobileEvent, [{
     key: 'getPos',
-    value: function getPos$$1(e) {
-      return getPos(e);
+    value: function getPos$$1(e, touchend) {
+      return getPos(e, this._.element, touchend);
     }
   }, {
     key: 'triggerEvents',
@@ -653,152 +650,35 @@ var MobileEvent = function () {
         return;
       }
 
-      var hasEnterOrMove = this._.objects.some(function (item) {
-        return item.events && item.events.some(function (i) {
-          return i.eventType === 'mouseenter' || i.eventType === 'mousemove' || i.eventType === 'drag' || i.eventType === 'dragin' || i.eventType === 'dragout' || i.eventType === 'drop';
-        });
-      }) || this._.globalMousemove;
-
-      // mouseenter mousemove
-      if (hasEnterOrMove && !this.triggeredMouseMove) {
-        this.bindMouseMove();
-        this.triggeredMouseMove = true;
-      }
-
-      if (!hasEnterOrMove && this.triggeredMouseMove) {
-        this.unBindMouseMove();
-        this.triggeredMouseMove = false;
-      }
-
-      if (!this.triggeredMouseDown) {
-        bind(this._.element, 'mousedown', this.mouseDown.bind(this));
-        this.triggeredMouseDown = true;
-      }
-
-      if (this._.enableGlobalScale) {
-        this.bindMouseWheel();
-      } else {
-        this.unBindMouseWheel();
+      if (!this.triggeredTouchStart) {
+        bind(this._.element, 'touchstart', this.touchStart.bind(this));
+        this.triggeredTouchStart = true;
       }
     }
   }, {
-    key: 'bindMouseWheel',
-    value: function bindMouseWheel() {
-      bind(this._.element, 'wheel', this.mouseWheel);
-    }
-  }, {
-    key: 'unBindMouseWheel',
-    value: function unBindMouseWheel() {
-      unbind(this._.element, 'wheel', this.mouseWheel);
-    }
-  }, {
-    key: 'bindMouseMove',
-    value: function bindMouseMove() {
-      bind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
-    }
-  }, {
-    key: 'unBindMouseMove',
-    value: function unBindMouseMove() {
-      unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
-    }
-  }, {
-    key: 'mouseEnterOrMove',
-    value: function mouseEnterOrMove(e_moveOrEnter) {
-      var that = this;
-      var isDragging = void 0;
-
-      var mX = that.getPos(e_moveOrEnter).x;
-      var mY = that.getPos(e_moveOrEnter).y;
-
-      that._.globalMousemove && that._.globalMousemove(e_moveOrEnter);
-
-      isDragging = that._.objects.some(function (item) {
-        return item.isDragging;
-      });
-
-      // trigger mouseenter and mousemove
-      var movedOn = that._._objects.filter(function (item) {
-        return item.isPointInner(mX, mY) && !item.hide;
-      });
-
-      if (isDragging) {
-        // dragin
-        if (movedOn && movedOn.length > 1) {
-          movedOn[1].events && movedOn[1].events.forEach(function (i) {
-            if (i.eventType === 'dragin' && !movedOn[1].hasDraggedIn) {
-              movedOn[1].hasDraggedIn = true;
-              i.callback && i.callback(movedOn[1]);
-            }
-          });
-        }
-
-        // dragout handler
-        var handleDragOut = function handleDragOut(item) {
-          item.hasDraggedIn && item.events.forEach(function (i) {
-            if (i.eventType === 'dragout') {
-              i.callback && i.callback(movedOn[1]);
-            }
-          });
-          item.hasDraggedIn = false;
-        };
-
-        // Determine whether the mouse is dragged out from the shape and trigger dragout handler
-        that._._objects.some(function (item) {
-          return item.hasDraggedIn && (!item.isPointInner(mX, mY) || movedOn[1] !== item) && handleDragOut(item);
-        });
-      } else {
-        // mouseleave handler
-        var handleMoveOut = function handleMoveOut(item) {
-          item.hasEnter && item.events.forEach(function (i) {
-            if (i.eventType === 'mouseleave') {
-              i.callback && i.callback(item);
-            }
-          });
-          item.hasEnter = false;
-        };
-        // normal mousemove
-        // Determine whether the mouse is removed from the shape and trigger mouseleave handler
-        that._._objects.some(function (item) {
-          return item.hasEnter && (!item.isPointInner(mX, mY) || movedOn[0] !== item) && handleMoveOut(item);
-        });
-        if (movedOn && movedOn.length > 0) {
-          movedOn[0].events && movedOn[0].events.forEach(function (i) {
-            if (i.eventType === 'mouseenter' && !movedOn[0].hasEnter) {
-              movedOn[0].hasEnter = true;
-              i.callback && i.callback(movedOn[0]);
-            } else if (i.eventType === 'mousemove') {
-              i.callback && i.callback(movedOn[0]);
-            }
-          });
-        }
-      }
-    }
-  }, {
-    key: 'mouseDown',
-    value: function mouseDown(e_down) {
+    key: 'touchStart',
+    value: function touchStart(e_start) {
+      e_start.preventDefault();
+      // 两指操控
+      // if(e_start.touches.length > 1) {
+      //   alert(e_start.touches);
+      //   return;
+      // }
       var that = this,
           whichIn = void 0,
           hasEventDrag = void 0,
-          hasEventDragEnd = void 0,
-          dragCb = void 0,
-          dragEndCb = void 0;
-
-      // global setting event mousedown
-      this._.globalMousedown && this._.globalMousedown(e_down);
-
-      var hasDrags = this._.objects.filter(function (item) {
-        return !item.hide;
-      }).some(function (item) {
-        return item.enableDrag && !item.fixed;
-      });
+          dragCb = void 0;
 
       // drag shape
-      var pX = this.getPos(e_down).x;
-      var pY = this.getPos(e_down).y;
+      var pos = this.getPos(e_start);
+      var _ref = [pos.x, pos.y],
+          pX = _ref[0],
+          pY = _ref[1];
+
       that.cacheX = pX;
       that.cacheY = pY;
 
-      // mousedown
+      // which shape is touched
       var whichDown = this._._objects.filter(function (item) {
         return item.isPointInner(pX, pY) && !item.hide;
       });
@@ -808,11 +688,17 @@ var MobileEvent = function () {
           that.changeOrder(whichDown[0]);
         }
         whichDown[0].events && whichDown[0].events.some(function (i) {
-          return i.eventType === 'mousedown' && i.callback && i.callback(whichDown[0]);
+          return i.eventType === 'touchstart' && i.callback && i.callback(whichDown[0]);
         });
       }
 
-      // mouseDrag
+      var hasDrags = this._.objects.filter(function (item) {
+        return !item.hide;
+      }).some(function (item) {
+        return item.enableDrag && !item.fixed;
+      });
+
+      // drag
       if (hasDrags) {
         whichIn = that._._objects.filter(function (item) {
           return !item.hide;
@@ -827,16 +713,12 @@ var MobileEvent = function () {
           return item.eventType === 'drag';
         });
 
-        hasEventDragEnd = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function (item) {
-          if (item.eventType === 'dragend') {
-            dragEndCb = item.callback;
-          }
-          return item.eventType === 'dragend';
-        });
-
         var move_Event = function move_Event(e_move) {
-          var mx = that.getPos(e_move).x;
-          var my = that.getPos(e_move).y;
+          var pos = that.getPos(e_move);
+          var _ref2 = [pos.x, pos.y],
+              mx = _ref2[0],
+              my = _ref2[1];
+
 
           whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
           whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
@@ -850,63 +732,23 @@ var MobileEvent = function () {
           whichIn[0].isDragging = true;
         };
 
-        var up_Event = function up_Event(e_up) {
-          var uX = that.getPos(e_up).x;
-          var uY = that.getPos(e_up).y;
+        var up_Event = function up_Event() /* e_up */{
+          // const pos = that.getPos(e_up, true);
+          // const [ uX, uY ] = [ pos.x, pos.y ];
 
-          var upOn = that._._objects.filter(function (item) {
-            return item.isPointInner(uX, uY);
+          // touchend
+          whichIn[0].events && whichIn[0].events.some(function (i) {
+            return i.eventType === 'touchend' && i.callback && i.callback(whichIn[0]);
           });
 
-          if (upOn && upOn.length > 1) {
-            if (upOn[1].hasDraggedIn) {
-              upOn[1].hasDraggedIn = false;
-              var dp = upOn[1].events.some(function (i) {
-                return i.eventType === 'drop' && i.callback && i.callback(upOn[1], upOn[0]);
-              });
-              // if not defined event drop, check if event dragout exist
-              // if yes, trigger the callback dragout.
-              !dp && upOn[1].events.some(function (i) {
-                return i.eventType === 'dragout' && i.callback && i.callback(upOn[1]);
-              });
-            }
-          }
-
-          // event dragend
-          hasEventDragEnd && dragEndCb(whichDown[0]);
-
-          unbind(document, 'mousemove', move_Event);
-          unbind(document, 'mouseup', up_Event);
+          unbind(document, 'touchmove', move_Event);
+          unbind(document, 'touchend', up_Event);
           whichIn[0].isDragging = false;
         };
         if (whichIn && whichIn.length > 0 && whichIn[0].enableDrag) {
-          bind(document, 'mousemove', move_Event);
-          bind(document, 'mouseup', up_Event);
+          bind(document, 'touchmove', move_Event);
+          bind(document, 'touchend', up_Event);
         }
-      }
-
-      // global translate
-      if (this._.enableGlobalTranslate && !(whichIn && whichIn.length > 0)) {
-
-        var move_dragCanvas = function move_dragCanvas(e_move) {
-          var mx = that.getPos(e_move).x;
-          var my = that.getPos(e_move).y;
-          // that._.originTransX = that._.originTransX + mx - that.cacheX;
-          // that._.originTransY = that._.originTransY  + my - that.cacheY;
-          that._.transX = that._.transX + mx - that.cacheX;
-          that._.transY = that._.transY + my - that.cacheY;
-          that._.redraw();
-          that.cacheX = mx;
-          that.cacheY = my;
-        };
-
-        var up_dragCanvas = function up_dragCanvas() {
-          unbind(document, 'mousemove', move_dragCanvas);
-          unbind(document, 'mouseup', up_dragCanvas);
-        };
-
-        bind(document, 'mousemove', move_dragCanvas);
-        bind(document, 'mouseup', up_dragCanvas);
       }
     }
   }, {
@@ -1642,8 +1484,6 @@ var Display = function () {
   createClass(Display, [{
     key: 'on',
     value: function on(eventTypes, callback) {
-      var _this2 = this;
-
       if (!eventTypes) {
         throw 'no eventTypes defined!';
       }
@@ -1654,17 +1494,18 @@ var Display = function () {
 
       this.events = this.events || [];
 
+      var allSupportEventTypes = this._.eventTypes.concat(this._.mobileEventTypes);
       var eTypes = eventTypes.split(' '),
           that = this;
 
       eTypes.forEach(function (event) {
-        if (~_this2._.eventTypes.indexOf(event)) {
+        if (~allSupportEventTypes.indexOf(event)) {
           that.events.push({
             eventType: event,
             callback: callback
           });
         } else {
-          throw event + ' is not in eventTypes!\n Please use event in ' + _this2._.eventTypes;
+          throw event + ' is not in eventTypes!\n Please use event in ' + allSupportEventTypes;
         }
       });
 
@@ -1695,7 +1536,7 @@ var Display = function () {
   }, {
     key: 'animateTo',
     value: function animateTo(keys) {
-      var _this3 = this;
+      var _this2 = this;
 
       var configs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -1710,7 +1551,7 @@ var Display = function () {
       data.to = to;
       data.onUpdate = function (keys) {
         for (var _key in to) {
-          _this3[_key] = keys[_key];
+          _this2[_key] = keys[_key];
         }
         configs.onUpdate && configs.onUpdate(keys);
       };
@@ -1720,7 +1561,7 @@ var Display = function () {
         }
       }
       data.onFinish = function () {
-        _this3.animating = false;
+        _this2.animating = false;
         configs.onFinish && configs.onFinish(keys);
       };
       var tween = new Tween(data);
@@ -2544,7 +2385,7 @@ var OMG = function () {
 
     this.eventTypes = ['click', 'mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
 
-    this.mobileEventTypes = ['touchstart', 'touchend', 'touchmove', 'tap'];
+    this.mobileEventTypes = ['touchstart', 'touchend', 'touchmove', 'tap', 'pinch', 'spread', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
 
     this._event = event(this, this.isMobile);
 

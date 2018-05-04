@@ -18,8 +18,8 @@ export class Event {
     this.triggeredMouseMove = false;
   }
 
-  getPos(e: MouseEvent): {x: number, y: number} {
-    return utils.getPos(e);
+  getPos(e: MouseEvent & TouchEvent): {x: number, y: number} {
+    return utils.getPos(e, this._.element);
   }
 
   triggerEvents() {
@@ -69,6 +69,7 @@ export class Event {
   }
 
   mouseWheel = (e: WheelEvent) => {
+    e.preventDefault();
     if(e.deltaY && e.deltaY > 0) {
       this._.scale = this._.scale - 0.01 >= this._.minDeviceScale ? this._.scale - 0.01 : this._.minDeviceScale;
     } else if(e.deltaY && e.deltaY < 0) {
@@ -85,7 +86,7 @@ export class Event {
     utils.unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
   }
 
-  mouseEnterOrMove(e_moveOrEnter: MouseEvent) {
+  mouseEnterOrMove(e_moveOrEnter: MouseEvent & TouchEvent) {
     const that = this;
     let isDragging;
 
@@ -158,7 +159,7 @@ export class Event {
 
   }
 
-  mouseDown(e_down: MouseEvent) {
+  mouseDown(e_down: MouseEvent & TouchEvent) {
     let that = this, whichIn, hasEventDrag, hasEventDragEnd, dragCb, dragEndCb;
 
     // global setting event mousedown
