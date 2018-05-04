@@ -99,6 +99,8 @@
 * 添加api `setGlobalProps`， 用于设置OMG全局状态比如enableGlobalTranslate, enableGlobalScale。
 * Graph的config移除bg参数。
 * Graph的fixed属性升级，设置了fixed之后，全局拖拽，全局缩放，自身拖拽全部对其无效。
+* 添加页面重置api reset。
+* graph line支持拖拽
 
 ## ToDo
 
