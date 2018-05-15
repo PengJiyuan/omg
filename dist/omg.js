@@ -1,5 +1,5 @@
 /*!
- * omg.js v4.0.0-beta.0
+ * omg.js v4.0.0
  * Author: PengJiyuan
  */
 (function (global, factory) {
@@ -69,7 +69,7 @@
   }
 })();
 
-var version = "4.0.0-beta.0";
+var version = "4.0.0";
 
 function getPos(e, element, touchend) {
   var ev = e || window.event;
