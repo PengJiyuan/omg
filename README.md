@@ -564,6 +564,13 @@ shape.animateTo({
 stage.clearAnimation();
 ```
 
+#### After Finish Animation
+```javascript
+stage.finishAnimation = () => {
+  console.log('all animations has finished!');
+};
+```
+
 ### Resize
 
 #### resize(opt)
