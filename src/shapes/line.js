@@ -20,13 +20,14 @@ export default function(settings: Object, _this: Global): GraghShape {
       throw 'The line needs at least two points';
     }
 
-    this.scaled_matrix = this.matrix.map(m => m.map(n => n * scale));
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+    if(!this.fixed) {
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    }
 
     const matrix = this.scaled_matrix;
 
     canvas.save();
-    canvas.translate(this.scaled_moveX, this.scaled_moveX);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if(this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }

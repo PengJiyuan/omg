@@ -1,7 +1,7 @@
 /* @flow */
 
-import * as utils from './utils/helpers';
-import type {OMG} from './core';
+import * as utils from '../utils/helpers';
+import type {OMG} from '../core';
 
 export class Event {
 
@@ -18,8 +18,8 @@ export class Event {
     this.triggeredMouseMove = false;
   }
 
-  getPos(e: MouseEvent): {x: number, y: number} {
-    return utils.getPos(e);
+  getPos(e: MouseEvent & TouchEvent): {x: number, y: number} {
+    return utils.getPos(e, this._.element);
   }
 
   triggerEvents() {
@@ -32,12 +32,7 @@ export class Event {
 
     const hasEnterOrMove = this._.objects.some(item => {
       return item.events && item.events.some(i => {
-        return i.eventType === 'mouseenter'
-          || i.eventType === 'mousemove'
-          || i.eventType === 'drag'
-          || i.eventType === 'dragin'
-          || i.eventType === 'dragout'
-          || i.eventType === 'drop';
+        return ~this._.eventTypes.indexOf(i.eventType);
       });
     }) || this._.globalMousemove;
 
@@ -74,6 +69,7 @@ export class Event {
   }
 
   mouseWheel = (e: WheelEvent) => {
+    e.preventDefault();
     if(e.deltaY && e.deltaY > 0) {
       this._.scale = this._.scale - 0.01 >= this._.minDeviceScale ? this._.scale - 0.01 : this._.minDeviceScale;
     } else if(e.deltaY && e.deltaY < 0) {
@@ -90,7 +86,7 @@ export class Event {
     utils.unbind(this._.element, 'mousemove', this.mouseEnterOrMove.bind(this));
   }
 
-  mouseEnterOrMove(e_moveOrEnter: MouseEvent) {
+  mouseEnterOrMove(e_moveOrEnter: MouseEvent & TouchEvent) {
     const that = this;
     let isDragging;
 
@@ -163,14 +159,14 @@ export class Event {
 
   }
 
-  mouseDown(e_down: MouseEvent) {
+  mouseDown(e_down: MouseEvent & TouchEvent) {
     let that = this, whichIn, hasEventDrag, hasEventDragEnd, dragCb, dragEndCb;
 
     // global setting event mousedown
     this._.globalMousedown && this._.globalMousedown(e_down);
 
     const hasDrags = this._.objects.filter(item => !item.hide).some(item => {
-      return item.enableDrag;
+      return item.enableDrag && !item.fixed;
     });
 
     // drag shape
@@ -181,7 +177,7 @@ export class Event {
 
     // mousedown
     const whichDown = this._._objects.filter(item => {
-      return item.isPointInner(pX, pY) && !item.isBg && !item.hide;
+      return item.isPointInner(pX, pY) && !item.hide;
     });
 
     if(whichDown && whichDown.length > 0) {
@@ -196,7 +192,7 @@ export class Event {
     // mouseDrag
     if(hasDrags) {
       whichIn = that._._objects.filter(item => !item.hide).filter(item => {
-        return item.isPointInner(pX, pY) && !item.isBg;
+        return item.isPointInner(pX, pY) && !item.fixed;
       });
 
       hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(item => {

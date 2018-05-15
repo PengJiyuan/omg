@@ -71,12 +71,21 @@
 
 var version = "4.0.0-beta.0";
 
-function getPos(e) {
+function getPos(e, element, touchend) {
   var ev = e || window.event;
-  var _ref = [ev.offsetX, ev.offsetY],
-      x = _ref[0],
-      y = _ref[1];
+  var ele = element || e.target;
+  var boundingRect = ele.getBoundingClientRect();
 
+  var x = void 0,
+      y = void 0;
+  var touchList = touchend ? ev.changedTouches : ev.touches;
+  if (isMobile()) {
+    x = touchList[0].clientX - boundingRect.left;
+    y = touchList[0].clientY - boundingRect.top;
+  } else {
+    x = ev.offsetX || ev.clientX;
+    y = ev.offsetY || ev.clientY;
+  }
   return { x: x, y: y };
 }
 
@@ -99,9 +108,9 @@ function unbind(target, eventType, handler) {
 
 // do not change the origin array
 function reverse(array) {
-  var _ref2 = [array.length, []],
-      length = _ref2[0],
-      ret = _ref2[1];
+  var _ref = [array.length, []],
+      length = _ref[0],
+      ret = _ref[1];
 
   for (var i = 0; i < length; i++) {
     ret[i] = array[length - i - 1];
@@ -135,6 +144,11 @@ function isObj(obj) {
   return !!(Object.prototype.toString.call(obj) === '[object Object]');
 }
 
+function isMobile() {
+  return (/(iphone|ipad|ipod|ios|android|mobile|blackberry|iemobile|mqqbrowser|juc|fennec|wosbrowser|browserng|Webos|symbian|windows phone)/i.test(navigator.userAgent)
+  );
+}
+
 var utils = Object.freeze({
 	getPos: getPos,
 	bind: bind,
@@ -145,7 +159,8 @@ var utils = Object.freeze({
 	getMin: getMin,
 	insertArray: insertArray,
 	isArr: isArr,
-	isObj: isObj
+	isObj: isObj,
+	isMobile: isMobile
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -306,6 +321,7 @@ var Event = function () {
     classCallCheck(this, Event);
 
     this.mouseWheel = function (e) {
+      e.preventDefault();
       if (e.deltaY && e.deltaY > 0) {
         _this2._.scale = _this2._.scale - 0.01 >= _this2._.minDeviceScale ? _this2._.scale - 0.01 : _this2._.minDeviceScale;
       } else if (e.deltaY && e.deltaY < 0) {
@@ -323,11 +339,13 @@ var Event = function () {
   createClass(Event, [{
     key: 'getPos',
     value: function getPos$$1(e) {
-      return getPos(e);
+      return getPos(e, this._.element);
     }
   }, {
     key: 'triggerEvents',
     value: function triggerEvents() {
+      var _this3 = this;
+
       var hasEvents = this._.objects.filter(function (item) {
         return !item.hide;
       }).some(function (item) {
@@ -339,7 +357,7 @@ var Event = function () {
 
       var hasEnterOrMove = this._.objects.some(function (item) {
         return item.events && item.events.some(function (i) {
-          return i.eventType === 'mouseenter' || i.eventType === 'mousemove' || i.eventType === 'drag' || i.eventType === 'dragin' || i.eventType === 'dragout' || i.eventType === 'drop';
+          return ~_this3._.eventTypes.indexOf(i.eventType);
         });
       }) || this._.globalMousemove;
 
@@ -473,7 +491,7 @@ var Event = function () {
       var hasDrags = this._.objects.filter(function (item) {
         return !item.hide;
       }).some(function (item) {
-        return item.enableDrag;
+        return item.enableDrag && !item.fixed;
       });
 
       // drag shape
@@ -484,7 +502,7 @@ var Event = function () {
 
       // mousedown
       var whichDown = this._._objects.filter(function (item) {
-        return item.isPointInner(pX, pY) && !item.isBg && !item.hide;
+        return item.isPointInner(pX, pY) && !item.hide;
       });
 
       if (whichDown && whichDown.length > 0) {
@@ -501,7 +519,7 @@ var Event = function () {
         whichIn = that._._objects.filter(function (item) {
           return !item.hide;
         }).filter(function (item) {
-          return item.isPointInner(pX, pY) && !item.isBg;
+          return item.isPointInner(pX, pY) && !item.fixed;
         });
 
         hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function (item) {
@@ -606,6 +624,150 @@ var Event = function () {
   }]);
   return Event;
 }();
+
+var MobileEvent = function () {
+  function MobileEvent(_this) {
+    classCallCheck(this, MobileEvent);
+
+    // global this
+    this._ = _this;
+  }
+
+  createClass(MobileEvent, [{
+    key: 'getPos',
+    value: function getPos$$1(e, touchend) {
+      return getPos(e, this._.element, touchend);
+    }
+  }, {
+    key: 'triggerEvents',
+    value: function triggerEvents() {
+      var hasEvents = this._.objects.filter(function (item) {
+        return !item.hide;
+      }).some(function (item) {
+        return item.events && isArr(item.events) || item.enableDrag;
+      });
+      if (!hasEvents && !this._.enableGlobalTranslate && !this._.enableGlobalScale) {
+        return;
+      }
+
+      if (!this.triggeredTouchStart) {
+        bind(this._.element, 'touchstart', this.touchStart.bind(this));
+        this.triggeredTouchStart = true;
+      }
+    }
+  }, {
+    key: 'touchStart',
+    value: function touchStart(e_start) {
+      e_start.preventDefault();
+      // 两指操控
+      // if(e_start.touches.length > 1) {
+      //   alert(e_start.touches);
+      //   return;
+      // }
+      var that = this,
+          whichIn = void 0,
+          hasEventDrag = void 0,
+          dragCb = void 0;
+
+      // drag shape
+      var pos = this.getPos(e_start);
+      var _ref = [pos.x, pos.y],
+          pX = _ref[0],
+          pY = _ref[1];
+
+      that.cacheX = pX;
+      that.cacheY = pY;
+
+      // which shape is touched
+      var whichDown = this._._objects.filter(function (item) {
+        return item.isPointInner(pX, pY) && !item.hide;
+      });
+
+      if (whichDown && whichDown.length > 0) {
+        if (whichDown[0].enableChangeIndex) {
+          that.changeOrder(whichDown[0]);
+        }
+        whichDown[0].events && whichDown[0].events.some(function (i) {
+          return i.eventType === 'touchstart' && i.callback && i.callback(whichDown[0]);
+        });
+      }
+
+      var hasDrags = this._.objects.filter(function (item) {
+        return !item.hide;
+      }).some(function (item) {
+        return item.enableDrag && !item.fixed;
+      });
+
+      // drag
+      if (hasDrags) {
+        whichIn = that._._objects.filter(function (item) {
+          return !item.hide;
+        }).filter(function (item) {
+          return item.isPointInner(pX, pY) && !item.fixed;
+        });
+
+        hasEventDrag = whichIn.length > 0 && whichIn[0].events && whichIn[0].events.some(function (item) {
+          if (item.eventType === 'drag') {
+            dragCb = item.callback;
+          }
+          return item.eventType === 'drag';
+        });
+
+        var move_Event = function move_Event(e_move) {
+          var pos = that.getPos(e_move);
+          var _ref2 = [pos.x, pos.y],
+              mx = _ref2[0],
+              my = _ref2[1];
+
+
+          whichIn[0].moveX = whichIn[0].moveX + mx - that.cacheX;
+          whichIn[0].moveY = whichIn[0].moveY + my - that.cacheY;
+
+          // event drag
+          hasEventDrag && dragCb(whichDown[0]);
+
+          that._.redraw();
+          that.cacheX = mx;
+          that.cacheY = my;
+          whichIn[0].isDragging = true;
+        };
+
+        var up_Event = function up_Event() /* e_up */{
+          // const pos = that.getPos(e_up, true);
+          // const [ uX, uY ] = [ pos.x, pos.y ];
+
+          // touchend
+          whichIn[0].events && whichIn[0].events.some(function (i) {
+            return i.eventType === 'touchend' && i.callback && i.callback(whichIn[0]);
+          });
+
+          unbind(document, 'touchmove', move_Event);
+          unbind(document, 'touchend', up_Event);
+          whichIn[0].isDragging = false;
+        };
+        if (whichIn && whichIn.length > 0 && whichIn[0].enableDrag) {
+          bind(document, 'touchmove', move_Event);
+          bind(document, 'touchend', up_Event);
+        }
+      }
+    }
+  }, {
+    key: 'changeOrder',
+    value: function changeOrder(item) {
+      var i = this._.objects.indexOf(item);
+      var cacheData = this._.objects[i];
+      this._.objects.splice(i, 1);
+      this._.objects.push(cacheData);
+      this._._objects = reverse(this._.objects);
+      this._.redraw();
+    }
+  }]);
+  return MobileEvent;
+}();
+
+function event(_this, isMobile) {
+  return isMobile ? new MobileEvent(_this) : new Event(_this);
+}
 
 var Color = function () {
   function Color() {
@@ -886,6 +1048,165 @@ var ImageLoader = function () {
   return ImageLoader;
 }();
 
+/**!
+ * code from https://github.com/LiikeJS/Liike/blob/master/src/ease.js
+ */
+var easeInBy = function easeInBy(power) {
+  return function (t) {
+    return Math.pow(t, power);
+  };
+};
+var easeOutBy = function easeOutBy(power) {
+  return function (t) {
+    return 1 - Math.abs(Math.pow(t - 1, power));
+  };
+};
+var easeInOutBy = function easeInOutBy(power) {
+  return function (t) {
+    return t < 0.5 ? easeInBy(power)(t * 2) / 2 : easeOutBy(power)(t * 2 - 1) / 2 + 0.5;
+  };
+};
+
+var linear = function linear(t) {
+  return t;
+};
+var quadIn = easeInBy(2);
+var quadOut = easeOutBy(2);
+var quadInOut = easeInOutBy(2);
+var cubicIn = easeInBy(3);
+var cubicOut = easeOutBy(3);
+var cubicInOut = easeInOutBy(3);
+var quartIn = easeInBy(4);
+var quartOut = easeOutBy(4);
+var quartInOut = easeInOutBy(4);
+var quintIn = easeInBy(5);
+var quintOut = easeOutBy(5);
+var quintInOut = easeInOutBy(5);
+var sineIn = function sineIn(t) {
+  return 1 + Math.sin(Math.PI / 2 * t - Math.PI / 2);
+};
+var sineOut = function sineOut(t) {
+  return Math.sin(Math.PI / 2 * t);
+};
+var sineInOut = function sineInOut(t) {
+  return (1 + Math.sin(Math.PI * t - Math.PI / 2)) / 2;
+};
+var bounceOut = function bounceOut(t) {
+  var s = 7.5625;
+  var p = 2.75;
+
+  if (t < 1 / p) {
+    return s * t * t;
+  }
+  if (t < 2 / p) {
+    t -= 1.5 / p;
+    return s * t * t + 0.75;
+  }
+  if (t < 2.5 / p) {
+    t -= 2.25 / p;
+    return s * t * t + 0.9375;
+  }
+  t -= 2.625 / p;
+  return s * t * t + 0.984375;
+};
+var bounceIn = function bounceIn(t) {
+  return 1 - bounceOut(1 - t);
+};
+var bounceInOut = function bounceInOut(t) {
+  return t < 0.5 ? bounceIn(t * 2) * 0.5 : bounceOut(t * 2 - 1) * 0.5 + 0.5;
+};
+
+var easing = Object.freeze({
+	linear: linear,
+	quadIn: quadIn,
+	quadOut: quadOut,
+	quadInOut: quadInOut,
+	cubicIn: cubicIn,
+	cubicOut: cubicOut,
+	cubicInOut: cubicInOut,
+	quartIn: quartIn,
+	quartOut: quartOut,
+	quartInOut: quartInOut,
+	quintIn: quintIn,
+	quintOut: quintOut,
+	quintInOut: quintInOut,
+	sineIn: sineIn,
+	sineOut: sineOut,
+	sineInOut: sineInOut,
+	bounceOut: bounceOut,
+	bounceIn: bounceIn,
+	bounceInOut: bounceInOut
+});
+
+var Tween = function () {
+  function Tween(settings) {
+    classCallCheck(this, Tween);
+    var from = settings.from,
+        to = settings.to,
+        duration = settings.duration,
+        delay = settings.delay,
+        easing = settings.easing,
+        onStart = settings.onStart,
+        onUpdate = settings.onUpdate,
+        onFinish = settings.onFinish;
+
+
+    for (var key in from) {
+      if (to[key] === undefined) {
+        to[key] = from[key];
+      }
+    }
+    for (var _key in to) {
+      if (from[_key] === undefined) {
+        from[_key] = to[_key];
+      }
+    }
+
+    this.from = from;
+    this.to = to;
+    this.duration = duration || 500;
+    this.delay = delay || 0;
+    this.easing = easing || 'linear';
+    this.onStart = onStart;
+    this.onUpdate = onUpdate;
+    this.onFinish = onFinish;
+    this.startTime = Date.now() + this.delay;
+    this.started = false;
+    this.finished = false;
+    this.keys = {};
+  }
+
+  createClass(Tween, [{
+    key: 'update',
+    value: function update() {
+      this.time = Date.now();
+      // delay some time
+      if (this.time < this.startTime) {
+        return;
+      }
+      // finish animation
+      if (this.elapsed === this.duration) {
+        if (!this.finished) {
+          this.finished = true;
+          this.onFinish && this.onFinish(this.keys);
+        }
+        return;
+      }
+      this.elapsed = this.time - this.startTime;
+      this.elapsed = this.elapsed > this.duration ? this.duration : this.elapsed;
+      for (var key in this.to) {
+        this.keys[key] = this.from[key] + (this.to[key] - this.from[key]) * easing[this.easing](this.elapsed / this.duration);
+      }
+      if (!this.started) {
+        this.onStart && this.onStart(this.keys);
+        this.started = true;
+      }
+      this.onUpdate(this.keys);
+    }
+  }]);
+  return Tween;
+}();
+
 // https://github.com/component/autoscale-canvas/blob/master/index.js
 
 /**
@@ -1107,165 +1428,6 @@ function getBounding(points, lineWidth) {
   };
 }
 
-/**!
- * code from https://github.com/LiikeJS/Liike/blob/master/src/ease.js
- */
-var easeInBy = function easeInBy(power) {
-  return function (t) {
-    return Math.pow(t, power);
-  };
-};
-var easeOutBy = function easeOutBy(power) {
-  return function (t) {
-    return 1 - Math.abs(Math.pow(t - 1, power));
-  };
-};
-var easeInOutBy = function easeInOutBy(power) {
-  return function (t) {
-    return t < 0.5 ? easeInBy(power)(t * 2) / 2 : easeOutBy(power)(t * 2 - 1) / 2 + 0.5;
-  };
-};
-
-var linear = function linear(t) {
-  return t;
-};
-var quadIn = easeInBy(2);
-var quadOut = easeOutBy(2);
-var quadInOut = easeInOutBy(2);
-var cubicIn = easeInBy(3);
-var cubicOut = easeOutBy(3);
-var cubicInOut = easeInOutBy(3);
-var quartIn = easeInBy(4);
-var quartOut = easeOutBy(4);
-var quartInOut = easeInOutBy(4);
-var quintIn = easeInBy(5);
-var quintOut = easeOutBy(5);
-var quintInOut = easeInOutBy(5);
-var sineIn = function sineIn(t) {
-  return 1 + Math.sin(Math.PI / 2 * t - Math.PI / 2);
-};
-var sineOut = function sineOut(t) {
-  return Math.sin(Math.PI / 2 * t);
-};
-var sineInOut = function sineInOut(t) {
-  return (1 + Math.sin(Math.PI * t - Math.PI / 2)) / 2;
-};
-var bounceOut = function bounceOut(t) {
-  var s = 7.5625;
-  var p = 2.75;
-
-  if (t < 1 / p) {
-    return s * t * t;
-  }
-  if (t < 2 / p) {
-    t -= 1.5 / p;
-    return s * t * t + 0.75;
-  }
-  if (t < 2.5 / p) {
-    t -= 2.25 / p;
-    return s * t * t + 0.9375;
-  }
-  t -= 2.625 / p;
-  return s * t * t + 0.984375;
-};
-var bounceIn = function bounceIn(t) {
-  return 1 - bounceOut(1 - t);
-};
-var bounceInOut = function bounceInOut(t) {
-  return t < 0.5 ? bounceIn(t * 2) * 0.5 : bounceOut(t * 2 - 1) * 0.5 + 0.5;
-};
-
-var easing = Object.freeze({
-	linear: linear,
-	quadIn: quadIn,
-	quadOut: quadOut,
-	quadInOut: quadInOut,
-	cubicIn: cubicIn,
-	cubicOut: cubicOut,
-	cubicInOut: cubicInOut,
-	quartIn: quartIn,
-	quartOut: quartOut,
-	quartInOut: quartInOut,
-	quintIn: quintIn,
-	quintOut: quintOut,
-	quintInOut: quintInOut,
-	sineIn: sineIn,
-	sineOut: sineOut,
-	sineInOut: sineInOut,
-	bounceOut: bounceOut,
-	bounceIn: bounceIn,
-	bounceInOut: bounceInOut
-});
-
-var Tween = function () {
-  function Tween(settings) {
-    classCallCheck(this, Tween);
-    var from = settings.from,
-        to = settings.to,
-        duration = settings.duration,
-        delay = settings.delay,
-        easing = settings.easing,
-        onStart = settings.onStart,
-        onUpdate = settings.onUpdate,
-        onFinish = settings.onFinish;
-
-
-    for (var key in from) {
-      if (to[key] === undefined) {
-        to[key] = from[key];
-      }
-    }
-    for (var _key in to) {
-      if (from[_key] === undefined) {
-        from[_key] = to[_key];
-      }
-    }
-
-    this.from = from;
-    this.to = to;
-    this.duration = duration || 500;
-    this.delay = delay || 0;
-    this.easing = easing || 'linear';
-    this.onStart = onStart;
-    this.onUpdate = onUpdate;
-    this.onFinish = onFinish;
-    this.startTime = Date.now() + this.delay;
-    this.started = false;
-    this.finished = false;
-    this.keys = {};
-  }
-
-  createClass(Tween, [{
-    key: 'update',
-    value: function update() {
-      this.time = Date.now();
-      // delay some time
-      if (this.time < this.startTime) {
-        return;
-      }
-      // finish animation
-      if (this.elapsed === this.duration) {
-        if (!this.finished) {
-          this.finished = true;
-          this.onFinish && this.onFinish(this.keys);
-        }
-        return;
-      }
-      this.elapsed = this.time - this.startTime;
-      this.elapsed = this.elapsed > this.duration ? this.duration : this.elapsed;
-      for (var key in this.to) {
-        this.keys[key] = this.from[key] + (this.to[key] - this.from[key]) * easing[this.easing](this.elapsed / this.duration);
-      }
-      if (!this.started) {
-        this.onStart && this.onStart(this.keys);
-        this.started = true;
-      }
-      this.onUpdate(this.keys);
-    }
-  }]);
-  return Tween;
-}();
-
 // No flow check, because flow do not support dynamic assign value.
 
 var Display = function () {
@@ -1274,6 +1436,12 @@ var Display = function () {
 
 
     this._ = _this;
+
+    this.enableDrag = false;
+    this.enableChangeIndex = false;
+    this.fixed = false;
+    this.cliping = false;
+    this.zindex = 0;
 
     // scaled_xxx, the value xxx after scaled, finally display value.
     this.commonData = {
@@ -1316,12 +1484,6 @@ var Display = function () {
   createClass(Display, [{
     key: 'on',
     value: function on(eventTypes, callback) {
-      var _this2 = this;
-
-      if (this.isBg) {
-        return;
-      }
-
       if (!eventTypes) {
         throw 'no eventTypes defined!';
       }
@@ -1332,17 +1494,18 @@ var Display = function () {
 
       this.events = this.events || [];
 
+      var allSupportEventTypes = this._.eventTypes.concat(this._.mobileEventTypes);
       var eTypes = eventTypes.split(' '),
           that = this;
 
       eTypes.forEach(function (event) {
-        if (~_this2._.eventTypes.indexOf(event)) {
+        if (~allSupportEventTypes.indexOf(event)) {
           that.events.push({
             eventType: event,
             callback: callback
           });
         } else {
-          throw event + ' is not in eventTypes!\n Please use event in ' + _this2._.eventTypes;
+          throw event + ' is not in eventTypes!\n Please use event in ' + allSupportEventTypes;
         }
       });
 
@@ -1359,33 +1522,21 @@ var Display = function () {
   }, {
     key: 'config',
     value: function config(obj) {
-      if (Object.prototype.toString.call(obj) !== '[object Object]') {
-        return;
+      if (!isObj(obj)) {
+        return this;
       }
-      if (obj.drag) {
-        this.enableDrag = obj.drag;
-      }
-      if (obj.changeIndex) {
-        this.enableChangeIndex = obj.changeIndex;
-      }
-      if (obj.fixed) {
-        this.fixed = obj.fixed;
-      }
-      if (obj.bg) {
-        this.isBg = obj.bg;
-      }
-      // Whether the graphic is animating drawn
-      if (obj.cliping) {
-        this.cliping = obj.cliping;
-      }
-      this.zindex = obj.zindex || 0;
+      this.enableDrag = obj.drag || this.enableDrag;
+      this.enableChangeIndex = obj.changeIndex || this.enableChangeIndex;
+      this.fixed = obj.fixed || this.fixed;
+      this.cliping = obj.cliping || this.cliping; // Whether the graphic is animating drawn
+      this.zindex = obj.zindex || this.zindex;
 
       return this;
     }
   }, {
     key: 'animateTo',
     value: function animateTo(keys) {
-      var _this3 = this;
+      var _this2 = this;
 
       var configs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -1400,7 +1551,7 @@ var Display = function () {
       data.to = to;
       data.onUpdate = function (keys) {
         for (var _key in to) {
-          _this3[_key] = keys[_key];
+          _this2[_key] = keys[_key];
         }
         configs.onUpdate && configs.onUpdate(keys);
       };
@@ -1410,7 +1561,7 @@ var Display = function () {
         }
       }
       data.onFinish = function () {
-        _this3.animating = false;
+        _this2.animating = false;
         configs.onFinish && configs.onFinish(keys);
       };
       var tween = new Tween(data);
@@ -1566,7 +1717,9 @@ var arc = function (settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'radius');
+    }
 
     canvas.save();
     if (this.fixed) {
@@ -1622,7 +1775,9 @@ var image = function (settings, _this) {
     var src = settings.src;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    }
 
     canvas.save();
     canvas.translate(this.scaled_moveX, this.scaled_moveY);
@@ -1690,17 +1845,14 @@ var line = function (settings, _this) {
       throw 'The line needs at least two points';
     }
 
-    this.scaled_matrix = this.matrix.map(function (m) {
-      return m.map(function (n) {
-        return n * scale;
-      });
-    });
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'lineWidth');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    }
 
     var matrix = this.scaled_matrix;
 
     canvas.save();
-    canvas.translate(this.scaled_moveX, this.scaled_moveX);
+    canvas.translate(this.scaled_moveX, this.scaled_moveY);
     if (this.fixed) {
       canvas.translate(-_this.transX, -_this.transY);
     }
@@ -1789,7 +1941,9 @@ var rectangle = function (settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY');
+    }
     DefineMatrix.call(this, this.scaled_x, this.scaled_y, this.scaled_width, this.scaled_height, this.rotate);
 
     canvas.save();
@@ -1870,7 +2024,9 @@ var text = function (settings, _this) {
     var size = fontSize * scale;
     var font = 'normal ' + fontWeight + ' ' + size + 'px ' + fontFamily;
 
-    DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'x', 'y', 'width', 'height', 'moveX', 'moveY', 'paddingTop', 'paddingLeft');
+    }
 
     var textWidth = void 0,
         ellipsisText = void 0;
@@ -1929,7 +2085,9 @@ var text = function (settings, _this) {
     text: settings.text || 'no text',
     style: settings.style || 'fill',
     paddingTop: settings.paddingTop || 0,
-    paddingLeft: settings.paddingLeft || 0
+    paddingLeft: settings.paddingLeft || 0,
+    scaled_paddingTop: (settings.paddingTop || 0) * _this.scale,
+    scaled_paddingLeft: (settings.paddingLeft || 0) * _this.scale
   });
 };
 
@@ -1938,7 +2096,9 @@ var polygon = function (settings, _this) {
     var canvas = _this.canvas;
     var scale = _this.scale;
 
-    DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    if (!this.fixed) {
+      DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix', 'lineWidth');
+    }
 
     var matrix = this.scaled_matrix;
 
@@ -2151,12 +2311,37 @@ var ext = Object.freeze({
 });
 
 var OMG = function () {
-  // support event types
+  // graphs contains all graphs' instance.
+
+  // All shapes function.
+  // shapes
+  // The image list for preload.
+  // Enable global translate?
+  // Export functions for extends custom graphs.
+  // canvas's with
+  // Element canvas.
+  // Instance of class event.
+  // All supported event types list.
+  // Real-time fps.
+  // An object contains animationId
+  // Whether the page is animating
+  // Class Tween
+  // Global mousedown function.
+  // Instance of imageLoader
+  // Ture or a function can be define. Before render, will load images first.
+  // If prepareImage is a function, will trigger after images loaded.
+  // Maximum scale rate
+  // Default scale rate
+  // The number of global translate x
+  // All shapes list's reverse list
+  // Current device is mobile phone
   function OMG(config) {
     classCallCheck(this, OMG);
 
 
     this.version = version;
+
+    this.isMobile = isMobile();
 
     this.objects = [];
 
@@ -2180,8 +2365,6 @@ var OMG = function () {
 
     this.globalMousemove = void 0;
 
-    this.isDragging = false;
-
     this.Tween = Tween;
 
     this.animationList = [];
@@ -2200,9 +2383,11 @@ var OMG = function () {
 
     this.graphs = {};
 
-    this.eventTypes = ['mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
+    this.eventTypes = ['click', 'mousedown', 'mouseup', 'mouseenter', 'mouseleave', 'mousemove', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
 
-    this._event = new Event(this);
+    this.mobileEventTypes = ['touchstart', 'touchend', 'touchmove', 'tap', 'pinch', 'spread', 'drag', 'dragend', 'dragin', 'dragout', 'drop'];
+
+    this._event = event(this, this.isMobile);
 
     this.color = new Color();
 
@@ -2240,8 +2425,25 @@ var OMG = function () {
     this.utils = utils;
 
     this.shapes = shapes;
-  }
-  // shapes
+  } // Group instance
+  // Some helper functions
+  // Enable global scale?
+  // Export clip function.
+  // canvas's height
+  // canvas.getContext2D()
+  // Class color.
+  // All supported mobile event types list.
+  // Used to cache timestamps which used to calculate fps.
+  // If define fpsFunc, can get real-time fps.
+  // Animation's id.
+  // The List contains page's all animation instance.
+  // Global mousemove function.
+  // Current scale rate
+  // Minimum scale rate
+  // The number of global translate y
+  // For generating and recording the graphs' zindex in a group
+  // All shapes list
+  // OMG's current version
 
 
   createClass(OMG, [{
@@ -2264,11 +2466,51 @@ var OMG = function () {
       };
     }
   }, {
+    key: 'reset',
+    value: function reset() {
+      this.transX = 0;
+      this.transY = 0;
+      this.scale = this.deviceScale;
+      this.objects.filter(function (o) {
+        return !o.parent;
+      }).forEach(function (o) {
+        o.moveX = 0;
+        o.moveY = 0;
+      });
+      this.objects.filter(function (o) {
+        return o.type === 'group';
+      }).forEach(function (o) {
+        o.updateAllChildsPosition();
+      });
+      this._objects = reverse(this.objects);
+      this.redraw();
+    }
+  }, {
     key: 'extend',
     value: function extend(ext) {
       for (var key in ext) {
         this.shapes[key] = ext[key];
       }
+    }
+
+    // Confused flow.
+
+  }, {
+    key: 'setGlobalProps',
+    value: function setGlobalProps(props) {
+      for (var key in props) {
+        switch (key) {
+          case 'enableGlobalTranslate':
+            this.enableGlobalTranslate = props[key];
+            break;
+          case 'enableGlobalScale':
+            this.enableGlobalScale = props[key];
+            break;
+          default:
+            break;
+        }
+      }
+      this._event.triggerEvents();
     }
 
     // Array<Object> | Object
@@ -2394,6 +2636,7 @@ var OMG = function () {
         _this4.redraw();
         if (_this4.animationList.length === 0 && _this4.animating) {
           _this4.animating = false;
+          _this4.finishAnimation();
           cancelAnimationFrame(_this4.cacheIdPool[_this4.animationId]);
         } else {
           _this4.cacheIdPool[_this4.animationId] = requestAnimationFrame(func);
@@ -2406,6 +2649,9 @@ var OMG = function () {
       }
       return this.animationId;
     }
+  }, {
+    key: 'finishAnimation',
+    value: function finishAnimation() {}
 
     /**
      * @param {func | Function}
@@ -2423,9 +2669,6 @@ var OMG = function () {
       this.fpsFunc = func;
       this.fpsCacheTime = Date.now();
     }
-
-    // fps off
-
   }, {
     key: 'fpsOff',
     value: function fpsOff() {

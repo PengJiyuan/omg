@@ -28,6 +28,9 @@
 <button id="scaleeReverseBtn" type="button" onclick="scaleeReverse()" class="btn btn-info btn-rounded">
 	关闭缩放
 </button>
+<button id="scaleeReverseBtn" type="button" onclick="reset()" class="btn btn-info btn-rounded">
+	重置
+</button>
 <script src="./omg.min.js"></script>
 <script>
 	var stage = omg({
@@ -49,7 +52,7 @@
 				height: height,
 				zindex: zindex,
 				rotate: 45,
-				color: '#'+(~~(Math.random()*(1<<24))).toString(16)
+				color: '#000'
 			}).config({
 				drag: true
 			}).on('mouseenter', function(cur) {
@@ -61,7 +64,7 @@
 			});
 	}
 
-	var rect1 = createRect(20, 20, 50, 50, 4);
+	var rect1 = createRect(20, 20, 50, 50, 40);
 
 	var line = stage.graphs.line({
 		matrix: [
@@ -84,37 +87,35 @@
 		cur.color = '#ef8376';
 		stage.redraw();
 		stage.element.style.cursor = 'default';
+	}).config({
+		drag: true
 	});
 
 	stage.addChild([rect1, line]);
 
 	stage.show();
 
-    // 全局拖拽设置
-    function translateReverse() {
-        let translateBtn = document.getElementById("translateReverseBtn");
-        if (stage.enableGlobalTranslate) {
-            translateBtn.innerHTML = "开启拖拽";
-            stage.enableGlobalTranslate = false;
-        } else {
-            translateBtn.innerHTML = "关闭拖拽";
-            stage.enableGlobalTranslate = true;
-				}
-				stage._event.triggerEvents();
-    }
+	// 全局拖拽设置
+	function translateReverse() {
+		let translateBtn = document.getElementById("translateReverseBtn");
+		stage.setGlobalProps({
+			enableGlobalTranslate: !stage.enableGlobalTranslate
+		});
+		translateBtn.innerHTML = stage.enableGlobalTranslate ? "开启拖拽" : "关闭拖拽";
+	}
 
-    // 缩放设置
-    function scaleeReverse() {
-        let scaleeBtn = document.getElementById("scaleeReverseBtn");
-        if (stage.enableGlobalScale) {
-            scaleeBtn.innerHTML = "开启缩放";
-            stage.enableGlobalScale = false;
-        } else {
-            scaleeBtn.innerHTML = "关闭缩放";
-            stage.enableGlobalScale = true;
-        }
-        stage._event.triggerEvents();
-    }
+	// 缩放设置
+	function scaleeReverse() {
+		let scaleeBtn = document.getElementById("scaleeReverseBtn");
+		stage.setGlobalProps({
+			enableGlobalScale: !stage.enableGlobalScale
+		});
+		scaleeBtn.innerHTML = stage.enableGlobalScale ? "开启缩放" : "关闭缩放";
+	}
+
+	function reset() {
+		stage.reset();
+	}
 
 </script>
 </body>

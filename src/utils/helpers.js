@@ -1,8 +1,18 @@
 /* @flow */
 
-export function getPos(e: MouseEvent): {x: number, y: number} {
+export function getPos(e: MouseEvent & TouchEvent, element: HTMLElement, touchend: boolean | void): {x: number, y: number} {
   const ev = e || window.event;
-  const [ x, y ] = [ ev.offsetX, ev.offsetY ];
+  const ele = element || e.target;
+  const boundingRect = ele.getBoundingClientRect();
+
+  let x, y;
+  let touchList = touchend ? ev.changedTouches : ev.touches;
+  if(isMobile()) {
+    [x, y] = [touchList[0].clientX - boundingRect.left, touchList[0].clientY  - boundingRect.top];
+  } else {
+    x = ev.offsetX || ev.clientX;
+    y = ev.offsetY || ev.clientY;
+  }
   return {x, y};
 }
 
@@ -56,4 +66,8 @@ export function isArr(obj: any): boolean %checks {
 
 export function isObj(obj: any): boolean %checks {
   return !!(Object.prototype.toString.call(obj) === '[object Object]');
+}
+
+export function isMobile(): boolean {
+  return /(iphone|ipad|ipod|ios|android|mobile|blackberry|iemobile|mqqbrowser|juc|fennec|wosbrowser|browserng|Webos|symbian|windows phone)/i.test(navigator.userAgent);
 }

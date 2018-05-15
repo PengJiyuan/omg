@@ -145,11 +145,9 @@
 		}, // optional
 		fontSize: 20,
 		text: 'Hello World',
-		color: '#fff',
-		style: 'fill'
+		color: '#fff'
 	}).config({
-		fixed: true,
-		bg: true
+		fixed: true
 	});
 
 	var image3 = stage.graphs.image({
@@ -247,7 +245,7 @@
 		stage.redraw();
 	});
 
-	stage.addChild([line, a]);
+	stage.addChild([line]);
 
 	stage.show();
 

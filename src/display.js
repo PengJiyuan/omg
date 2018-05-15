@@ -3,12 +3,19 @@
 import isPointInner from './inside';
 import getBounding from './clip/bounding';
 import { Tween } from './tween/index';
+import * as utils from './utils/helpers';
 
 class Display {
 
   constructor(settings, _this) {
 
     this._ = _this;
+
+    this.enableDrag = false;
+    this.enableChangeIndex = false;
+    this.fixed = false;
+    this.cliping = false;
+    this.zindex = 0;
 
     // scaled_xxx, the value xxx after scaled, finally display value.
     this.commonData = {
@@ -50,10 +57,6 @@ class Display {
   }
 
   on(eventTypes, callback) {
-    if(this.isBg) {
-      return;
-    }
-
     if(!eventTypes) {
       throw 'no eventTypes defined!';
     }
@@ -64,16 +67,17 @@ class Display {
 
     this.events = this.events || [];
 
+    const allSupportEventTypes = this._.eventTypes.concat(this._.mobileEventTypes);
     const eTypes = eventTypes.split(' '), that = this;
 
     eTypes.forEach(event => {
-      if(~this._.eventTypes.indexOf(event)) {
+      if(~allSupportEventTypes.indexOf(event)) {
         that.events.push({
           eventType: event,
           callback: callback
         });
       } else {
-        throw `${event} is not in eventTypes!\n Please use event in ${this._.eventTypes}`;
+        throw `${event} is not in eventTypes!\n Please use event in ${allSupportEventTypes}`;
       }
     });
 
@@ -86,26 +90,14 @@ class Display {
   }
 
   config(obj) {
-    if(Object.prototype.toString.call(obj) !== '[object Object]') {
-      return;
+    if(!utils.isObj(obj)) {
+      return this;
     }
-    if(obj.drag) {
-      this.enableDrag = obj.drag;
-    }
-    if(obj.changeIndex) {
-      this.enableChangeIndex = obj.changeIndex;
-    }
-    if(obj.fixed) {
-      this.fixed = obj.fixed;
-    }
-    if(obj.bg) {
-      this.isBg = obj.bg;
-    }
-    // Whether the graphic is animating drawn
-    if(obj.cliping) {
-      this.cliping = obj.cliping;
-    }
-    this.zindex = obj.zindex || 0;
+    this.enableDrag = obj.drag || this.enableDrag;
+    this.enableChangeIndex = obj.changeIndex || this.enableChangeIndex;
+    this.fixed = obj.fixed || this.fixed;
+    this.cliping = obj.cliping || this.cliping; // Whether the graphic is animating drawn
+    this.zindex = obj.zindex || this.zindex;
 
     return this;
   }

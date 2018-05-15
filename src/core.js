@@ -2,14 +2,14 @@
 
 import './utils/polyfill';
 import { version } from '../package.json';
-import { Event } from './event';
+import event from './event/index';
 import { Color } from './utils/color';
 import { ImageLoader } from './utils/imageLoader';
+import { Tween } from './tween/index';
 import autoscale from './utils/autoscale';
 import * as utils from './utils/helpers';
 import shapes from './shapes/index';
 import group from './group/index';
-import { Tween } from './tween/index';
 import clip from './clip/index';
 import * as ext from './extend/export';
 
@@ -29,50 +29,55 @@ export type configSettings = {
 
 export class OMG {
 
-  version: string;
-  graphs: {[graph_name: string]: Object};
-  objects: Array<GraghShape>;
-  _objects: Array<GraghShape>;
-  groupRecords: number;
-  transX: number;
-  transY: number;
-  deviceScale: number;
-  minDeviceScale: number;
-  maxDeviceScale: number;
-  scale: number;
-  loader: Object;
+  version: string;                       // OMG's current version
+  isMobile: boolean;                     // Current device is mobile phone
+  objects: Array<GraghShape>;            // All shapes list
+  _objects: Array<GraghShape>;           // All shapes list's reverse list
+  groupRecords: number;                  // For generating and recording the graphs' zindex in a group
+  transX: number;                        // The number of global translate x
+  transY: number;                        // The number of global translate y
+  deviceScale: number;                   // Default scale rate
+  minDeviceScale: number;                // Minimum scale rate
+  maxDeviceScale: number;                // Maximum scale rate
+  scale: number;                         // Current scale rate
+  loader: Object;                        // Instance of imageLoader
+  // Ture or a function can be define. Before render, will load images first.
+  // If prepareImage is a function, will trigger after images loaded.
   prepareImage: boolean | Function | void;
-  globalMousedown: Function | void;
-  globalMousemove: Function | void;
-  isDragging: boolean | void;
-  Tween: any;
-  animationList: Array<any>;
-  animationId: number | void;
-  animating: boolean | void;
-  cacheIdPool: Object;
-  fpsFunc: Function | void;
-  fps: number;
-  fpsCacheTime: number;
-  eventTypes: Array<string>; // support event types
-  _event: Object;
-  color: Color;
-  element: HTMLCanvasElement;
-  canvas: CanvasRenderingContext2D;
-  width: number;
-  height: number;
-  ext: Object;
-  clip: Function;
-  enableGlobalScale: boolean | void;
-  enableGlobalTranslate: boolean | void;
-  images: Array<string>;
-  utils: Object;
-  shapes: Object;
+  globalMousedown: Function | void;      // Global mousedown function.
+  globalMousemove: Function | void;      // Global mousemove function.
+  Tween: any;                            // Class Tween
+  animationList: Array<any>;             // The List contains page's all animation instance.
+  animating: boolean | void;             // Whether the page is animating
+  animationId: number | void;            // Animation's id.
+  cacheIdPool: Object;                   // An object contains animationId
+  fpsFunc: Function | void;              // If define fpsFunc, can get real-time fps.
+  fps: number;                           // Real-time fps.
+  fpsCacheTime: number;                  // Used to cache timestamps which used to calculate fps.
+  eventTypes: Array<string>;             // All supported event types list.
+  mobileEventTypes: Array<string>;       // All supported mobile event types list.
+  _event: Object;                        // Instance of class event.
+  color: Color;                          // Class color.
+  element: HTMLCanvasElement;            // Element canvas.
+  canvas: CanvasRenderingContext2D;      // canvas.getContext2D()
+  width: number;                         // canvas's with
+  height: number;                        // canvas's height
+  ext: Object;                           // Export functions for extends custom graphs.
+  clip: Function;                        // Export clip function.
+  enableGlobalScale: boolean | void;     // Enable global translate?
+  enableGlobalTranslate: boolean | void; // Enable global scale?
+  images: Array<string>;                 // The image list for preload.
+  utils: Object;                         // Some helper functions
+  shapes: Object;                        // All shapes function.
   // shapes
-  group: Function;
+  group: Function;                        // Group instance
+  graphs: {[graph_name: string]: Object}; // graphs contains all graphs' instance.
 
   constructor(config: configSettings) {
 
     this.version = version;
+
+    this.isMobile = utils.isMobile();
 
     this.objects = [];
 
@@ -98,8 +103,6 @@ export class OMG {
 
     this.globalMousemove = void(0);
 
-    this.isDragging = false;
-
     this.Tween = Tween;
 
     this.animationList = [];
@@ -119,6 +122,7 @@ export class OMG {
     this.graphs = {};
 
     this.eventTypes = [
+      'click',
       'mousedown',
       'mouseup',
       'mouseenter',
@@ -131,7 +135,21 @@ export class OMG {
       'drop'
     ];
 
-    this._event = new Event(this);
+    this.mobileEventTypes = [
+      'touchstart',
+      'touchend',
+      'touchmove',
+      'tap',
+      'pinch',
+      'spread',
+      'drag',
+      'dragend',
+      'dragin',
+      'dragout',
+      'drop'
+    ];
+
+    this._event = event(this, this.isMobile);
 
     this.color = new Color();
 
@@ -184,10 +202,42 @@ export class OMG {
     };
   }
 
+  reset() {
+    this.transX = 0;
+    this.transY = 0;
+    this.scale = this.deviceScale;
+    this.objects.filter(o => !o.parent).forEach(o => {
+      o.moveX = 0;
+      o.moveY = 0;
+    });
+    this.objects.filter(o => o.type === 'group').forEach(o => {
+      o.updateAllChildsPosition();
+    });
+    this._objects = utils.reverse(this.objects);
+    this.redraw();
+  }
+
   extend(ext: Object): void {
     for (let key in ext) {
       this.shapes[key] = ext[key];
     }
+  }
+
+  // Confused flow.
+  setGlobalProps(props: {[prop_name: string]: any}) {
+    for(let key in props) {
+      switch(key) {
+        case 'enableGlobalTranslate':
+          this.enableGlobalTranslate = props[key];
+          break;
+        case 'enableGlobalScale':
+          this.enableGlobalScale = props[key];
+          break;
+        default:
+          break;
+      }
+    }
+    this._event.triggerEvents();
   }
 
   // Array<Object> | Object
@@ -292,6 +342,7 @@ export class OMG {
       this.redraw();
       if(this.animationList.length === 0 && this.animating) {
         this.animating = false;
+        this.finishAnimation();
         cancelAnimationFrame(this.cacheIdPool[this.animationId]);
       } else {
         this.cacheIdPool[this.animationId] = requestAnimationFrame(func);
@@ -304,6 +355,8 @@ export class OMG {
     }
     return this.animationId;
   }
+
+  finishAnimation() {}
 
   /**
    * @param {func | Function}
@@ -319,7 +372,6 @@ export class OMG {
     this.fpsCacheTime = Date.now();
   }
 
-  // fps off
   fpsOff() {
     this.fpsFunc = void(0);
     this.fps = 0;
