@@ -15,6 +15,17 @@
 			background-color: #fff;
 		}
 
+		#fps {
+			position: absolute;
+			width: 100px;
+			height: 40px;
+			font-size: 20px;
+			line-break: 40px;
+			text-align: center;
+			z-index: 10;
+			top: 0;
+			right: 0;
+		}
 	</style>
 </head>
 <body>
@@ -24,72 +35,63 @@
 </div>
 <script src="./omg.min.js"></script>
 <script>
-	var world = omg({
+	var w = document.body.clientWidth;
+	var h = document.body.clientHeight;
+	var stage = omg({
 		element: document.getElementById('canvas'),
-		width: document.body.clientWidth,
-		height: document.body.clientHeight,
-		enableGlobalTranslate: false
+		width: w,
+		height: h
 	});
 
-	world.init();
+	stage.init();
 
-	var rect1 = world.rectangle({
-		x: 200,
-		y: 500,
-		width: 100,
-		height: 100,
-		zindex: 2,
-		color: '#ef8376'
-	});
-  var rect2 = world.rectangle({
-		x: 200,
-		y: 500,
-		width: 100,
-		height: 100,
-		zindex: 2,
-		color: '#ef5412'
+	var ele = document.getElementById('fps');
+	stage.fpsOn(function(fps) {
+		ele.innerHTML = 'fps: ' + fps;
 	});
 
-  function move(cur, delay) {
-  	cur.animateTo({
-			x: 800,
-			y: 200,
-			width: 200,
-			height: 200
-		}, {
-			easing: 'bounceOut',
-			duration: 500,
-			delay: delay,
-			onFinish: function() {
-				setTimeout(function() {
-					cur.animateTo({
-						x: 200,
-						y: 500,
-						width: 100,
-						height: 100
-					}, {
-						easing: 'bounceOut',
-						duration: 500,
-						onFinish: function() {
-							setTimeout(function() {
-  							move(cur, delay);
-							}, 1000);
-						}
-					});
-				}, 1000);
-			}
+	var list = [];
+
+	function createCircle() {
+		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', ' + Math.random() * 1 + ')'
+		var circle = stage.graphs.arc({
+			x: w / 2,
+			y: h / 2,
+			radius: 0,
+			color: color,
+			style: 'fill'
 		});
-  }
+		circle.open = false;
+		list.push(circle);
+		stage.addChild(circle);
+	}
 
-	world.addChild([rect1, rect2]);
+	for(var i = 0; i < 200; i ++) {
+		createCircle();
+	}
 
-	world.show();
+	stage.show();
 
-	move(rect1, 0);
-	setTimeout(function() {
-		move(rect2, 0);
-	}, 500);
+	function animation() {
+		list.forEach(function(graph, i) {
+			graph.animateTo({
+				x: graph.open ? w / 2 : Math.random() * w,
+				y: graph.open ? h / 2 : Math.random() * h,
+				radius: graph.open ? 0 : Math.random() * 10 + 5
+			}, {
+				easing: 'cubicInOut',
+				onFinish: function(keys) {
+					graph.open = !graph.open;
+				}
+			});
+		});
+	}
 
+	animation();
+
+ 	stage.finishAnimation = function() {
+		setTimeout(animation, 50);
+	}
 </script>
 </body>
 </html>

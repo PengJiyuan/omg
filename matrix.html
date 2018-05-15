@@ -22,9 +22,18 @@
 <div class="container">
 		<canvas id="canvas"></canvas>
 </div>
+<button id="translateReverseBtn" type="button" onclick="translateReverse()" class="btn btn-info btn-rounded">
+	关闭拖拽
+</button>
+<button id="scaleeReverseBtn" type="button" onclick="scaleeReverse()" class="btn btn-info btn-rounded">
+	关闭缩放
+</button>
+<button id="scaleeReverseBtn" type="button" onclick="reset()" class="btn btn-info btn-rounded">
+	重置
+</button>
 <script src="./omg.min.js"></script>
 <script>
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -33,31 +42,31 @@
 		prepareImage: true
 	});
 
-	world.init();
+	stage.init();
 
 	function createRect(x, y, width, height, zindex) {
-		return world.rectangle({
+		return stage.graphs.rectangle({
 				x: x,
 				y: y,
 				width: width,
 				height: height,
 				zindex: zindex,
 				rotate: 45,
-				color: '#'+(~~(Math.random()*(1<<24))).toString(16)
+				color: '#000'
 			}).config({
 				drag: true
 			}).on('mouseenter', function(cur) {
 				cur.color = '#555';
-				world.redraw();
+				stage.redraw();
 			}).on('mouseleave', function(cur) {
 				cur.color = '#222';
-				world.redraw();
+				stage.redraw();
 			});
 	}
 
-	var rect1 = createRect(20, 20, 50, 50, 4);
+	var rect1 = createRect(20, 20, 50, 50, 40);
 
-	var line = world.line({
+	var line = stage.graphs.line({
 		matrix: [
 			[10, 60], 
 			[100, 180],
@@ -72,17 +81,41 @@
 		color: '#ef8376'
 	}).on('mouseenter mousemove', function(cur) {
 		cur.color = '#000';
-		world.redraw();
-		world.element.style.cursor = 'pointer';
+		stage.redraw();
+		stage.element.style.cursor = 'pointer';
 	}).on('mouseleave', function(cur) {
 		cur.color = '#ef8376';
-		world.redraw();
-		world.element.style.cursor = 'default';
+		stage.redraw();
+		stage.element.style.cursor = 'default';
+	}).config({
+		drag: true
 	});
 
-	world.addChild([rect1, line]);
+	stage.addChild([rect1, line]);
 
-	world.show();
+	stage.show();
+
+	// 全局拖拽设置
+	function translateReverse() {
+		let translateBtn = document.getElementById("translateReverseBtn");
+		stage.setGlobalProps({
+			enableGlobalTranslate: !stage.enableGlobalTranslate
+		});
+		translateBtn.innerHTML = stage.enableGlobalTranslate ? "开启拖拽" : "关闭拖拽";
+	}
+
+	// 缩放设置
+	function scaleeReverse() {
+		let scaleeBtn = document.getElementById("scaleeReverseBtn");
+		stage.setGlobalProps({
+			enableGlobalScale: !stage.enableGlobalScale
+		});
+		scaleeBtn.innerHTML = stage.enableGlobalScale ? "开启缩放" : "关闭缩放";
+	}
+
+	function reset() {
+		stage.reset();
+	}
 
 </script>
 </body>

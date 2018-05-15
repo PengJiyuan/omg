@@ -24,7 +24,7 @@
 </div>
 <script src="./omg.min.js"></script>
 <script>
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
@@ -39,7 +39,7 @@
 	    const scale = _this.scale;
 
 	    // if you want trigger events(includes drag, scale, mousedown, mouseenter...), you must add this line.
-	    world.ext.DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
+	    stage.ext.DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
 
 	    const matrix = this.scaled_matrix;
 
@@ -58,7 +58,7 @@
 	    canvas.restore();
 	  };
 
-	  return Object.assign({}, world.ext.display(settings, _this), {
+	  return Object.assign({}, stage.ext.display(settings, _this), {
 	    type: 'polygon',
 	    draw: draw,
 	    lineWidth: settings.lineWidth || 1,
@@ -66,31 +66,25 @@
 	  });
 	};
 
-	world.extend({
+	stage.extend({
 		test: test
 	});
 
-	world.init();
+	stage.init();
 
-	// world.addChild(world.rectangle({
-	// 	x: 0,
-	// 	y: 0,
-	// 	width: 100,
-	// 	height: 100
-	// }));
-	world.addChild(world.test({
+	stage.addChild(stage.graphs.test({
 		matrix: [[310, 120], [360, 120], [348, 230], [250, 340], [146, 200]],
 		color: '#555'
 	}).on('mouseenter', function(cur) {
 		cur.color = '#423';
-		world.redraw();
+		stage.redraw();
 	}).on('mouseleave', function(cur) {
 		cur.color = '#555';
-		world.redraw();
+		stage.redraw();
 	}).config({
 		drag: true
 	}));
-	world.show();
+	stage.show();
 
 </script>
 </body>

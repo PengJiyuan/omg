@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>omg.js | Z-index</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		#canvas {
+			margin: 0;
+			background-color: #ccc;
+		}
+
+	</style>
+</head>
+<body>
+<div id="fps"></div>
+<div class="container">
+		<canvas id="canvas"></canvas>
+</div>
+<script src="./omg.min.js"></script>
+<script>
+	var stage = omg({
+		element: document.getElementById('canvas'),
+		width: 800,
+		height: 800,
+		enableGlobalTranslate: false
+	});
+
+	stage.init();
+
+	function createRect(x, y, width, height, zindex) {
+		return stage.graphs.rectangle({
+				x: x,
+				y: y,
+				width: width,
+				height: height,
+				zindex: zindex,
+				color: 'black'
+			}).on('touchstart', function(cur) {
+        cur.color = 'red';
+        stage.redraw();
+      }).on('touchend', function(cur) {
+        cur.color = 'black';
+        stage.redraw();
+      }).config({
+        drag: true
+      });
+	}	
+
+  var rect1 = createRect(0, 0, 200, 200, 4);
+  var rect2 = createRect(0, 0, 240, 200, 4);
+  var rect3 = createRect(0, 0, 280, 200, 4);
+  var rect4 = createRect(0, 0, 320, 200, 4);
+  var rect5 = createRect(0, 0, 360, 200, 4);
+  var rect6 = createRect(0, 0, 420, 200, 4);
+  var rect7 = createRect(0, 0, 460, 200, 4);
+  var rect8 = createRect(0, 0, 200, 300, 4);
+  var rect9 = createRect(0, 0, 200, 400, 4);
+  var rect10 = createRect(0, 0, 200, 500, 4);
+
+  stage.addChild([rect1, rect2, rect3, rect4, rect5, rect6, rect7, rect8, rect9, rect10]);
+  
+  // stage.utils.getPos();
+
+	stage.show();
+
+</script>
+</body>
+</html>

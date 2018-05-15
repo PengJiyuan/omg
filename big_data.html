@@ -23,14 +23,14 @@
 </div>
 <script src="./omg.min.js"></script>
 <script>
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: document.body.clientWidth,
 		height: document.body.clientHeight,
 		enableGlobalTranslate: false
 	});
 
-	world.init();
+	stage.init();
 
 	// tooltip
 
@@ -50,7 +50,7 @@
 	function createArc() {
 		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.5)';
 		var radius = Math.random()*10;
-		var arc = world.arc({
+		var arc = stage.graphs.arc({
 			x: Math.random()*document.body.clientWidth,
 			y: Math.random()*document.body.clientHeight,
 			radius: radius,
@@ -64,21 +64,21 @@
 				name: 'radius',
 				value: radius
 			});
-			world.element.style.cursor = 'pointer';
-			var x = world.utils.getPos().x + 20;
-			var y = world.utils.getPos().y + 20;
+			stage.element.style.cursor = 'pointer';
+			var x = stage.utils.getPos().x + 20;
+			var y = stage.utils.getPos().y + 20;
 			dom.style.left = x + 'px';
 			dom.style.top = y + 'px';
 		}).on('mouseleave', function() {
-			world.element.style.cursor = 'default';
+			stage.element.style.cursor = 'default';
 		}).config({
 			drag: false,
 			changeIndex: true
 		});
-		world.addChild(arc);
+		stage.addChild(arc);
 	}	
 	for(var i = 0;i < 10000; i++) {createArc();}
-	world.show();
+	stage.show();
 
 </script>
 </body>

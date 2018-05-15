@@ -31,18 +31,18 @@
 <script src="./omg.min.js"></script>
 <script>
 
-	var world = omg({
+	var stage = omg({
 		element: document.getElementById('canvas'),
 		width: 500,
 		height: 500,
 		enableGlobalTranslate: true
 	});
 
-	world.init();
+	stage.init();
 
 	function createRect() {
-		world.addChild(
-			world.arc({
+		stage.addChild(
+			stage.graphs.arc({
 				x: Math.random()*400,
 				y: Math.random()*400,
 				radius: Math.random()*20,
@@ -56,20 +56,20 @@
 	}	
 
 	for(var i = 0;i < 200; i++) {createRect();}
-	world.show();
+	stage.show();
 
-	var world2 = omg({
+	var stage2 = omg({
 		element: document.getElementById('canvas2'),
 		width: 500,
 		height: 500,
 		enableGlobalTranslate: true 
 	});
 
-	world2.init();
+	stage2.init();
 
 	function createRect2() {
-		world2.addChild(
-			world2.arc({
+		stage2.addChild(
+			stage2.graphs.arc({
 				x: Math.random()*500,
 				y: Math.random()*500,
 				radius: Math.random()*20,
@@ -83,7 +83,7 @@
 	}	
 
 	for(var i = 0;i < 200; i++) {createRect2();}
-	world2.show();
+	stage2.show();
 
 
 
