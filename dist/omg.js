@@ -2636,6 +2636,7 @@ var OMG = function () {
         _this4.redraw();
         if (_this4.animationList.length === 0 && _this4.animating) {
           _this4.animating = false;
+          _this4.finishAnimation();
           cancelAnimationFrame(_this4.cacheIdPool[_this4.animationId]);
         } else {
           _this4.cacheIdPool[_this4.animationId] = requestAnimationFrame(func);
@@ -2648,6 +2649,9 @@ var OMG = function () {
       }
       return this.animationId;
     }
+  }, {
+    key: 'finishAnimation',
+    value: function finishAnimation() {}
 
     /**
      * @param {func | Function}

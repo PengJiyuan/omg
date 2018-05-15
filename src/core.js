@@ -342,6 +342,7 @@ export class OMG {
       this.redraw();
       if(this.animationList.length === 0 && this.animating) {
         this.animating = false;
+        this.finishAnimation();
         cancelAnimationFrame(this.cacheIdPool[this.animationId]);
       } else {
         this.cacheIdPool[this.animationId] = requestAnimationFrame(func);
@@ -354,6 +355,8 @@ export class OMG {
     }
     return this.animationId;
   }
+
+  finishAnimation() {}
 
   /**
    * @param {func | Function}
