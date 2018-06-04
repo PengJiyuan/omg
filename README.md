@@ -27,6 +27,10 @@ const OMG = require('omg.js');
 console.log(OMG); // ...
 ```
 
+**CDN**
+
+https://unpkg.com/omg.js@4.0.0/dist/omg.min.js (you can edit @version to change omg.js version)
+
 **DOWNLOAD**
 
 [Source Code](dist/omg.min.js)
