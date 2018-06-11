@@ -2,7 +2,7 @@
 
 export function getPos(e: MouseEvent & TouchEvent, element: HTMLElement, touchend: boolean | void): {x: number, y: number} {
   const ev = e || window.event;
-  const ele = element || e.target;
+  const ele = element || ev.target;
   const boundingRect = ele.getBoundingClientRect();
 
   let x, y;

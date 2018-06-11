@@ -73,7 +73,7 @@ var version = "4.0.0";
 
 function getPos(e, element, touchend) {
   var ev = e || window.event;
-  var ele = element || e.target;
+  var ele = element || ev.target;
   var boundingRect = ele.getBoundingClientRect();
 
   var x = void 0,
