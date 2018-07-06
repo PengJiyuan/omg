@@ -31,7 +31,7 @@ https://unpkg.com/omg.js@4.0.0/dist/omg.min.js (你可以修改 @version 来改�
 
 **下载**
 
-[Source Code](dist/omg.min.js)
+[源代码](dist/omg.min.js)
 
 ## 使用方法
 
