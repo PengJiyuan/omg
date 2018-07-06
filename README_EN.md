@@ -3,7 +3,7 @@
 [![][npm-image]][npm-url]
 [![][downloads-image]][downloads-url]
 
-一个让你跳过canvas，直接绘图的 2d 绘图库，上手简单，接口简洁，功能丰富. [在线示例](https://omg.js.org) [English Document](README_EN.md)
+Oh my goodness! Awesome Canvas Render Library. [Demo](https://omg.js.org) [中文文档](README.md)
 
 <div align=center>
   <img src=".github/demo1.gif" />
@@ -15,7 +15,7 @@
 
 <video src=".github/demo.mov">
 
-## 如何安装omg？
+## Install
 
 **NPM**    
 
@@ -23,15 +23,15 @@
 
 **CDN**
 
-https://unpkg.com/omg.js@4.0.0/dist/omg.min.js (你可以修改 @version 来改变引用的版本)
+https://unpkg.com/omg.js@4.0.0/dist/omg.min.js (you can edit @version to change omg.js version)
 
-**下载**
+**DOWNLOAD**
 
 [Source Code](dist/omg.min.js)
 
-## 使用方法
+## Usage
 
-* ES6
+* node
 
 ```javascript
 import omg from 'omg.js';
@@ -44,7 +44,7 @@ const stage = omg({
 stage.init();
 ```
 
-* 浏览器
+* broswer
 
 ```html
 <script src="yourpath/omg.min.js"></script>
@@ -56,7 +56,7 @@ stage.init();
 </script>
 ```
 
-## 示例
+## Example
 
 ```javascript
 import omg from 'omg.js';
@@ -67,17 +67,16 @@ const stage = omg({
   height: 500,
   enableGlobalTranslate: true,
   enableGlobalScale: true,
-  position: 'absolute', // 改变canvas.style.position
-  images: [], // 预加载的图片列表，通常不用指定，因为使用接口绘制图片的时候，会自动预加载。
-  prepareImage: true, // 是否开启预加载图片
-  // 活着
+  position: 'absolute', // canvas.style.position
+  images: [], // preload image list
+  prepareImage: true, // whether to preload images
+  // or
   prepareImage: () => {
-    // 如果prepareImage指定一个函数的话，也表示开启预加载图片，而且在加载完成后，会触发这个回调函数。
-    hideLoading();
+    hideLoading(); // will called after images loaded.
   }
 });
 
-// 在init之前，你可以通过`stage.extend(yourShape)`拓展自定义的图形。
+// before init, you can expand your custom graphs.
 stage.init();
 
 const rect = stage.graphs.rectangle({
@@ -111,16 +110,16 @@ const rect = stage.graphs.rectangle({
   changeIndex: true
 });
 
-// 把图形添加到待绘制的列表中.
+// add graphs to drawing list.
 stage.addChild(rect);
 
-// 绘制，并且绑定事件。
+// draw and trigger events.
 stage.show();
 ```
 
-### 图形列表
+### Graphs
 
-**矩形**
+**Rectangle**
 
 ```javascript
 const rect = stage.graphs.rectangle({
@@ -128,19 +127,18 @@ const rect = stage.graphs.rectangle({
   y: 0,
   width: 110,
   height: 110,
-  rotate: 45, // 如果指定了radius的话，rotate会出现异常(待修复)
+  rotate: 45, // not work when define radius
   radius: {
-    tl: 6, // 左上
-    tr: 6, // 右上
-    bl: 6, // 左下
-    br: 6  // 右下
+    tl: 6, // top left
+    tr: 6, // top right
+    bl: 6, // bottom left
+    br: 6 // bottom right
   },
   color: '#514022'
 });
 ```
 
-**折线**
-
+**Line & Polyline**
 ```javascript
 const polyline = stage.graphs.line({
   matrix: [
@@ -155,7 +153,7 @@ const polyline = stage.graphs.line({
 });
 ```
 
-**不规则多边形**
+**Polygon**
 ```javascript
 const polygon = stage.graphs.polygon({
   matrix: [
@@ -171,7 +169,7 @@ const polygon = stage.graphs.polygon({
 });
 ```
 
-**图片**
+**Image**
 
 ```javascript
 const image = stage.graphs.image({
@@ -182,7 +180,7 @@ const image = stage.graphs.image({
   src: './img/timg.jpg'
 });
 
-// 支持canvas绘制图片的所有接口.
+// For more detail, check canvas api.
 const image3 = stage.graphs.image({
   x: 200,
   y: 200,
@@ -196,7 +194,7 @@ const image3 = stage.graphs.image({
 });
 ```
 
-**文字**
+**Text**
 
 ```javascript
 const text = stage.graphs.text({
@@ -217,7 +215,7 @@ const text = stage.graphs.text({
 });
 ```
 
-**圆形**
+**Circle**
 
 ```javascript
 const arc = stage.graphs.arc({
@@ -229,7 +227,7 @@ const arc = stage.graphs.arc({
 });
 ```
 
-**扇形**
+**Sector**
 
 ```javascript
 const arcb = stage.graphs.arc({
@@ -243,22 +241,22 @@ const arcb = stage.graphs.arc({
 });
 ```
 
-### 隐藏图形
+### Hide Shapes
 ```javascript
 const arcb = stage.graphs.arc({
   ...,
   hide: true
 });
 
-// 或者
+// or
 
 arcb.hide = true;
 ```
 
-### 拓展图形
+### Expand Shapes
 
-如果omg提供的默认图形不够用, 你可以轻松拓展自定义图形.
-在`init`之前, 你可以通过 `extend` 方法来拓展自定义图形.
+If the default shapes not enough, you can expand shapes simply.
+Before stage init, just expand your shapes by function `extend`.
 
 
 ```javascript
@@ -266,12 +264,13 @@ const stage = omg({
   ...
 });
 
+// demo shape
 const yourShape = function(settings, _this) {
   const draw = function() {
     const canvas = _this.canvas;
     const scale = _this.scale;
 
-    // 如果你想要自定义图形支持drag, scale, mousedown, mouseenter等事件，你必须添加这一行
+    // if you want trigger events(includes drag, scale, mousedown, mouseenter...), you must add this line.
     stage.ext.DefineScale.call(this, scale, 'moveX', 'moveY', 'matrix');
 
     const matrix = this.scaled_matrix;
@@ -299,14 +298,14 @@ const yourShape = function(settings, _this) {
   });
 };
 
-// 在init之前，拓展自定义图形.
+// Before init, extend your shapes.
 stage.extend({
   yourShape: yourShape
 });
 
 stage.init();
 
-// 使用自定义图形
+// use your extend shape
 const shape = stage.graphs.yourShape({
   ...settings
 });
@@ -317,11 +316,11 @@ stage.show();
 
 ```
 
-### 添加事件
+### Add Event
 
-#### 全局事件
+#### global events
 
-给全局canvas添加的 (mousedown, mousemove) 事件.
+Global event (mousedown, mousemove) for whole omg.
 
 ```javascript
 stage.mousedown(function(e) {
@@ -333,9 +332,9 @@ stage.mousemove(function(e) {
 });
 ```
 
-#### 给图形添加事件
+#### shape events
 
-所有pc端支持的事件:
+All pc event types supported:
 
 * mousedown
 * mouseup
@@ -348,18 +347,18 @@ stage.mousemove(function(e) {
 * dragout
 * drop
 
-所有移动端支持的事件:
+All mobile event types supported:
 
 * touchstart
 * touchmove
 * touchend
 * tap
 
-支持链式调用.
+Support chain call.
 
 ```javascript
-/*
- * @cur: 当前图形.
+/*!
+ * @cur: current shape.
  */
 shape.on('mousedown', function( cur ) {
   console.log('you click rect');
@@ -375,16 +374,14 @@ shape.on('mousedown', function( cur ) {
 ```javascript
 rect.config({
   zindex: 10,
-  drag: true, // 图形开启拖拽
-  changeIndex: true， // 当拖拽的时候，改变图形的顺序
-  fixed: true, // 不受globalTranslate and globalScale 的影响。
+  drag: true, // enable drag 
+  changeIndex: true， // when drag, will change graphs' order
+  fixed: true, // globalTranslate and globalScale is not work
 });
 ```
 
 ### Group
-
-你可以把一些图形添加到一个组里，这样你可以让这些图形表现的行为一致。
-
+You can insert some shapes into a group, so that then can behave consistency.
 ```javascript
 const group = stage.group({
   x: 100,
@@ -400,16 +397,20 @@ const group = stage.group({
     }
   },
   /**
-   * @param {Object} background - 给组添加背景颜色
-   */
+   * @param {Object} background - group's background color
+   * @TODO: support image
+   * /
   background: {
-    color: '#000'
+    color: '#000',
+    img: '/path/x.png' // TODO
   },
   /**
-   * @param {Object} border - 给组添加边框
-   */
+   * @param {Object} border - group's border
+   * @TODO: support border width
+   * /
   border: {
     color: '#000',
+    lineWidth: 2 // TODO
   },
   zindex: 10
 }).on('mousedown', function() {
@@ -417,36 +418,35 @@ const group = stage.group({
 });
 ```
 
-* **方法** `group.add()`
+* **Function** `group.add()`
 
-把图形添加到组里. 组内图形的坐标原点是组的 (x, y) 坐标。
+Add child element to group.
+The child element's coordinates will be referenced to the group's starting point.
 
-* **方法** `group.remove()`
+* **Function** `group.remove()`
 
-从组内删除图形.
+Remove an child element from group.
 
-1. remove([Array])  -  删除多个图形
-2. remove([Function])  -  删除的图形支持用filter过滤.
+1. remove([Array])  -  remove shapes list
+2. remove([Function])  -  remove group's children filter by function.
 
-* **方法** `group.updateAllChildsPosition()`
+* **Function** `group.updateAllChildsPosition()`
 
-更新组内所有子图形的坐标位置。如果组的坐标发生了改变，需要调用这个函数来保证组内的图形跟随移动。
+update all group's children's position.
 
-### 添加到待绘制列表.
-
-group和图形一样，都需要`addChild`来添加到stage。
+### Add shapes to stage.
 
 ```javascript
 stage.addChild(rect);
 stage.addChild(line);
 stage.addChild(group);
 
-// 或者
+// or
 
 stage.addChild([rect, line, arc1, text1]);
 ```
 
-### 从绘制列表移除.
+### Remove shapes from stage.
 
 ```javascript
 stage.removeChild(rect);
@@ -461,15 +461,14 @@ stage.removeAllChilds();
 ```
 
 
-### show()
-
-绘制并且绑定事件.
+### Show
+Draw and trigger events.
 
 ```javascript
 stage.show();
 ```
-如果你通过`addChild`或`removeChild`新增了某些图形和事件或者移除了某些图形和事件，那么你需要通过以下方法重置事件。
 
+If you call function addChild or removeChild and bind some new events or unbind some events, you shold reset events trigger by:
 ```javascript
 stage.show()
 ```
@@ -479,23 +478,22 @@ stage.draw();
 stage._events.triggerEvents();
 ```
 
-### 绘制和重绘
+### Draw and Redraw
 ```javascript
 stage.draw();
 stage.redraw();
 ```
 
-### 重置
-
-重置整个舞台，让所有图形的状态回归到初始值，会重置所有的拖拽位移和缩放.
+### Reset
+Reset OMG to init status.
 
 ```javascript
 stage.reset();
 ```
 
-### 动画
+### Animation
 
-#### 全局动画
+#### Global Animation
 
 ```javascript
 function go() {
@@ -507,14 +505,14 @@ function go() {
 stage.animate(go);
 ```
 
-#### 图形动画
+#### Shap Animation
 
-[在线示例](https://omg.js.org/animation.html)
+[Demo](https://omg.js.org/animation.html)
 
 ```javascript
 /**
- * @param: {keys | Object}   -- 动画结束时的值，是个对象
- * @param: {config | Object} -- 动画的一些配置项
+ * @param: {keys | Object}   -- the end value of your tween
+ * @param: {config | Object} -- the tween settings
  */
 shape.animateTo({
   x: 100,
@@ -522,27 +520,27 @@ shape.animateTo({
   width: 200,
   height: 200
 }, {
-  duration: 1000, // 动画持续事件，默认 500 毫秒
-  delay: 500, // 动画延迟的事件，默认 0 毫秒
-  easing: 'bounceOut', // 动画的补间类型，默认 'linear' （匀速）
+  duration: 1000, //default = 500
+  delay: 500, // defalut = 0
+  easing: 'bounceOut', // defalut = 'linear'
   onStart: function(keys) {
     /**
      * @param: keys
-     * keys是一个对象，存放着图形运动到当前的一些坐标和内部数据。
+     * the values during you tween
      * same below
      */
     console.log(keys.x, keys.y, keys.width, keys.height);
-  },
+  }, // defalut = undefined
   onUpdate: function(keys) {
     console.log(keys.x, keys.y, keys.width, keys.height);
-  },
+  }, // defalut = undefined
   onFinish: function(keys) {
     console.log(keys.x, keys.y, keys.width, keys.height);
-  },
+  }, // defalut = undefined
 });
 ```
 
-#### 补间动画类型
+#### Easing Types
 * linear
 * quadIn
 * quadOut
@@ -563,58 +561,54 @@ shape.animateTo({
 * bounceIn
 * bounceInOut
 
-#### 清除动画
+#### Clear Animation
 ```javascript
 stage.clearAnimation();
 ```
 
-#### finishAnimation
-
-如果舞台上的所有动画都结束后，会调用这个方法。
-
+#### After Finish Animation
 ```javascript
 stage.finishAnimation = () => {
-  console.log('所有动画都结束了!');
+  console.log('all animations has finished!');
 };
 ```
 
-### 自动缩放canvas
+### Resize
 
 #### resize(opt)
-* opt.width {Function} -- 缩放后的宽度
-* opt.height {Function} -- 缩放后的高度
-* opt.resize {Function} -- 在缩放后触发的回调函数
+* opt.width {Function} -- width after resize
+* opt.height {Function} -- height after resize
+* opt.resize {Function} -- callback triggered after resize
 
 ```javascript
 world.resize({
   width: () => document.body.clientWidth,
   height: () => document.body.clientHeight,
-  // 如果你传了resize, 需要调用update这个函数来更新canvas的尺寸。
+  // function update - update the canvas size
   resize: (update) => {
     update();
   }
 });
 ```
 
-### FPS （帧率）
+### FPS
 
 #### fpsOn
 
-当舞台上有动画的时候，你可以通过调用`fpsOn`来开启获取帧率。
+If you use some animations and want to know the fps, just call function `fpsOn` to get fps.
 
 ```javascript
 stage.fpsOn(function(fps) {
-  // fps即是帧率，每秒刷新一次
   console.log(fps);
 });
 ```
 
-#### 关闭帧率获取
+#### Fps off
 ```javascript
 stage.fpsOff();
 ```
 
-## [更新日志](./.github/CHANGELOG.md)
+## [CHANGELOG](./.github/CHANGELOG.md)
 
 ## [MIT](./LICENSE)
 
