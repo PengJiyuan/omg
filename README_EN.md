@@ -3,7 +3,11 @@
 [![][npm-image]][npm-url]
 [![][downloads-image]][downloads-url]
 
-Oh my goodness! Awesome Canvas Render Library. [Demo](https://omg.js.org) [中文文档](README.md)
+Oh my goodness! Awesome Canvas Render Library. 
+
+[Demo](https://omg.js.org)
+
+[中文文档](README.md)
 
 <div align=center>
   <img src=".github/demo1.gif" />

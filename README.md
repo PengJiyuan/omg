@@ -3,7 +3,11 @@
 [![][npm-image]][npm-url]
 [![][downloads-image]][downloads-url]
 
-一个让你跳过canvas，直接绘图的 2d 绘图库，上手简单，接口简洁，功能丰富. [在线示例](https://omg.js.org) [English Document](README_EN.md)
+一个让你跳过canvas，直接绘图的 2d 绘图库，上手简单，接口简洁，功能丰富. 
+
+[在线示例](https://omg.js.org)
+
+[English Document](README_EN.md)
 
 <div align=center>
   <img src=".github/demo1.gif" />

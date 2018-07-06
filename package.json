@@ -14,7 +14,7 @@
     "build": "rm -rf dist/ && node rollup.config.js --beauty && node rollup.config.js --minify && cp dist/omg.min.js examples/omg.min.js",
     "dev": "rm -rf dist/ && node rollup.config.js --example",
     "eslint": "eslint src --ext .js --cache",
-    "release": "cd scripts && node release.js",
+    "release": "relix",
     "extra": "cp dist/omg.min.js examples/omg.min.js && git add .",
     "flow": "flow"
   },
@@ -43,6 +43,7 @@
     "flow-bin": "^0.70.0",
     "fs-extra": "^4.0.2",
     "pre-commit": "^1.2.2",
+    "relix": "^1.0.0",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-json": "^2.3.0",
