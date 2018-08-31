@@ -8,6 +8,7 @@
 			padding: 0;
 			width: 100%;
 			height: 100%;
+			background-image: linear-gradient(to bottom, #243949 0%, #517fa4 100%);
 			overflow: hidden;
 		}
 		#canvas {
@@ -124,102 +125,107 @@
 			<a href="./group.html">Group</a>
 		</ul>
 	</div>
-	<div id="fps"></div>
+	<!-- <div id="fps"></div> -->
 	<!-- <div id="holder" class="holder"></div> -->
-	<canvas id="canvas"></canvas>
+	<!-- <canvas id="canvas"></canvas> -->
 </div>
-<script src="./omg.min.js"></script>
+<!-- <script src="./omg.min.js"></script> -->
+<script src="https://unpkg.com/particle-bg/lib/particle-bg.umd.min.js"></script>
 <script>
-	var width = document.body.clientWidth;
-	var height = document.body.clientHeight;
-	var stage = omg({
-		element: document.getElementById('canvas'),
-		width: width,
-		height: height,
-		enableGlobalTranslate: false
+	particleBg('body', {
+		color: 'rgba(255, 255, 255, 0.5)',
+		radius: 3
 	});
+	// var width = document.body.clientWidth;
+	// var height = document.body.clientHeight;
+	// var stage = omg({
+	// 	element: document.getElementById('canvas'),
+	// 	width: width,
+	// 	height: height,
+	// 	enableGlobalTranslate: false
+	// });
 
-	stage.init();
+	// stage.init();
 
-	var eleFps = document.getElementById('fps');
+	// var eleFps = document.getElementById('fps');
 
-	stage.fpsOn(function(fps) {
-		eleFps.innerHTML = 'FPS: ' + fps;
-	});
+	// stage.fpsOn(function(fps) {
+	// 	eleFps.innerHTML = 'FPS: ' + fps;
+	// });
 
-	// document.getElementById('holder').style.backgroundColor = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.9)';
-	// console.log(document.getElementById('holder').style.backgroundColor)
+	// // document.getElementById('holder').style.backgroundColor = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.9)';
+	// // console.log(document.getElementById('holder').style.backgroundColor)
 
-	var rr = [10, 50];
-	var rectList = [];
-	var createRect = function() {
-		var w = Math.random() * (rr[1] - rr[0]) + rr[0];
-		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.5)';
-		var rect = stage.graphs.rectangle({
-			x: Math.random() * width,
-			y: Math.random() * height,
-			rotate: Math.ceil(Math.random() * 90),
-			width: w,
-			height: w,
-			color: color
-		});
+	// var rr = [10, 50];
+	// var rectList = [];
+	// var createRect = function() {
+	// 	var w = Math.random() * (rr[1] - rr[0]) + rr[0];
+	// 	var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.5)';
+	// 	var rect = stage.graphs.rectangle({
+	// 		x: Math.random() * width,
+	// 		y: Math.random() * height,
+	// 		rotate: Math.ceil(Math.random() * 90),
+	// 		width: w,
+	// 		height: w,
+	// 		color: color
+	// 	});
 
-		rectList.push(rect);
-	};
+	// 	rectList.push(rect);
+	// };
 
-	for(var i = 0; i < 80; i++) {
-		createRect();
-	}
+	// for(var i = 0; i < 80; i++) {
+	// 	createRect();
+	// }
 
-	stage.addChild(rectList);
+	// stage.addChild(rectList);
 
-	var arcList = [];
-	var createArc = function() {
-		var r = Math.random() * (rr[1] - rr[0]) + rr[0];
-		var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.3)';
-		var arc = stage.graphs.arc({
-			x: Math.random() * width - 80,
-			y: Math.random() * height - 80,
-			radius: r,
-			color: color,
-			style: 'fill'
-		});
-		arcList.push(arc);
-	};
+	// var arcList = [];
+	// var createArc = function() {
+	// 	var r = Math.random() * (rr[1] - rr[0]) + rr[0];
+	// 	var color = 'rgba('+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', '+Math.round(Math.random()*255)+', 0.3)';
+	// 	var arc = stage.graphs.arc({
+	// 		x: Math.random() * width - 80,
+	// 		y: Math.random() * height - 80,
+	// 		radius: r,
+	// 		color: color,
+	// 		style: 'fill'
+	// 	});
+	// 	arcList.push(arc);
+	// };
 
-	for(var i = 0; i < 60; i++) {
-		createArc();
-	}
+	// for(var i = 0; i < 60; i++) {
+	// 	createArc();
+	// }
 
-	stage.addChild(arcList);
+	// stage.addChild(arcList);
 
-	function bounce(shape, r) {
-		shape.animateTo({
-			radius: shape.radius + r
-		}, {
-			easing: 'quadOut',
-			duration: 2000,
-			onFinish: function(keys) {
-				bounce(shape, -r);
-			}
-		});
-	}
+	// function bounce(shape, r) {
+	// 	shape.animateTo({
+	// 		radius: shape.radius + r
+	// 	}, {
+	// 		easing: 'quadOut',
+	// 		duration: 2000,
+	// 		onFinish: function(keys) {
+	// 			bounce(shape, -r);
+	// 		}
+	// 	});
+	// }
 
-	arcList.forEach(function(a) {
-		var random = Math.random();
-		var flag = random < 0.5 ? true: false;
-		var plus = random * 20 + 10;
-		var minus = a.radius - random * 20 - 10 >= 0 ? - random * 20 - 10 : 0;
-		bounce(a, flag ? plus : minus);
-	});
+	// arcList.forEach(function(a) {
+	// 	var random = Math.random();
+	// 	var flag = random < 0.5 ? true: false;
+	// 	var plus = random * 20 + 10;
+	// 	var minus = a.radius - random * 20 - 10 >= 0 ? - random * 20 - 10 : 0;
+	// 	bounce(a, flag ? plus : minus);
+	// });
 
-	function rotateRect() {
-		rectList.forEach(function(r) {
-			r.rotate++;
-		});
-	}
+	// function rotateRect() {
+	// 	rectList.forEach(function(r) {
+	// 		r.rotate++;
+	// 	});
+	// }
 
-	stage.animate(rotateRect);
+	// stage.animate(rotateRect);
 
 </script>
 </body>
