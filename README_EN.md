@@ -17,8 +17,6 @@ Oh my goodness! Awesome Canvas Render Library.
   <img src=".github/demo2.gif" />
 </div>
 
-<video src=".github/demo.mov">
-
 ## Install
 
 **NPM**    
