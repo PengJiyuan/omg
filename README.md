@@ -17,8 +17,6 @@
   <img src=".github/demo2.gif" />
 </div>
 
-<video src=".github/demo.mov">
-
 ## 如何安装omg？
 
 **NPM**    
